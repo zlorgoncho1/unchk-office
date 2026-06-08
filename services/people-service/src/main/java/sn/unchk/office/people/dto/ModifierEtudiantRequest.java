@@ -66,6 +66,10 @@ public record ModifierEtudiantRequest(
         @Max(value = 2100, message = "L'annee de sortie est invalide.")
         Short exitYear,
 
+        /** Autres formations suivies (texte libre, hors catalogue). */
+        @Size(max = 2000, message = "Les autres formations ne peuvent depasser 2000 caracteres.")
+        String otherTrainings,
+
         UUID userRef,
 
         @NotNull(message = "Le statut est obligatoire.")

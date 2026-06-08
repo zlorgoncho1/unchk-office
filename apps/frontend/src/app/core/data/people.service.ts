@@ -39,7 +39,9 @@ export class PeopleService {
 
   // --- CRUD étudiants (corps = CreerEtudiantRequest / ModifierEtudiantRequest :
   //     ine (création seulement), firstName, lastName, gender, email, phone,
-  //     promotion, enrollmentYear, exitYear, status, matricule, birthDate...) ---
+  //     promotion, enrollmentYear, exitYear, status, matricule, birthDate,
+  //     formationRef (formation principale), otherTrainings (autres formations),
+  //     diplomas (tableau de DiplomeDto)...) ---
 
   /** Crée un étudiant. */
   creerEtudiant(corps: Record<string, unknown>): Observable<Etudiant> {

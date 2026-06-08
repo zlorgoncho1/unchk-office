@@ -80,7 +80,8 @@ public class StudentService {
         appliquer(etudiant, requete.matricule(), requete.firstName(), requete.lastName(),
                 requete.gender(), requete.birthDate(), requete.birthPlace(), requete.email(),
                 requete.phone(), requete.address(), requete.photoObjectKey(), requete.formationRef(),
-                requete.promotion(), requete.enrollmentYear(), requete.exitYear(), requete.userRef());
+                requete.promotion(), requete.enrollmentYear(), requete.exitYear(),
+                requete.otherTrainings(), requete.userRef());
         if (requete.status() != null) {
             etudiant.setStatus(requete.status());
         }
@@ -106,7 +107,8 @@ public class StudentService {
         appliquer(etudiant, requete.matricule(), requete.firstName(), requete.lastName(),
                 requete.gender(), requete.birthDate(), requete.birthPlace(), requete.email(),
                 requete.phone(), requete.address(), requete.photoObjectKey(), requete.formationRef(),
-                requete.promotion(), requete.enrollmentYear(), requete.exitYear(), requete.userRef());
+                requete.promotion(), requete.enrollmentYear(), requete.exitYear(),
+                requete.otherTrainings(), requete.userRef());
         etudiant.setStatus(requete.status());
         remplacerDiplomes(etudiant, requete.diplomas());
 
@@ -139,7 +141,7 @@ public class StudentService {
                            sn.unchk.office.people.domain.Genre gender, java.time.LocalDate birthDate,
                            String birthPlace, String email, String phone, String address,
                            String photoObjectKey, UUID formationRef, String promotion,
-                           Short enrollmentYear, Short exitYear, UUID userRef) {
+                           Short enrollmentYear, Short exitYear, String otherTrainings, UUID userRef) {
         e.setMatricule(matricule);
         e.setFirstName(firstName);
         e.setLastName(lastName);
@@ -154,6 +156,7 @@ public class StudentService {
         e.setPromotion(promotion);
         e.setEnrollmentYear(enrollmentYear);
         e.setExitYear(exitYear);
+        e.setOtherTrainings(otherTrainings);
         e.setUserRef(userRef);
     }
 

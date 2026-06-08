@@ -80,7 +80,7 @@ class StudentControllerTest {
         EtudiantResponse cree = new EtudiantResponse(
                 UUID.randomUUID(), "INE-2024-100", "MAT-100", "Awa", "Diop",
                 sn.unchk.office.people.domain.Genre.femme, null, null, null, null, null, null,
-                null, "2024-2025", (short) 2024, null,
+                null, "2024-2025", (short) 2024, null, null,
                 sn.unchk.office.people.domain.StudentStatus.inscrit, List.of(),
                 Instant.now(), Instant.now());
         when(service.creer(any(), any())).thenReturn(cree);
