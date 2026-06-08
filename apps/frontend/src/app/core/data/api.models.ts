@@ -86,6 +86,8 @@ export interface Formation {
   level: NiveauFormation;
   kind: string;
   funding: string;
+  // Montant du financement (devise locale), optionnel.
+  amount: number | null;
   startDate: string | null;
   endDate: string | null;
   trainedMale: number;

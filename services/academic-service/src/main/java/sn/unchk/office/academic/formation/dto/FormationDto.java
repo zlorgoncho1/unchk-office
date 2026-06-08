@@ -5,6 +5,7 @@ import sn.unchk.office.academic.formation.Formation;
 import sn.unchk.office.academic.formation.NiveauFormation;
 import sn.unchk.office.academic.formation.TypeFormation;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import java.util.UUID;
  * @param level          niveau
  * @param kind           type
  * @param funding        financement
+ * @param amount         montant du financement
  * @param startDate      date de début
  * @param endDate        date de fin
  * @param trainedMale    formés (hommes)
@@ -34,6 +36,7 @@ public record FormationDto(
         NiveauFormation level,
         TypeFormation kind,
         Financement funding,
+        BigDecimal amount,
         LocalDate startDate,
         LocalDate endDate,
         int trainedMale,
@@ -53,6 +56,7 @@ public record FormationDto(
                 f.getLevel(),
                 f.getKind(),
                 f.getFunding(),
+                f.getAmount(),
                 f.getStartDate(),
                 f.getEndDate(),
                 f.getTrainedMale(),

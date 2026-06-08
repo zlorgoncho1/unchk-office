@@ -78,6 +78,7 @@ public class FormationService {
             formation.setKind(dto.kind());
         }
         formation.setFunding(dto.funding());
+        formation.setAmount(dto.amount());
         formation.setStartDate(dto.startDate());
         formation.setEndDate(dto.endDate());
         formation.setTrainedMale(dto.trainedMale() != null ? dto.trainedMale() : 0);
@@ -112,6 +113,7 @@ public class FormationService {
             formation.setKind(dto.kind());
         }
         formation.setFunding(dto.funding());
+        formation.setAmount(dto.amount());
         formation.setStartDate(dto.startDate());
         formation.setEndDate(dto.endDate());
         if (dto.trainedMale() != null) {

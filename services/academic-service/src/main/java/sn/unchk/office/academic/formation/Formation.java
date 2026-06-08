@@ -52,6 +52,10 @@ public class Formation {
     @Column(name = "funding")
     private Financement funding;
 
+    /** Montant du financement (devise locale, peut être nul si non renseigné). */
+    @Column(name = "amount")
+    private java.math.BigDecimal amount;
+
     /** Date de début (incluse), optionnelle. */
     @Column(name = "start_date")
     private LocalDate startDate;
@@ -183,6 +187,14 @@ public class Formation {
 
     public void setFunding(Financement funding) {
         this.funding = funding;
+    }
+
+    public java.math.BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(java.math.BigDecimal amount) {
+        this.amount = amount;
     }
 
     public LocalDate getStartDate() {
