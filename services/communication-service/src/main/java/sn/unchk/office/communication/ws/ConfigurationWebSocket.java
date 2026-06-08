@@ -1,52 +1,37 @@
 package sn.unchk.office.communication.ws;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 /**
- * Configuration du canal WebSocket / STOMP des notifications temps réel.
+ * Configuration du canal WebSocket (simple, messages texte/JSON) des notifications temps réel.
  * <p>
- * Endpoint d'établissement de session : {@code /ws/notifications} (le gateway y route le
- * handshake après validation du JWT). Le push se fait sur une file utilisateur :
- * chaque destinataire reçoit ses notifications sur {@code /user/queue/notifications}, lié à
- * son {@code subject.id} (pas d'IDOR temps réel cross-utilisateur).
+ * Endpoint : {@code /ws/notifications} (routé par le gateway). Le handshake est authentifié
+ * par le JWT transmis en paramètre d'URL ({@code ?access_token=...}), car le navigateur ne
+ * peut pas poser d'en-tête {@code Authorization} à l'ouverture d'un WebSocket. Chaque
+ * notification est ensuite poussée en JSON direct à la (les) session(s) du destinataire
+ * (lié à son {@code subject.id} : pas de push cross-utilisateur — anti-IDOR temps réel).
  */
 @Configuration
-@EnableWebSocketMessageBroker
-public class ConfigurationWebSocket implements WebSocketMessageBrokerConfigurer {
+@EnableWebSocket
+public class ConfigurationWebSocket implements WebSocketConfigurer {
 
-    /** Préfixe des destinations utilisateur (push ciblé par session). */
-    public static final String PREFIXE_UTILISATEUR = "/user";
-    /** Destination de file des notifications poussées au client. */
-    public static final String DESTINATION_NOTIFICATIONS = "/queue/notifications";
-
+    private final GestionnaireNotificationsWs gestionnaire;
     private final IntercepteurHandshakeJwt intercepteurHandshake;
-    private final GestionnaireHandshakeUtilisateur gestionnaireHandshake;
 
-    public ConfigurationWebSocket(IntercepteurHandshakeJwt intercepteurHandshake,
-                                  GestionnaireHandshakeUtilisateur gestionnaireHandshake) {
+    public ConfigurationWebSocket(GestionnaireNotificationsWs gestionnaire,
+                                  IntercepteurHandshakeJwt intercepteurHandshake) {
+        this.gestionnaire = gestionnaire;
         this.intercepteurHandshake = intercepteurHandshake;
-        this.gestionnaireHandshake = gestionnaireHandshake;
     }
 
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // Endpoint de handshake ; l'intercepteur lie la session à l'identité de l'utilisateur,
-        // le gestionnaire en fait le Principal STOMP (routage /user/...).
-        registry.addEndpoint("/ws/notifications")
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(gestionnaire, "/ws/notifications")
                 .addInterceptors(intercepteurHandshake)
-                .setHandshakeHandler(gestionnaireHandshake)
-                .setAllowedOriginPatterns("*"); // le contrôle d'origine (CORS) est assuré au gateway
-    }
-
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // Courtier simple en mémoire : suffisant pour un push mono-instance.
-        registry.enableSimpleBroker(DESTINATION_NOTIFICATIONS);
-        // Préfixe des destinations propres à un utilisateur (résolu via son Principal).
-        registry.setUserDestinationPrefix(PREFIXE_UTILISATEUR);
+                // Le contrôle d'origine (CORS) est assuré au gateway.
+                .setAllowedOriginPatterns("*");
     }
 }
