@@ -22,6 +22,19 @@ allow if "admin" in input.subject.roles
 # RBAC grossier : la route + méthode est permise pour au moins un rôle du sujet.
 allow if route_allowed
 
+# Notifications personnelles : tout utilisateur authentifié consulte et marque
+# les SIENNES (le service filtre sur l'identité de l'appelant ; OPA n'autorise
+# que la route, indépendamment du rôle).
+allow if {
+	input.request.method == "GET"
+	startswith(input.request.path, "/api/communication/notifications")
+}
+
+allow if {
+	input.request.method == "PATCH"
+	startswith(input.request.path, "/api/communication/notifications/")
+}
+
 # ABAC / anti-IDOR : lecture autorisée seulement si l'objet est visible par le sujet.
 allow if {
 	input.action == "read"
