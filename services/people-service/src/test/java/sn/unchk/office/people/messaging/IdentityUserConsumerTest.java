@@ -14,6 +14,7 @@ import sn.unchk.office.people.domain.ProcessedEvent;
 import sn.unchk.office.people.messaging.consumer.IdentityUserConsumer;
 import sn.unchk.office.people.repository.IdentityUserRoRepository;
 import sn.unchk.office.people.repository.ProcessedEventRepository;
+import sn.unchk.office.people.repository.StudentRepository;
 
 import java.time.Instant;
 import java.util.List;
@@ -44,11 +45,14 @@ class IdentityUserConsumerTest {
     @Mock
     private ProcessedEventRepository processedEventRepository;
 
+    @Mock
+    private StudentRepository studentRepository;
+
     @Test
     @DisplayName("Un evenement identity.users alimente le read-model et marque l'event traite")
     void consommer_upsertReadModel() {
         IdentityUserConsumer consumer =
-                new IdentityUserConsumer(userRoRepository, processedEventRepository);
+                new IdentityUserConsumer(userRoRepository, processedEventRepository, studentRepository);
 
         UUID userId = UUID.randomUUID();
         UUID eventId = UUID.randomUUID();
@@ -86,7 +90,7 @@ class IdentityUserConsumerTest {
     @DisplayName("Un evenement deja traite est ignore (idempotence)")
     void consommer_evenementDejaTraite_ignore() {
         IdentityUserConsumer consumer =
-                new IdentityUserConsumer(userRoRepository, processedEventRepository);
+                new IdentityUserConsumer(userRoRepository, processedEventRepository, studentRepository);
 
         UUID userId = UUID.randomUUID();
         UUID eventId = UUID.randomUUID();
@@ -110,7 +114,7 @@ class IdentityUserConsumerTest {
     @DisplayName("Un tombstone Kafka (valeur null) purge la cle du read-model")
     void consommer_tombstone_purge() {
         IdentityUserConsumer consumer =
-                new IdentityUserConsumer(userRoRepository, processedEventRepository);
+                new IdentityUserConsumer(userRoRepository, processedEventRepository, studentRepository);
 
         UUID userId = UUID.randomUUID();
         ConsumerRecord<String, DomainEvent<Map<String, Object>>> record =
