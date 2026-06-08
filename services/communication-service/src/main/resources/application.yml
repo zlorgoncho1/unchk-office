@@ -1,0 +1,89 @@
+# ============================================================
+# Configuration du communication-service (Spring Boot 3.3.4 / Java 21, MVC servlet).
+# Périmètre : comptes rendus, réunions, notifications temps réel (push WebSocket).
+# Communication inter-services 100% Kafka (aucun appel REST entre services).
+# ============================================================
+
+server:
+  # Port applicatif du service (cf. docs/architecture.md). Dans le réseau Docker le
+  # gateway route /api/communication/** et /ws/notifications/** vers ce service.
+  port: ${SERVER_PORT:8084}
+
+spring:
+  application:
+    name: communication-service
+
+  # --- Import optionnel de la configuration centralisée (Config Server) ---
+  # optional: le service démarre même si le Config Server est absent.
+  config:
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://config-server:8888}
+
+  # --- Source de données : base PostgreSQL dédiée "communication" ---
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/communication}
+    username: ${SPRING_DATASOURCE_USERNAME:communication}
+    password: ${SPRING_DATASOURCE_PASSWORD:communication}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      # Le schéma est géré par Flyway : Hibernate ne fait que valider la concordance.
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+    open-in-view: false
+
+  # --- Flyway : migrations versionnées depuis le DDL des docs ---
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  # --- Kafka : bus inter-services (KRaft), sérialisation JSON ---
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:19092}
+    consumer:
+      # Groupe de consommation propre au service (read-models locaux).
+      group-id: ${KAFKA_GROUP_ID:communication-service}
+      auto-offset-reset: earliest
+
+  # --- Sécurité : validation des JWT RS256 via JWKS d'identity-service ---
+  # (utilisé par le serveur de ressources OAuth2 fourni par libs/common)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${JWT_JWKS_URI:http://identity-service:8080/.well-known/jwks.json}
+
+# --- Propriétés de validation JWT exploitées par libs/common (ConfigurationServeurRessources) ---
+unchk:
+  security:
+    jwt:
+      jwks-uri: ${JWT_JWKS_URI:http://identity-service:8080/.well-known/jwks.json}
+      issuer: ${JWT_ISSUER:http://identity-service:8080}
+      audience: ${JWT_AUDIENCE:unchk-office}
+  # --- Autorisation externalisée OPA (ABAC objet anti-IDOR au niveau service) ---
+  authz:
+    opa:
+      url: ${OPA_URL:http://opa:8181}
+      chemin: ${OPA_PATH:/v1/data/unchk/authz/allow}
+      timeout: ${OPA_TIMEOUT_MS:2000}
+
+# --- Supervision (santé / info) exposée pour les sondes Docker ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+# --- Journalisation : INFO par défaut, DEBUG ciblé sur notre code ---
+logging:
+  level:
+    root: INFO
+    sn.unchk.office: DEBUG
