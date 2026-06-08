@@ -47,15 +47,18 @@ local** (projection CQRS) alimenté en consommant les topics Kafka des autres se
 ```bash
 cp .env.example .env
 
-# Construit (Maven dans Docker) puis lance les 15 conteneurs.
-# Premier lancement : long (téléchargement images + dépendances Maven, cache ensuite).
+# Construit (Maven dans Docker + build Angular) puis lance les 16 conteneurs
+# (7 microservices + gateway + config + frontend + infra).
+# Premier lancement : long (images + dépendances Maven/npm, cache ensuite).
 docker compose up -d --build
 
 # Vérifier que tout est démarré / "healthy"
 docker compose ps
 ```
 
-Le **gateway** expose l'API sur `http://localhost:8080`. Compte de démonstration (seedé par Flyway) :
+> **Une seule commande suffit** : `docker compose up` démarre **toute l'application** (frontend + backend).
+
+Le **frontend** est servi sur **http://localhost:4200** (nginx) et le **gateway** expose l'API sur `http://localhost:8080`. Ouvrez http://localhost:4200 et connectez-vous. Compte de démonstration (seedé par Flyway) :
 
 | Identifiant | Mot de passe | Rôle |
 |---|---|---|
@@ -72,11 +75,15 @@ curl -s -X POST localhost:8080/api/identity/auth/login -H "Content-Type: applica
 curl -s -H "Authorization: Bearer <JWT>" localhost:8080/api/people/students
 ```
 
-### Frontend (mode développement)
+### Frontend (mode développement, optionnel)
+
+> Le frontend de production est déjà servi par `docker compose` sur http://localhost:4200.
+> Ce mode n'est utile que pour le rechargement à chaud pendant le développement
+> (arrêter d'abord le conteneur : `docker compose stop frontend`).
 
 ```bash
 cd apps/frontend
-npm ci
+npm install
 npx ng serve        # http://localhost:4200 (appelle le gateway sur :8080)
 ```
 
@@ -84,7 +91,7 @@ npx ng serve        # http://localhost:4200 (appelle le gateway sur :8080)
 
 | Service | URL locale |
 |---|---|
-| **Frontend (dev)** | http://localhost:4200 |
+| **Frontend (nginx)** | http://localhost:4200 |
 | **API Gateway** | http://localhost:8080 |
 | identity / people / document / communication / academic / insertion / admin | 8081 … 8087 (port hôte de debug → 8080 interne) |
 | Config Server | http://localhost:8888 |
