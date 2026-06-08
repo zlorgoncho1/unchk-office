@@ -1,0 +1,43 @@
+// ============================================================
+// Thème global UNCHK Office — Angular Material 3.
+// Palette dérivée du logo : primaire bleu #1C75BC, secondaire vert #36A93B,
+// tertiaire/accent orange #F39200, texte marine #16314A, fond clair #F4F7FA.
+// ============================================================
+@use '@angular/material' as mat;
+@use './styles/theme-colors' as unchk;
+@use './styles/tokens'; // variables CSS de marque (:root)
+
+html {
+  // Thème CLAIR Material 3 basé sur les palettes de marque générées.
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: unchk.$primary-palette,
+      tertiary: unchk.$tertiary-palette,
+    ),
+    typography: Inter,
+    density: 0,
+  ));
+  color-scheme: light;
+}
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--unchk-background);
+  color: var(--unchk-text);
+}
+
+// --- Quelques utilitaires de marque réutilisés dans l'app shell ---
+.unchk-accent { color: var(--unchk-orange); }
+
+.unchk-surface {
+  background: var(--unchk-surface);
+  border: 1px solid var(--unchk-border);
+  border-radius: var(--unchk-radius-lg);
+  box-shadow: var(--unchk-shadow-card);
+}
+
+// L'icône Solar (web component Iconify) s'aligne sur le texte.
+iconify-icon { display: inline-block; vertical-align: middle; line-height: 1; }
