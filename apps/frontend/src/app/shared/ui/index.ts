@@ -7,3 +7,6 @@ export * from './loading-state/loading-state.component';
 export * from './chart-card/chart-card.component';
 export * from './status-pill/status-pill.component';
 export * from './data-table/data-table.component';
+export * from './form-drawer/form-drawer.component';
+export * from './confirm-dialog/confirm-dialog.component';
+export * from './drawer.util';

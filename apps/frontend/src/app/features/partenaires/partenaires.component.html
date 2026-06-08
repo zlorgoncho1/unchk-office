@@ -2,7 +2,12 @@
   titre="Partenaires"
   sousTitre="Réseau de partenaires de l'appui à l'insertion"
   icone="buildings-2-bold-duotone"
-/>
+>
+  <button mat-flat-button color="primary" (click)="nouveau()">
+    <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+    <span>&nbsp;Nouveau partenaire</span>
+  </button>
+</unchk-page-header>
 
 @if (data.etat().erreur) {
   <unchk-empty-state
@@ -13,10 +18,14 @@
 } @else {
   <unchk-section-card sansBordure>
     <unchk-data-table
-        detaillable
+      detaillable
       [colonnes]="colonnes"
       [lignes]="lignes()"
       [chargement]="data.etat().chargement"
+      modifiable
+      supprimable
+      (modifier)="onModifier($event)"
+      (supprimer)="onSupprimer($event)"
       filtrable
       titreVide="Aucun partenaire"
       messageVide="La base de partenaires est vide pour le moment."

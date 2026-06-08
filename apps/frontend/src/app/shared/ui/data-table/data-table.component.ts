@@ -56,22 +56,6 @@ export interface ColonneTable<T = Record<string, unknown>> {
 }
 
 /**
- * Action de ligne d'un {@link DataTableComponent} (bouton icône en fin de ligne).
- *
- * @typeParam T type d'une ligne de données
- */
-export interface ActionTable<T = Record<string, unknown>> {
-  /** Identifiant de l'action (émis au clic). */
-  cle: string;
-  /** Libellé (infobulle + accessibilité). */
-  libelle: string;
-  /** Icône Solar (sans le préfixe « solar: »). */
-  icone: string;
-  /** Affiche l'action seulement si la condition est vraie pour la ligne. */
-  visible?: (ligne: T) => boolean;
-}
-
-/**
  * Tableau de données brandé UNCHK, réutilisable sur toutes les pages.
  * <p>
  * Pilotage par configuration de colonnes ({@link ColonneTable}) : rendu homogène
@@ -104,12 +88,16 @@ export class DataTableComponent<T = Record<string, unknown>> {
   readonly messageVide = input<string | null>(null);
   /** Icône Solar de l'état vide. */
   readonly iconeVide = input<string>('inbox-line-duotone');
-  /** Actions de ligne optionnelles : une colonne « Actions » est ajoutée à droite. */
-  readonly actions = input<ActionTable<T>[]>([]);
-  /** Émis au clic d'une action de ligne : {@code { action: clé, ligne }}. */
-  readonly actionDeclenchee = output<{ action: string; ligne: T }>();
-  /** Ajoute un bouton « Voir » par ligne ouvrant un dialog de détail générique. */
+  /** Ajoute un bouton « Voir » par ligne ouvrant un drawer de détail générique. */
   readonly detaillable = input(false, { transform: booleanAttribute });
+  /** Ajoute un bouton « Modifier » par ligne (émet {@link modifier}). */
+  readonly modifiable = input(false, { transform: booleanAttribute });
+  /** Ajoute un bouton « Supprimer » par ligne (émet {@link supprimer}). */
+  readonly supprimable = input(false, { transform: booleanAttribute });
+  /** Émis au clic de « Modifier » avec la ligne concernée. */
+  readonly modifier = output<T>();
+  /** Émis au clic de « Supprimer » avec la ligne concernée. */
+  readonly supprimer = output<T>();
 
   private readonly dialog = inject(MatDialog);
 
@@ -171,10 +159,10 @@ export class DataTableComponent<T = Record<string, unknown>> {
     return align === 'droite' ? 'dt--droite' : align === 'centre' ? 'dt--centre' : '';
   }
 
-  /** Indique si une colonne d'actions doit être affichée. */
-  protected aDesActions(): boolean {
-    return this.detaillable() || this.actions().length > 0;
-  }
+  /** Indique si une colonne d'actions doit être affichée (signal dérivé, référence stable). */
+  protected readonly aDesActions = computed(
+    () => this.detaillable() || this.modifiable() || this.supprimable()
+  );
 
   /** Ouvre le dialog de détail générique avec les valeurs formatées de la ligne. */
   protected ouvrirDetail(ligne: T): void {
@@ -194,14 +182,15 @@ export class DataTableComponent<T = Record<string, unknown>> {
     });
   }
 
-  /** Actions visibles pour une ligne donnée. */
-  protected actionsVisibles(ligne: T): ActionTable<T>[] {
-    return this.actions().filter((a) => !a.visible || a.visible(ligne));
+  /** Émet l'événement « modifier » pour la ligne. */
+  protected emettreModifier(ligne: T, evt: Event): void {
+    evt.stopPropagation();
+    this.modifier.emit(ligne);
   }
 
-  /** Émet l'action déclenchée pour la ligne (sans propager le clic à la ligne). */
-  protected declencher(action: ActionTable<T>, ligne: T, evt: Event): void {
+  /** Émet l'événement « supprimer » pour la ligne. */
+  protected emettreSupprimer(ligne: T, evt: Event): void {
     evt.stopPropagation();
-    this.actionDeclenchee.emit({ action: action.cle, ligne });
+    this.supprimer.emit(ligne);
   }
 }
