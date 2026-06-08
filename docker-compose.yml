@@ -4,6 +4,40 @@ name: unchk-office
 # sont ajoutés au fur et à mesure. Démarrage infra :
 #   docker compose up -d kafka postgres minio opa kafka-ui
 
+# ============================================================
+# Bloc d'environnement partagé par les microservices métier.
+# Harmonise des conventions de configuration divergentes entre services
+# (DB, Kafka, OPA, JWT). Voir docs/journal-de-bord.md (#9).
+# Tous les services écoutent en interne sur 8080 (cible du routage gateway).
+# ============================================================
+x-service-env: &service-env
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  DB_USER: ${POSTGRES_USER}
+  DB_PASSWORD: ${POSTGRES_PASSWORD}
+  SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+  SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+  KAFKA_BOOTSTRAP: kafka:19092
+  KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+  KAFKA_BOOTSTRAP_INTERNAL: kafka:19092
+  OPA_URL: http://opa:8181
+  JWT_ISSUER: http://identity-service:8080
+  JWT_ISSUER_URI: http://identity-service:8080
+  JWT_JWKS_URI: http://identity-service:8080/.well-known/jwks.json
+  CONFIG_SERVER_URI: http://config-server:8888
+  CONFIG_SERVER_URL: http://config-server:8888
+  CONFIG_IMPORT: "optional:configserver:http://config-server:8888"
+  SPRING_CONFIG_IMPORT: "optional:configserver:http://config-server:8888"
+  SERVER_PORT: "8080"
+
+x-service-depends: &service-depends
+  postgres:
+    condition: service_healthy
+  kafka:
+    condition: service_healthy
+
 services:
   # ============================================================
   # Messaging : Apache Kafka en mode KRaft (cluster natif, SANS ZooKeeper)
@@ -164,6 +198,121 @@ services:
         condition: service_healthy
       opa:
         condition: service_started
+    networks: [unchk-net]
+
+  # ============================================================
+  # Microservices métier (Spring Boot). Build : contexte racine + Dockerfile du module.
+  # Tous écoutent en interne sur 8080 ; port hôte distinct pour le débogage.
+  # ============================================================
+  identity-service:
+    build:
+      context: .
+      dockerfile: services/identity-service/Dockerfile
+    container_name: unchk-identity-service
+    environment:
+      <<: *service-env
+      DB_NAME: identity
+      DB_URL: jdbc:postgresql://postgres:5432/identity
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/identity
+    ports:
+      - "8081:8080"
+    depends_on: *service-depends
+    networks: [unchk-net]
+
+  people-service:
+    build:
+      context: .
+      dockerfile: services/people-service/Dockerfile
+    container_name: unchk-people-service
+    environment:
+      <<: *service-env
+      DB_NAME: people
+      DB_URL: jdbc:postgresql://postgres:5432/people
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/people
+    ports:
+      - "8082:8080"
+    depends_on: *service-depends
+    networks: [unchk-net]
+
+  document-service:
+    build:
+      context: .
+      dockerfile: services/document-service/Dockerfile
+    container_name: unchk-document-service
+    environment:
+      <<: *service-env
+      DB_NAME: document
+      DB_URL: jdbc:postgresql://postgres:5432/document
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/document
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "8083:8080"
+    depends_on:
+      <<: *service-depends
+      minio:
+        condition: service_started
+    networks: [unchk-net]
+
+  communication-service:
+    build:
+      context: .
+      dockerfile: services/communication-service/Dockerfile
+    container_name: unchk-communication-service
+    environment:
+      <<: *service-env
+      DB_NAME: communication
+      DB_URL: jdbc:postgresql://postgres:5432/communication
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/communication
+    ports:
+      - "8084:8080"
+    depends_on: *service-depends
+    networks: [unchk-net]
+
+  academic-service:
+    build:
+      context: .
+      dockerfile: services/academic-service/Dockerfile
+    container_name: unchk-academic-service
+    environment:
+      <<: *service-env
+      DB_NAME: academic
+      DB_URL: jdbc:postgresql://postgres:5432/academic
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/academic
+    ports:
+      - "8085:8080"
+    depends_on: *service-depends
+    networks: [unchk-net]
+
+  insertion-service:
+    build:
+      context: .
+      dockerfile: services/insertion-service/Dockerfile
+    container_name: unchk-insertion-service
+    environment:
+      <<: *service-env
+      DB_NAME: insertion
+      DB_URL: jdbc:postgresql://postgres:5432/insertion
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/insertion
+    ports:
+      - "8086:8080"
+    depends_on: *service-depends
+    networks: [unchk-net]
+
+  admin-service:
+    build:
+      context: .
+      dockerfile: services/admin-service/Dockerfile
+    container_name: unchk-admin-service
+    environment:
+      <<: *service-env
+      DB_NAME: admin
+      DB_URL: jdbc:postgresql://postgres:5432/admin
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/admin
+    ports:
+      - "8087:8080"
+    depends_on: *service-depends
     networks: [unchk-net]
 
 networks:
