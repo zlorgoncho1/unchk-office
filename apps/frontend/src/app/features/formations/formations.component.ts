@@ -75,6 +75,13 @@ export class FormationsComponent {
       valeur: (f) => humaniser(f.funding),
     },
     {
+      // Montant du financement : colonne monétaire optionnelle (vide si non renseigné).
+      cle: 'amount',
+      libelle: 'Montant',
+      type: 'montant',
+      largeur: '130px',
+    },
+    {
       cle: 'formes',
       libelle: 'Formés',
       type: 'nombre',
@@ -135,6 +142,8 @@ export class FormationsComponent {
         { valeur: 'mixte', libelle: 'Mixte' },
       ],
     },
+    // Montant du financement (complète le type de financement, cf. énoncé).
+    { cle: 'amount', libelle: 'Montant du financement', type: 'nombre' },
     { cle: 'startDate', libelle: 'Date de début', type: 'date' },
     { cle: 'endDate', libelle: 'Date de fin', type: 'date' },
     { cle: 'trainedMale', libelle: 'Formés (hommes)', type: 'nombre' },

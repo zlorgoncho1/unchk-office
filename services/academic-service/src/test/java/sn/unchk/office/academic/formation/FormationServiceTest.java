@@ -51,7 +51,8 @@ class FormationServiceTest {
         // Étant donné des données de formation valides...
         FormationCreationDto dto = new FormationCreationDto(
                 "LIC-INFO", "Licence Informatique", NiveauFormation.LICENCE, TypeFormation.INITIALE,
-                Financement.ETAT, LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31),
+                Financement.ETAT, new java.math.BigDecimal("1500000"),
+                LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31),
                 30, 20, null);
         when(formationRepository.existsByCode("LIC-INFO")).thenReturn(false);
         // Le dépôt renvoie l'entité qu'on lui passe en lui affectant un ID (simule la persistance).
@@ -79,7 +80,7 @@ class FormationServiceTest {
     void creation_refuse_un_code_deja_utilise() {
         // Étant donné un code déjà présent en base...
         FormationCreationDto dto = new FormationCreationDto(
-                "DUP", "Doublon", NiveauFormation.MASTER, null, null, null, null, 0, 0, null);
+                "DUP", "Doublon", NiveauFormation.MASTER, null, null, null, null, null, 0, 0, null);
         when(formationRepository.existsByCode("DUP")).thenReturn(true);
 
         // Quand on tente la création, alors un conflit est levé et rien n'est publié.
@@ -92,7 +93,7 @@ class FormationServiceTest {
     void creation_refuse_une_periode_incoherente() {
         // Étant donné une date de fin antérieure à la date de début...
         FormationCreationDto dto = new FormationCreationDto(
-                null, "Formation", NiveauFormation.CERTIFICAT, null, null,
+                null, "Formation", NiveauFormation.CERTIFICAT, null, null, null,
                 LocalDate.of(2025, 6, 1), LocalDate.of(2025, 1, 1), 0, 0, null);
 
         // Quand on tente la création, alors la règle de période rejette la demande.

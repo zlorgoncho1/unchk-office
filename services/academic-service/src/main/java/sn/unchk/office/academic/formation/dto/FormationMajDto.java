@@ -8,6 +8,7 @@ import sn.unchk.office.academic.formation.Financement;
 import sn.unchk.office.academic.formation.NiveauFormation;
 import sn.unchk.office.academic.formation.TypeFormation;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import java.util.UUID;
  * @param level          niveau obligatoire
  * @param kind           type
  * @param funding        financement
+ * @param amount         montant du financement
  * @param startDate      date de début
  * @param endDate        date de fin
  * @param trainedMale    formés (hommes)
@@ -40,6 +42,9 @@ public record FormationMajDto(
         TypeFormation kind,
 
         Financement funding,
+
+        @PositiveOrZero(message = "Le montant du financement doit être positif ou nul.")
+        BigDecimal amount,
 
         LocalDate startDate,
 
