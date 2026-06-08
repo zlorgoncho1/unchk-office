@@ -10,6 +10,16 @@
     [ton]="tonConnexion()"
     [humaniserLibelle]="false"
   ></unchk-status-pill>
+  <!-- Action : marquer toutes les notifications non lues comme lues. -->
+  <button
+    mat-stroked-button
+    color="primary"
+    [disabled]="nonLues() === 0"
+    (click)="toutMarquerLu()"
+  >
+    <iconify-icon icon="solar:check-read-line-duotone"></iconify-icon>
+    <span>&nbsp;Tout marquer comme lu</span>
+  </button>
 </unchk-page-header>
 
 <!-- Compteurs : total, non lues, lues. -->

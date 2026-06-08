@@ -1,9 +1,11 @@
 import {
   CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  OnInit,
   computed,
   inject,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 
 import { AppNotification } from '../../core/models';
 import { NotificationService } from '../../core/realtime/notification.service';
@@ -20,10 +22,12 @@ import {
 
 /**
  * Page « Notifications ».
- * Affiche la liste des notifications temps réel reçues via le WebSocket
- * (titre/libellé, type, date, statut lu/non-lu) dans un tableau brandé.
- * La source est le signal du {@link NotificationService} : pas de chargement
- * HTTP, on lit directement l'état réactif déjà alimenté par le socket.
+ * Affiche la liste des notifications de l'utilisateur (titre/libellé, type, date,
+ * statut lu/non-lu) dans un tableau brandé.
+ * <p>
+ * Sources combinées : l'historique REST (GET /api/communication/notifications),
+ * chargé à l'ouverture de la page, ET le flux temps réel WebSocket déjà alimenté
+ * par le {@link NotificationService}. Le marquage « lu » appelle le PATCH backend.
  */
 @Component({
   selector: 'app-notifications',
@@ -35,13 +39,35 @@ import {
     StatusPillComponent,
     DataTableComponent,
     EmptyStateComponent,
+    MatButtonModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './notifications.component.html',
   styleUrl: './notifications.component.scss',
 })
-export class NotificationsComponent {
+export class NotificationsComponent implements OnInit {
   private readonly service = inject(NotificationService);
+
+  /** Au chargement : récupère l'historique + le compteur en plus du flux temps réel. */
+  ngOnInit(): void {
+    this.service.chargerHistorique();
+  }
+
+  /** Marque une notification comme lue (PATCH backend via le service). */
+  protected onMarquerLue(n: AppNotification): void {
+    if (!n.lu) {
+      this.service.marquerLue(n.id);
+    }
+  }
+
+  /** Marque toutes les notifications non lues comme lues. */
+  protected toutMarquerLu(): void {
+    for (const n of this.notifications()) {
+      if (!n.lu) {
+        this.service.marquerLue(n.id);
+      }
+    }
+  }
 
   // Source réactive : liste des notifications poussées par le service temps réel.
   protected readonly notifications = this.service.notifications;

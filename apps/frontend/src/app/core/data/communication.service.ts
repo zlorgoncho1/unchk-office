@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { CompteRendu, Reunion } from './api.models';
+import { CompteRendu, NotificationApi, Reunion } from './api.models';
 
 /**
  * Accès aux données « communication » (réunions, comptes rendus) via le gateway.
@@ -54,6 +54,18 @@ export class CommunicationService {
     return this.http.post<CompteRendu>(`${this.base}/api/communication/comptes-rendus`, corps);
   }
 
+  /**
+   * Publie un compte rendu : déclenche les notifications automatiques.
+   * Enchaîné juste après une création réussie pour que tout nouveau
+   * compte rendu notifie ses destinataires (PATCH /{id}/publish).
+   */
+  publierCompteRendu(id: string): Observable<CompteRendu> {
+    return this.http.patch<CompteRendu>(
+      `${this.base}/api/communication/comptes-rendus/${id}/publish`,
+      {}
+    );
+  }
+
   /** Modifie un compte rendu. */
   modifierCompteRendu(id: string, corps: Record<string, unknown>): Observable<CompteRendu> {
     return this.http.put<CompteRendu>(`${this.base}/api/communication/comptes-rendus/${id}`, corps);
@@ -62,5 +74,29 @@ export class CommunicationService {
   /** Supprime un compte rendu. */
   supprimerCompteRendu(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/api/communication/comptes-rendus/${id}`);
+  }
+
+  // --- Notifications (historique + compteur + marquage lu de l'utilisateur courant) ---
+
+  /** Historique des notifications de l'utilisateur courant (les plus récentes d'abord). */
+  listerNotifications(): Observable<NotificationApi[]> {
+    return this.http.get<NotificationApi[]>(
+      `${this.base}/api/communication/notifications`
+    );
+  }
+
+  /** Nombre de notifications non lues (badge cloche). */
+  compterNotificationsNonLues(): Observable<{ count: number }> {
+    return this.http.get<{ count: number }>(
+      `${this.base}/api/communication/notifications/non-lues/count`
+    );
+  }
+
+  /** Marque une notification de l'utilisateur courant comme lue. */
+  marquerNotificationLue(id: string): Observable<NotificationApi> {
+    return this.http.patch<NotificationApi>(
+      `${this.base}/api/communication/notifications/${id}/lue`,
+      {}
+    );
   }
 }

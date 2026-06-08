@@ -17,5 +17,7 @@ public enum MeetingType {
     /** Préparation de cours. */
     preparation_cours,
     /** Évaluation. */
-    evaluation
+    evaluation,
+    /** Rencontre (échange ponctuel, point informel). */
+    rencontre
 }

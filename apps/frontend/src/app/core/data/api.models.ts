@@ -153,6 +153,21 @@ export interface CompteRendu {
   updatedAt: string;
 }
 
+// --- Communication : notification (/api/communication/notifications) ---
+// Reflète NotificationDto côté backend (historique + marquage lu).
+export interface NotificationApi {
+  id: string;
+  recipientId: string;
+  kind: string;
+  title: string;
+  message: string | null;
+  targetService: string | null;
+  targetRef: string | null;
+  read: boolean;
+  readAt: string | null;
+  createdAt: string;
+}
+
 // --- Admin : budget (/api/admin/budgets) ---
 export type StatutBudget = 'projet' | 'vote' | 'en_execution' | 'cloture';
 

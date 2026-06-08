@@ -55,10 +55,10 @@ public class ConsommateurDocument {
         if (doc == null || doc.id() == null) {
             return;
         }
-        // On ne notifie que les circulaires effectivement publiées.
-        boolean circulairePubliee = CIRCULAIRE.equalsIgnoreCase(doc.category())
-                && Boolean.TRUE.equals(doc.published());
-        if (!circulairePubliee) {
+        // On notifie dès qu'une circulaire est reçue : l'événement document ne porte pas
+        // de champ « published » fiable, exiger published() faisait que la notif ne partait
+        // jamais. L'idempotence (marquerSiNouveau sur eventId) évite tout doublon.
+        if (!CIRCULAIRE.equalsIgnoreCase(doc.category())) {
             return;
         }
 

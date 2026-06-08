@@ -91,6 +91,7 @@ export class ComptesRendusComponent {
         { valeur: 'tutorat', libelle: 'Tutorat' },
         { valeur: 'preparation_cours', libelle: 'Préparation de cours' },
         { valeur: 'evaluation', libelle: 'Évaluation' },
+        { valeur: 'rencontre', libelle: 'Rencontre' },
       ],
     },
     { cle: 'meetingDate', libelle: 'Date de la réunion', type: 'date', requis: true },
@@ -127,9 +128,47 @@ export class ComptesRendusComponent {
             authorId: this.auth.currentUser()?.id,
             visibility: corps['visibility'] ? [corps['visibility']] : [],
           };
-          this.ecrire(this.svc.creerCompteRendu(charge), 'Compte rendu créé.');
+          this.creerPuisPublier(charge);
         }
       });
+  }
+
+  /**
+   * Crée un compte rendu puis le publie automatiquement (notification des destinataires).
+   * La création seule ne notifie pas : c'est la publication qui déclenche les notifications.
+   * Robuste si l'id n'est pas renvoyé : on confirme la création sans bloquer.
+   */
+  private creerPuisPublier(charge: Record<string, unknown>): void {
+    this.svc.creerCompteRendu(charge).subscribe({
+      next: (cr) => {
+        if (cr?.id) {
+          // Publication enchaînée : tout nouveau compte rendu notifie automatiquement.
+          this.svc.publierCompteRendu(cr.id).subscribe({
+            next: () => {
+              this.snack.open('Compte rendu créé et publié.', 'OK', { duration: 3000 });
+              this.data.recharger();
+            },
+            error: () => {
+              // La création a réussi mais la publication a échoué : on n'efface pas le brouillon.
+              this.snack.open('Compte rendu créé (publication impossible).', 'OK', {
+                duration: 4000,
+              });
+              this.data.recharger();
+            },
+          });
+        } else {
+          // Pas d'id renvoyé : on confirme la création sans tenter la publication.
+          this.snack.open('Compte rendu créé.', 'OK', { duration: 3000 });
+          this.data.recharger();
+        }
+      },
+      error: () =>
+        this.snack.open(
+          'Action impossible (droits insuffisants ou données invalides).',
+          'OK',
+          { duration: 4000 }
+        ),
+    });
   }
 
   /** Ouvre le drawer d'édition d'un compte rendu (pré-rempli avec ce que la liste expose). */
