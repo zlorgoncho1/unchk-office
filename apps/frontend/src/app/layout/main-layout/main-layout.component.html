@@ -1,8 +1,14 @@
 <!-- Grille principale : [sidebar | contenu | rail droit]. -->
-<div class="layout" [class.layout--menu-ouvert]="menuOuvert()" [class.layout--rail-ouvert]="railOuvert()">
-  <!-- Barre latérale (repliable en mobile). -->
+<div
+  class="layout"
+  [class.layout--menu-ouvert]="menuOuvert()"
+  [class.layout--rail-ouvert]="railOuvert()"
+  [class.layout--sidebar-replie]="sidebarReplie()"
+  [class.layout--rail-replie]="railReplie()"
+>
+  <!-- Barre latérale (repliable : mini-icônes en desktop, overlay en mobile). -->
   <div class="layout__sidebar">
-    <app-sidebar (naviguer)="fermerPanneaux()"></app-sidebar>
+    <app-sidebar [replie]="sidebarReplie()" (naviguer)="fermerPanneaux()"></app-sidebar>
   </div>
 
   <!-- Colonne centrale : topbar + contenu routé. -->

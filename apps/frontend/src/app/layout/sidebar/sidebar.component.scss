@@ -154,3 +154,43 @@
     text-overflow: ellipsis;
   }
 }
+
+// --- Mode replié (mini) : icônes seules, libellés masqués ---
+.sidebar--replie {
+  // On masque tous les textes (titres de section, libellés, profil).
+  .sidebar__section-titre,
+  .sidebar__lien-libelle,
+  .sidebar__profil-texte {
+    display: none;
+  }
+
+  // Logo : on ne garde que le monogramme « UN » (partie gauche, le reste rogné).
+  .sidebar__logo {
+    padding: 20px 14px 16px;
+    justify-content: flex-start;
+    overflow: hidden;
+
+    img {
+      height: 28px;
+      max-width: none;
+    }
+  }
+
+  .sidebar__nav {
+    padding: 8px 12px 16px;
+  }
+
+  // Liens centrés, en icône seule (info-bulle native via l'attribut title).
+  .sidebar__lien {
+    justify-content: center;
+    gap: 0;
+    padding: 11px 0;
+  }
+
+  // Profil réduit à l'avatar, centré.
+  .sidebar__profil {
+    justify-content: center;
+    padding: 12px 0;
+    margin: 0 10px 12px;
+  }
+}

@@ -1,5 +1,5 @@
 <!-- Barre latérale : logo, navigation filtrée par rôle, profil en pied. -->
-<aside class="sidebar">
+<aside class="sidebar" [class.sidebar--replie]="replie()">
   <!-- Logo horizontal en haut. -->
   <a class="sidebar__logo" routerLink="/accueil" (click)="naviguer.emit()">
     <img
@@ -24,6 +24,7 @@
                 [routerLink]="['/', item.chemin]"
                 routerLinkActive="sidebar__lien--actif"
                 [routerLinkActiveOptions]="{ exact: false }"
+                [title]="replie() ? item.libelle : null"
                 (click)="naviguer.emit()"
               >
                 <iconify-icon

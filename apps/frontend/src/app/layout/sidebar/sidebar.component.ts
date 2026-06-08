@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   inject,
+  input,
   output,
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -31,6 +32,9 @@ export class SidebarComponent {
 
   // Émis lorsqu'un lien est cliqué (pour refermer la sidebar en mobile).
   readonly naviguer = output<void>();
+
+  // Mode replié : n'affiche que les icônes (gestion de l'espace en desktop).
+  readonly replie = input(false);
 
   // Utilisateur courant et son rôle principal (libellé affiché en pied).
   readonly user = this.auth.currentUser;
