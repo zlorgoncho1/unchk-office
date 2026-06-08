@@ -1,0 +1,105 @@
+<!-- Registre de contact : suivi du devenir des diplômés (contacts + situations d'insertion). -->
+<unchk-page-header
+  titre="Registre de contact"
+  sousTitre="Suivi du devenir des diplômés et saisie des situations d'insertion"
+  icone="users-group-rounded-bold-duotone"
+></unchk-page-header>
+
+@if (etudiants.etat().erreur) {
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Indisponible"
+    [message]="etudiants.etat().erreur"
+  />
+} @else {
+  <!-- Sélecteur d'étudiant : pilote l'affichage du registre et des situations. -->
+  <unchk-section-card>
+    <mat-form-field appearance="outline" class="rc-selecteur">
+      <mat-label>Étudiant</mat-label>
+      <mat-select
+        [value]="etudiantId()"
+        (valueChange)="onChangerEtudiant($event)"
+        [disabled]="etudiants.etat().chargement || listeEtudiants().length === 0"
+      >
+        @for (e of listeEtudiants(); track e.id) {
+          <mat-option [value]="e.id">
+            {{ e.lastName }} {{ e.firstName }}
+            @if (e.matricule) {
+              — {{ e.matricule }}
+            }
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </unchk-section-card>
+
+  <!-- Section 1 : registre de contact (échanges de suivi). -->
+  <unchk-section-card
+    titre="Registre de contact"
+    icone="phone-rounded-bold-duotone"
+  >
+    <button
+      actions
+      mat-flat-button
+      color="primary"
+      [disabled]="!etudiantId()"
+      (click)="nouveauContact()"
+    >
+      <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+      <span>&nbsp;Nouveau contact</span>
+    </button>
+
+    @if (contacts.etat().erreur) {
+      <unchk-empty-state
+        icone="shield-warning-line-duotone"
+        titre="Indisponible"
+        [message]="contacts.etat().erreur"
+      />
+    } @else {
+      <unchk-data-table
+        [colonnes]="colonnesContacts"
+        [lignes]="lignesContacts()"
+        [chargement]="contacts.etat().chargement"
+        titreVide="Aucun contact"
+        messageVide="Aucun échange de suivi enregistré pour cet étudiant."
+        iconeVide="phone-rounded-line-duotone"
+      />
+    }
+  </unchk-section-card>
+
+  <!-- Section 2 : situations d'insertion (alimentent les statistiques). -->
+  <unchk-section-card
+    titre="Situations d'insertion"
+    icone="case-round-bold-duotone"
+  >
+    <button
+      actions
+      mat-flat-button
+      color="primary"
+      [disabled]="!etudiantId()"
+      (click)="nouvelleSituation()"
+    >
+      <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+      <span>&nbsp;Déclarer une situation</span>
+    </button>
+
+    @if (situations.etat().erreur) {
+      <unchk-empty-state
+        icone="shield-warning-line-duotone"
+        titre="Indisponible"
+        [message]="situations.etat().erreur"
+      />
+    } @else {
+      <unchk-data-table
+        [colonnes]="colonnesSituations"
+        [lignes]="lignesSituations()"
+        [chargement]="situations.etat().chargement"
+        modifiable
+        (modifier)="onModifierSituation($event)"
+        titreVide="Aucune situation"
+        messageVide="Aucune situation d'insertion déclarée pour cet étudiant."
+        iconeVide="case-round-line-duotone"
+      />
+    }
+  </unchk-section-card>
+}
