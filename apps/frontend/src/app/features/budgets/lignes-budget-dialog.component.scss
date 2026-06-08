@@ -1,0 +1,98 @@
+// Panneau latéral « Lignes du budget » : en-tête figé, corps défilant, pied figé.
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+// En-tête : titre du budget + bouton fermer.
+.lb-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 22px 14px;
+  border-bottom: 1px solid var(--unchk-border);
+  flex: 0 0 auto;
+}
+
+.lb-titre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--unchk-navy);
+}
+
+.lb-titre iconify-icon {
+  font-size: 1.5rem;
+  color: var(--unchk-blue);
+}
+
+// Bloc d'actions de l'en-tête (modifier l'entête + fermer).
+.lb-entete-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.lb-fermer iconify-icon {
+  font-size: 1.4rem;
+  color: var(--unchk-text-muted);
+}
+
+// Corps défilant : barre d'action + table.
+.lb-corps {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 16px 22px;
+}
+
+// Barre au-dessus de la table : sous-titre + bouton d'ajout.
+.lb-barre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.lb-sous-titre {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--unchk-text);
+}
+
+// Pied figé : récapitulatif des totaux (prévu / réalisé / écart).
+.lb-pied {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 14px 22px 18px;
+  border-top: 1px solid var(--unchk-border);
+  background: var(--unchk-background);
+}
+
+.lb-total {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lb-total-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--unchk-text-muted);
+}
+
+.lb-total-valeur {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--unchk-navy);
+}

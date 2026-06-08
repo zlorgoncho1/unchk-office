@@ -105,4 +105,11 @@ public class BudgetController {
                                            @Valid @RequestBody RealisationLigneDto dto) {
         return budgetService.renseignerRealisation(id, ligneId, dto);
     }
+
+    /** Supprime une ligne budgétaire (propriétaire requis : ABAC update). */
+    @DeleteMapping("/{id}/lignes/{ligneId}")
+    @VerifieAccesObjet(type = "budget", action = "update", idParam = "id")
+    public BudgetDto supprimerLigne(@PathVariable UUID id, @PathVariable UUID ligneId) {
+        return budgetService.supprimerLigne(id, ligneId);
+    }
 }

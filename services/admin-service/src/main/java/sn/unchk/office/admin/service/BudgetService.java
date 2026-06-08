@@ -159,6 +159,22 @@ public class BudgetService {
         return chargerDto(enregistre);
     }
 
+    /** Supprime une ligne budgétaire puis recalcule les totaux du budget. */
+    @Transactional
+    public BudgetDto supprimerLigne(UUID budgetId, UUID ligneId) {
+        Budget budget = chargerOuLever(budgetId);
+        BudgetLine ligne = budgetLineRepository.findById(ligneId)
+                .filter(l -> l.getBudgetId().equals(budgetId))
+                .orElseThrow(() -> new RessourceIntrouvableException("Ligne budgétaire introuvable."));
+
+        budgetLineRepository.delete(ligne);
+
+        Budget enregistre = recalculerTotaux(budget);
+        audit.succes("SUPPRESSION_LIGNE_BUDGET", "budget", budgetId.toString());
+        producteur.publier("BudgetMisAJour", mapper.versPayload(enregistre));
+        return chargerDto(enregistre);
+    }
+
     /** Consulte un budget (entête + lignes). */
     @Transactional(readOnly = true)
     public BudgetDto consulter(UUID budgetId) {

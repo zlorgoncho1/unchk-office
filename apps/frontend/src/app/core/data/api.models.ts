@@ -184,6 +184,36 @@ export interface BudgetResume {
   currency: string;
 }
 
+// Sens d'une ligne budgétaire (= enum BudgetLineDirection côté backend).
+export type SensLigneBudget = 'depense' | 'recette';
+
+// Ligne budgétaire détaillée (prévu vs réalisé pour un poste).
+export interface LigneBudgetaire {
+  id: string;
+  category: string;
+  direction: SensLigneBudget;
+  plannedAmount: number;
+  realizedAmount: number;
+  ecart: number;
+  label: string | null;
+}
+
+// Vue détaillée d'un budget (entête + lignes) renvoyée par GET /{id}.
+export interface BudgetDetail {
+  id: string;
+  fiscalYear: number;
+  label: string;
+  status: StatutBudget;
+  orientationNote: string | null;
+  totalPlanned: number;
+  totalRealized: number;
+  ecartGlobal: number;
+  currency: string;
+  createdAt: string;
+  updatedAt: string;
+  lignes: LigneBudgetaire[];
+}
+
 // --- Insertion : stage (/api/insertion/stages) ---
 export type StatutStage =
   | 'prevu'

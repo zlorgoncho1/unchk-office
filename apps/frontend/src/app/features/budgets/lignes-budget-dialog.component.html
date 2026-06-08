@@ -1,0 +1,66 @@
+<!-- En-tête figé : intitulé du budget + fermer. -->
+<div class="lb-entete">
+  <h2 class="lb-titre">
+    <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
+    <span>{{ titre() }}</span>
+  </h2>
+  <div class="lb-entete-actions">
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="modifierEntete()"
+    >
+      <iconify-icon icon="solar:pen-2-linear"></iconify-icon>
+      <span>&nbsp;Entête</span>
+    </button>
+    <button
+      mat-icon-button
+      class="lb-fermer"
+      type="button"
+      (click)="fermer()"
+      aria-label="Fermer"
+    >
+      <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+    </button>
+  </div>
+</div>
+
+<!-- Corps défilant : barre d'action + table des lignes. -->
+<div class="lb-corps">
+  <div class="lb-barre">
+    <span class="lb-sous-titre">Lignes du budget (prévu / réalisé)</span>
+    <button mat-flat-button color="primary" type="button" (click)="ajouter()">
+      <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+      <span>&nbsp;Ajouter une ligne</span>
+    </button>
+  </div>
+
+  <unchk-data-table
+    [colonnes]="colonnes"
+    [lignes]="lignes()"
+    [chargement]="chargement()"
+    modifiable
+    supprimable
+    (modifier)="saisirRealise($event)"
+    (supprimer)="supprimer($event)"
+    titreVide="Aucune ligne"
+    messageVide="Ajoutez une première ligne pour suivre le budget réalisé."
+    iconeVide="bill-list-bold-duotone"
+  />
+</div>
+
+<!-- Pied figé : récapitulatif des totaux. -->
+<div class="lb-pied">
+  <div class="lb-total">
+    <span class="lb-total-label">Total prévu</span>
+    <span class="lb-total-valeur">{{ exposeMontant(totalPrevu()) }}</span>
+  </div>
+  <div class="lb-total">
+    <span class="lb-total-label">Total réalisé</span>
+    <span class="lb-total-valeur">{{ exposeMontant(totalRealise()) }}</span>
+  </div>
+  <div class="lb-total">
+    <span class="lb-total-label">Écart</span>
+    <span class="lb-total-valeur">{{ exposeMontant(ecartGlobal()) }}</span>
+  </div>
+</div>

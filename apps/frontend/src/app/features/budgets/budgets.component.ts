@@ -25,6 +25,7 @@ import {
 } from '../../shared/ui';
 import { chargerDepuis } from '../../shared/util/loadable';
 import { formaterMontant, humaniser, pourcentage } from '../../shared/util/format.util';
+import { LignesBudgetDialog } from './lignes-budget-dialog.component';
 
 /**
  * Page « Budgets » : liste des budgets de l'université + gestion complète (CRUD).
@@ -136,25 +137,23 @@ export class BudgetsComponent {
     });
   }
 
-  /** Ouvre le drawer d'édition (pré-rempli ; l'exercice n'est pas modifiable). */
-  protected onModifier(b: BudgetResume): void {
-    this.ouvrirForm('Modifier le budget', b).subscribe((corps) => {
-      if (!corps) {
-        return;
-      }
-      // MajBudgetDto = label, orientationNote, currency : on isole le statut.
-      const { status, ...entete } = corps;
-      const cible = status as StatutBudget | undefined;
-      // PUT de l'entête, puis PATCH du statut seulement s'il a changé.
-      const maj$ = this.admin.modifierBudget(b.id, entete).pipe(
-        switchMap((maj) =>
-          cible && cible !== b.status
-            ? this.admin.changerStatutBudget(b.id, cible)
-            : of(maj)
-        )
-      );
-      this.ecrire(maj$, 'Budget modifié.');
-    });
+  /**
+   * Ouvre le panneau de détail d'un budget : gestion de ses lignes (prévu / réalisé),
+   * édition de l'entête et totaux. À la fermeture, recharge la liste si des écritures
+   * ont eu lieu (totaux susceptibles d'avoir changé).
+   */
+  protected onDetail(b: BudgetResume): void {
+    this.dialog
+      .open(
+        LignesBudgetDialog,
+        optionsDrawer({ budget: b }, '640px')
+      )
+      .afterClosed()
+      .subscribe((modifie) => {
+        if (modifie) {
+          this.data.recharger();
+        }
+      });
   }
 
   /** Demande confirmation puis supprime le budget. */
