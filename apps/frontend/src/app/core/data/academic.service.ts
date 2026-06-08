@@ -18,4 +18,23 @@ export class AcademicService {
   listerFormations(): Observable<Formation[]> {
     return this.http.get<Formation[]>(`${this.base}/api/academic/formations`);
   }
+
+  // --- CRUD formations (corps = FormationCreationDto / FormationMajDto :
+  //     code, label, level, kind, funding, startDate, endDate,
+  //     trainedMale, trainedFemale, responsibleRef[, active à la modification]) ---
+
+  /** Crée une formation. */
+  creerFormation(corps: Record<string, unknown>): Observable<Formation> {
+    return this.http.post<Formation>(`${this.base}/api/academic/formations`, corps);
+  }
+
+  /** Modifie une formation existante. */
+  modifierFormation(id: string, corps: Record<string, unknown>): Observable<Formation> {
+    return this.http.put<Formation>(`${this.base}/api/academic/formations/${id}`, corps);
+  }
+
+  /** Supprime une formation. */
+  supprimerFormation(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/api/academic/formations/${id}`);
+  }
 }

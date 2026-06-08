@@ -1,9 +1,14 @@
-<!-- Page Formations : en-tête brandé + tableau de données filtrable. -->
+<!-- Page Formations : en-tête brandé + bouton Nouveau + tableau de données filtrable. -->
 <unchk-page-header
   titre="Formations"
   sousTitre="Catalogue des formations et suivi des effectifs formés"
   icone="square-academic-cap-bold-duotone"
-/>
+>
+  <button mat-flat-button color="primary" (click)="nouveau()">
+    <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+    <span>&nbsp;Nouvelle formation</span>
+  </button>
+</unchk-page-header>
 
 @if (data.etat().erreur) {
   <unchk-empty-state
@@ -14,10 +19,14 @@
 } @else {
   <unchk-section-card sansBordure>
     <unchk-data-table
-        detaillable
+      detaillable
       [colonnes]="colonnes"
       [lignes]="lignes()"
       [chargement]="data.etat().chargement"
+      modifiable
+      supprimable
+      (modifier)="onModifier($event)"
+      (supprimer)="onSupprimer($event)"
       filtrable
       titreVide="Aucune formation"
       messageVide="Aucune formation n'est enregistrée pour le moment."
