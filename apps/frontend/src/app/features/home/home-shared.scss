@@ -67,23 +67,35 @@
 // --- Tableaux Material : habillage sobre marqué UNCHK ---
 .home-table {
   width: 100%;
+  background: transparent;
 
-  // En-têtes : fond clair, texte marine, majuscules discrètes.
+  // En-têtes : fond clair, texte marine, capitales discrètes
+  // (rendu STRICTEMENT identique au composant partagé unchk-data-table).
   th.mat-mdc-header-cell {
     background: var(--unchk-line);
     color: var(--unchk-navy);
     font-weight: 700;
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--unchk-border);
   }
 
+  // Cellules : séparateur fin et clair (pas d'effet « boxy » Material par défaut).
   td.mat-mdc-cell {
     color: var(--unchk-text);
     font-size: 0.9rem;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--unchk-line);
   }
 
-  // Liseré de séparation discret.
+  // Dernière ligne sans séparateur (comme la table partagée).
+  .mat-mdc-row:last-child td.mat-mdc-cell {
+    border-bottom: none;
+  }
+
+  // Survol de ligne discret.
   .mat-mdc-row:hover {
     background: var(--unchk-background);
   }
