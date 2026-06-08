@@ -42,7 +42,7 @@
 .fiche {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 14px 24px;
+  gap: 16px 24px;
 
   &__champ {
     display: flex;
@@ -70,7 +70,7 @@
   background: transparent;
 
   // En-têtes : fond clair, texte marine, capitales discrètes
-  // (rendu STRICTEMENT identique au composant partagé unchk-data-table).
+  // (densité STRICTEMENT identique au composant partagé unchk-data-table).
   th.mat-mdc-header-cell {
     background: var(--unchk-line);
     color: var(--unchk-navy);
@@ -78,15 +78,17 @@
     font-size: 0.74rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    padding: 11px 14px;
+    line-height: 1.4;
+    padding: 9px 16px;
     border-bottom: 1px solid var(--unchk-border);
   }
 
-  // Cellules : séparateur fin et clair (pas d'effet « boxy » Material par défaut).
+  // Cellules : mêmes padding/densité que la table partagée (lignes denses, séparateur fin).
   td.mat-mdc-cell {
     color: var(--unchk-text);
     font-size: 0.9rem;
-    padding: 12px 14px;
+    line-height: 1.4;
+    padding: 9px 16px;
     border-bottom: 1px solid var(--unchk-line);
   }
 
@@ -106,7 +108,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 4px 12px;
+  padding: 0 0 12px;
 
   input {
     flex: 1;
@@ -146,7 +148,7 @@
   }
 
   &__legende {
-    margin: 6px 0 0;
+    margin: 8px 0 0;
     font-size: 0.82rem;
     color: var(--unchk-text-muted);
   }
@@ -174,7 +176,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 4px;
+    padding: 12px 0;
     border-bottom: 1px solid var(--unchk-line);
 
     &:last-child {

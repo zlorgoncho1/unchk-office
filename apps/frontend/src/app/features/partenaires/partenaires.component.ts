@@ -55,11 +55,15 @@ export class PartenairesComponent {
       // Affiche le type humanisé (ex. « Ong » → libellé lisible).
       valeur: (p) => humaniser(p.kind),
       ton: () => 'info',
+      // Colonne courte (pastille) : largeur fixe pour laisser respirer le reste.
+      largeur: '130px',
     },
     {
       cle: 'city',
       libelle: 'Ville',
       valeur: (p) => p.city,
+      // Colonne courte : largeur fixe.
+      largeur: '140px',
     },
     {
       cle: 'contact',
