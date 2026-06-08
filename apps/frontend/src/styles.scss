@@ -15,7 +15,10 @@ html {
       primary: unchk.$primary-palette,
       tertiary: unchk.$tertiary-palette,
     ),
-    typography: Inter,
+    typography: (
+      plain-family: 'Miranda Sans',
+      brand-family: 'Miranda Sans',
+    ),
     density: 0,
   ));
   color-scheme: light;
@@ -24,7 +27,7 @@ html {
 html, body { height: 100%; }
 body {
   margin: 0;
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'Miranda Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
   background-color: var(--unchk-background);
   color: var(--unchk-text);
 }
@@ -41,3 +44,15 @@ body {
 
 // L'icône Solar (web component Iconify) s'aligne sur le texte.
 iconify-icon { display: inline-block; vertical-align: middle; line-height: 1; }
+
+// Icône Iconify en préfixe/suffixe d'un champ Material : réserve sa largeur
+// pour ne pas chevaucher le libellé flottant.
+.mat-mdc-form-field-icon-prefix iconify-icon,
+.mat-mdc-form-field-text-prefix iconify-icon,
+.mat-mdc-form-field-icon-suffix iconify-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  font-size: 1.2rem;
+}

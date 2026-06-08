@@ -29,7 +29,7 @@
           placeholder="prenom.nom@unchk.edu.sn"
           required
         />
-        <iconify-icon matPrefix icon="solar:letter-linear" class="login__icone"></iconify-icon>
+        <iconify-icon matIconPrefix icon="solar:letter-linear" class="login__icone"></iconify-icon>
         @if (formulaire.controls.email.touched && formulaire.controls.email.hasError('required')) {
           <mat-error>Le courriel est obligatoire.</mat-error>
         }
@@ -48,7 +48,7 @@
           autocomplete="current-password"
           required
         />
-        <iconify-icon matPrefix icon="solar:lock-password-linear" class="login__icone"></iconify-icon>
+        <iconify-icon matIconPrefix icon="solar:lock-password-linear" class="login__icone"></iconify-icon>
         <button
           type="button"
           matSuffix
