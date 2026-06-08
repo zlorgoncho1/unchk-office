@@ -3,9 +3,11 @@ package sn.unchk.office.communication.web;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -51,5 +53,19 @@ public class ReunionController {
     @GetMapping("/{id}")
     public ResponseEntity<ReunionDto> consulter(@PathVariable UUID id) {
         return ResponseEntity.ok(serviceReunion.consulter(id));
+    }
+
+    /** Modifie une réunion (corps = même DTO que la création). */
+    @PutMapping("/{id}")
+    public ReunionDto modifier(@PathVariable UUID id,
+                               @Valid @RequestBody ReunionCreationRequest requete) {
+        return serviceReunion.modifier(id, requete);
+    }
+
+    /** Supprime une réunion (suppression logique). */
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void supprimer(@PathVariable UUID id) {
+        serviceReunion.supprimer(id);
     }
 }

@@ -2,10 +2,12 @@ package sn.unchk.office.communication.web;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -64,5 +66,23 @@ public class CompteRenduController {
             action = "read", idParam = "id")
     public CompteRenduDto consulter(@PathVariable UUID id) {
         return serviceCompteRendu.consulter(id);
+    }
+
+    /** Modifie un compte rendu (corps = même DTO que la rédaction). Réservé au propriétaire (ABAC update). */
+    @PutMapping("/{id}")
+    @VerifieAccesObjet(type = FournisseurAttributsCommunication.TYPE_COMPTE_RENDU,
+            action = "update", idParam = "id")
+    public CompteRenduDto modifier(@PathVariable UUID id,
+                                   @Valid @RequestBody CompteRenduCreationRequest requete) {
+        return serviceCompteRendu.modifier(id, requete);
+    }
+
+    /** Supprime un compte rendu (suppression logique). Réservé au propriétaire (ABAC delete). */
+    @DeleteMapping("/{id}")
+    @VerifieAccesObjet(type = FournisseurAttributsCommunication.TYPE_COMPTE_RENDU,
+            action = "delete", idParam = "id")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void supprimer(@PathVariable UUID id) {
+        serviceCompteRendu.supprimer(id);
     }
 }
