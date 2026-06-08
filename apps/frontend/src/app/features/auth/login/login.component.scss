@@ -22,7 +22,9 @@
   &__carte {
     width: 100%;
     max-width: 420px;
-    padding: 40px 32px;
+    padding: 40px 36px;
+    border-radius: var(--unchk-radius-xl);
+    box-shadow: var(--unchk-shadow-raised);
     box-sizing: border-box;
   }
 
