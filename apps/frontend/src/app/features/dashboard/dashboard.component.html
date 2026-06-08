@@ -1,0 +1,55 @@
+<!-- Tableau de bord d'accueil, personnalisé selon le rôle. -->
+<unchk-page-header
+  [titre]="'Bonjour, ' + prenom()"
+  [sousTitre]="'Voici un aperçu de votre espace ' + rolePrincipal()"
+  icone="widget-5-bold-duotone"
+>
+  <button mat-flat-button color="primary">
+    <iconify-icon icon="solar:add-circle-linear"></iconify-icon>
+    <span>&nbsp;Nouvelle action</span>
+  </button>
+</unchk-page-header>
+
+<!-- Grille de KPI filtrés par rôle. -->
+<section class="dashboard__kpis">
+  @for (k of kpis(); track k.libelle) {
+    <unchk-stat-card
+      [libelle]="k.libelle"
+      [valeur]="k.valeur"
+      [icone]="k.icone"
+      [ton]="k.ton"
+      [variation]="k.variation ?? null"
+      [variationPositive]="k.positive ?? true"
+    ></unchk-stat-card>
+  }
+</section>
+
+<!-- Deux colonnes de contenu. -->
+<section class="dashboard__grille">
+  <unchk-section-card titre="Activité de l'espace" icone="chart-square-bold-duotone">
+    <unchk-empty-state
+      icone="chart-2-bold-duotone"
+      titre="Vos données arrivent"
+      message="Les indicateurs et listes des modules métier s'afficheront ici une fois connectés aux services."
+    >
+      <button mat-stroked-button color="primary">Explorer les modules</button>
+    </unchk-empty-state>
+  </unchk-section-card>
+
+  <unchk-section-card titre="Raccourcis" icone="bolt-bold-duotone">
+    <ul class="dashboard__raccourcis">
+      <li>
+        <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
+        Consulter les comptes rendus
+      </li>
+      <li>
+        <iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>
+        Voir mon emploi du temps
+      </li>
+      <li>
+        <iconify-icon icon="solar:folder-with-files-bold-duotone"></iconify-icon>
+        Parcourir les documents
+      </li>
+    </ul>
+  </unchk-section-card>
+</section>

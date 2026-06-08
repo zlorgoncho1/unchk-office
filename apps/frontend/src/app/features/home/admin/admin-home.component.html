@@ -1,0 +1,123 @@
+<!-- Tableau de bord administrateur : vue d'ensemble de la plateforme. -->
+<unchk-page-header
+  [titre]="'Vue d\'ensemble'"
+  [sousTitre]="'Bonjour ' + prenom() + ', voici l\'état de la plateforme UNCHK Office'"
+  icone="widget-5-bold-duotone"
+>
+  <a mat-flat-button color="primary" routerLink="/statistiques">
+    <iconify-icon icon="solar:chart-2-linear"></iconify-icon>
+    <span>&nbsp;Statistiques</span>
+  </a>
+</unchk-page-header>
+
+<!-- Compteurs globaux (données réelles via le gateway). -->
+<section class="home__kpis">
+  <unchk-stat-card
+    libelle="Étudiants"
+    [valeur]="nbEtudiants()"
+    icone="users-group-rounded-bold-duotone"
+    ton="blue"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Personnel"
+    [valeur]="nbPersonnel()"
+    icone="users-group-two-rounded-bold-duotone"
+    ton="green"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Formations"
+    [valeur]="nbFormations()"
+    icone="square-academic-cap-bold-duotone"
+    ton="orange"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Documents"
+    [valeur]="nbDocuments()"
+    icone="folder-with-files-bold-duotone"
+    ton="navy"
+  ></unchk-stat-card>
+</section>
+
+<div class="home__grille">
+  <!-- Annuaire du personnel : tableau triable + filtrable. -->
+  <unchk-section-card titre="Annuaire du personnel" icone="users-group-rounded-bold-duotone">
+    @if (chargementPersonnel()) {
+      <unchk-loading-state message="Chargement de l'annuaire…"></unchk-loading-state>
+    } @else if (erreurPersonnel()) {
+      <unchk-empty-state
+        icone="shield-warning-bold-duotone"
+        titre="Annuaire indisponible"
+        [message]="erreurPersonnel()"
+      >
+        <button mat-stroked-button color="primary" (click)="personnel.recharger()">
+          Réessayer
+        </button>
+      </unchk-empty-state>
+    } @else if (aDuPersonnel()) {
+      <div class="table-filtre">
+        <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+        <input
+          type="text"
+          placeholder="Filtrer par nom, département, spécialité…"
+          (input)="filtrer($any($event.target).value)"
+        />
+      </div>
+      <table mat-table [dataSource]="sourcePersonnel" matSort class="home-table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
+          <td mat-cell *matCellDef="let p">{{ p.firstName }} {{ p.lastName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="kind">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Catégorie</th>
+          <td mat-cell *matCellDef="let p">
+            <unchk-status-pill [libelle]="p.kind" ton="info"></unchk-status-pill>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="department">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Département</th>
+          <td mat-cell *matCellDef="let p">{{ p.department ?? '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="grade">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Grade</th>
+          <td mat-cell *matCellDef="let p">{{ p.grade ?? '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="hiredAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Recruté le</th>
+          <td mat-cell *matCellDef="let p">{{ exposeDate(p.hiredAt) }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="colonnesPersonnel"></tr>
+        <tr mat-row *matRowDef="let row; columns: colonnesPersonnel"></tr>
+      </table>
+    } @else {
+      <unchk-empty-state
+        icone="users-group-rounded-bold-duotone"
+        titre="Aucun personnel"
+        message="Aucun membre du personnel n'est enregistré."
+      ></unchk-empty-state>
+    }
+  </unchk-section-card>
+
+  <!-- Graphe : répartition des formations par niveau. -->
+  @if (formations.etat().chargement) {
+    <unchk-section-card titre="Formations par niveau" icone="chart-square-bold-duotone">
+      <unchk-loading-state [compact]="true" message="Chargement…"></unchk-loading-state>
+    </unchk-section-card>
+  } @else if (nbFormations() > 0) {
+    <unchk-chart-card
+      titre="Formations par niveau"
+      icone="chart-square-bold-duotone"
+      type="doughnut"
+      [data]="grapheNiveaux()"
+      [hauteur]="300"
+    ></unchk-chart-card>
+  } @else {
+    <unchk-section-card titre="Formations par niveau" icone="chart-square-bold-duotone">
+      <unchk-empty-state
+        [compact]="true"
+        icone="chart-2-bold-duotone"
+        titre="Pas de données"
+        message="Aucune formation à représenter."
+      ></unchk-empty-state>
+    </unchk-section-card>
+  }
+</div>

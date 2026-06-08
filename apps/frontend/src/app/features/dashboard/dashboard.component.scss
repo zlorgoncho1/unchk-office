@@ -1,0 +1,53 @@
+// Tableau de bord — disposition des KPI et des cartes.
+:host {
+  display: block;
+}
+
+.dashboard {
+  &__kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  &__grille {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__raccourcis {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--unchk-radius-md);
+      font-size: 0.9rem;
+      color: var(--unchk-navy);
+      cursor: pointer;
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: var(--unchk-line);
+      }
+
+      iconify-icon {
+        color: var(--unchk-blue);
+        font-size: 1.25rem;
+      }
+    }
+  }
+}

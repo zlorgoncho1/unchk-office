@@ -1,0 +1,198 @@
+// ============================================================
+// Styles communs aux tableaux de bord d'accueil (un par rôle).
+// Grilles de KPI, dispositions à deux colonnes, tableaux Material brandés.
+// ============================================================
+:host {
+  display: block;
+}
+
+// Rangée de cartes KPI (s'adapte à la largeur disponible).
+.home__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+// Grille principale : zone large + colonne latérale.
+.home__grille {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+  align-items: start;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Grille pleine largeur (une seule colonne de cartes empilées).
+.home__pleine {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+// Espace entre les blocs verticaux.
+.home__section {
+  margin-top: 16px;
+}
+
+// --- Fiche personnelle (étudiant) : liste de paires clé/valeur ---
+.fiche {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px 24px;
+
+  &__champ {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__libelle {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--unchk-text-subtle);
+  }
+
+  &__valeur {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--unchk-navy);
+  }
+}
+
+// --- Tableaux Material : habillage sobre marqué UNCHK ---
+.home-table {
+  width: 100%;
+
+  // En-têtes : fond clair, texte marine, majuscules discrètes.
+  th.mat-mdc-header-cell {
+    background: var(--unchk-line);
+    color: var(--unchk-navy);
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  td.mat-mdc-cell {
+    color: var(--unchk-text);
+    font-size: 0.9rem;
+  }
+
+  // Liseré de séparation discret.
+  .mat-mdc-row:hover {
+    background: var(--unchk-background);
+  }
+}
+
+// Barre de filtre au-dessus d'un tableau.
+.table-filtre {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px 12px;
+
+  input {
+    flex: 1;
+    border: 1px solid var(--unchk-border);
+    border-radius: var(--unchk-radius-md);
+    padding: 9px 12px;
+    font: inherit;
+    color: var(--unchk-navy);
+    background: var(--unchk-white);
+
+    &:focus {
+      outline: none;
+      border-color: var(--unchk-blue);
+      box-shadow: 0 0 0 3px rgba(28, 117, 188, 0.12);
+    }
+  }
+
+  iconify-icon {
+    color: var(--unchk-text-subtle);
+    font-size: 1.2rem;
+  }
+}
+
+// Petite légende sous une jauge (budget engagé, etc.).
+.jauge {
+  &__piste {
+    height: 8px;
+    border-radius: var(--unchk-radius-pill);
+    background: var(--unchk-line);
+    overflow: hidden;
+  }
+
+  &__remplissage {
+    height: 100%;
+    border-radius: var(--unchk-radius-pill);
+    background: var(--unchk-blue);
+  }
+
+  &__legende {
+    margin: 6px 0 0;
+    font-size: 0.82rem;
+    color: var(--unchk-text-muted);
+  }
+}
+
+// Cellule mettant en avant un montant (alignée à droite).
+.montant {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.aligne-droite {
+  text-align: right;
+}
+
+// --- Liste de documents / éléments récents (panneau latéral) ---
+.liste-doc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--unchk-line);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    iconify-icon {
+      color: var(--unchk-blue);
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+  }
+
+  &__corps {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__titre {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--unchk-navy);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    font-size: 0.78rem;
+    color: var(--unchk-text-muted);
+  }
+}
