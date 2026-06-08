@@ -3,7 +3,12 @@
   titre="Étudiants"
   sousTitre="Annuaire des étudiants : identité, promotion et statut"
   icone="users-group-rounded-bold-duotone"
-/>
+>
+  <button mat-flat-button color="primary" (click)="nouveau()">
+    <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+    <span>&nbsp;Nouvel étudiant</span>
+  </button>
+</unchk-page-header>
 
 @if (data.etat().erreur) {
   <!-- Erreur de chargement : message neutre sans détail technique. -->
@@ -16,10 +21,14 @@
   <!-- Tableau brandé : filtre texte, états chargement et vide gérés en interne. -->
   <unchk-section-card sansBordure>
     <unchk-data-table
-        detaillable
+      detaillable
       [colonnes]="colonnes"
       [lignes]="lignes()"
       [chargement]="data.etat().chargement"
+      modifiable
+      supprimable
+      (modifier)="onModifier($event)"
+      (supprimer)="onSupprimer($event)"
       filtrable
       placeholderFiltre="Filtrer par matricule, nom, promo, statut…"
       titreVide="Aucun étudiant"
