@@ -19,8 +19,13 @@ public record OpaProprietes(
         Long timeout
 ) {
 
-    /** Chemin par défaut de la règle {@code allow} dans le paquet {@code unchk.authz}. */
-    public static final String CHEMIN_PAR_DEFAUT = "/v1/data/unchk/authz/allow";
+    /**
+     * Chemin par défaut de la règle d'accès OBJET ({@code allow_objet}) dans le paquet
+     * {@code unchk.authz}. Les services interrogent l'ABAC objet (anti-IDOR), distincte du
+     * RBAC de route {@code allow} évalué au gateway : un large droit de route ne doit pas
+     * suffire à lire un objet hors de sa visibilité.
+     */
+    public static final String CHEMIN_PAR_DEFAUT = "/v1/data/unchk/authz/allow_objet";
 
     /** Délai par défaut (2 secondes) : OPA est local, la décision doit être quasi immédiate. */
     public static final long TIMEOUT_PAR_DEFAUT_MS = 2000L;

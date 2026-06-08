@@ -68,7 +68,7 @@ unchk:
   authz:
     opa:
       url: ${OPA_URL:http://opa:8181}
-      chemin: ${OPA_PATH:/v1/data/unchk/authz/allow}
+      chemin: ${OPA_PATH:/v1/data/unchk/authz/allow_objet}
       timeout: ${OPA_TIMEOUT_MS:2000}
 
 # --- Supervision (santé / info) exposée pour les sondes Docker ---
