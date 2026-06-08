@@ -29,6 +29,9 @@
        libs/common, apps/api-gateway, platform/config-server,
        services/identity-service, services/people-service, ... -->
   <modules>
+    <module>libs/common</module>
+    <module>apps/api-gateway</module>
+    <module>platform/config-server</module>
   </modules>
 
   <dependencyManagement>
