@@ -1,0 +1,42 @@
+// ============================================================
+// Charte graphique UNCHK — tokens SCSS pour Angular Material.
+// Générés depuis brand/design-tokens.json (source de vérité).
+// ============================================================
+
+// --- Couleurs de marque ---
+$unchk-blue-light:  #4F97D1;
+$unchk-blue:        #1C75BC; // primaire
+$unchk-blue-dark:   #155A91;
+$unchk-green-light: #5BC65F;
+$unchk-green:       #36A93B; // secondaire
+$unchk-green-dark:  #2A8530;
+$unchk-orange-light:#FBA834;
+$unchk-orange:      #F39200; // accent
+$unchk-orange-dark: #C46F00;
+$unchk-navy:        #16314A; // texte principal
+$unchk-slate:       #3E6E8E; // texte secondaire
+
+// --- Neutres ---
+$unchk-white:       #FFFFFF;
+$unchk-background:  #F4F7FA;
+$unchk-surface:     #FFFFFF;
+$unchk-border:      #E3E8EF;
+$unchk-line:        #EDF1F6;
+$unchk-text:        #16314A;
+$unchk-text-muted:  #5B6B7B;
+$unchk-text-subtle: #8A98A6;
+
+// --- Sémantique ---
+$unchk-success: #36A93B;
+$unchk-warning: #F39200;
+$unchk-danger:  #E5484D;
+$unchk-info:    #1C75BC;
+
+// --- Typographie ---
+$unchk-font: ('Inter', 'Segoe UI', system-ui, -apple-system, sans-serif);
+
+// --- Espacements ---
+$unchk-space: (xs: 4px, sm: 8px, md: 12px, lg: 16px, xl: 24px, 2xl: 32px, 3xl: 48px, 4xl: 64px);
+
+// --- Rayons ---
+$unchk-radius: (sm: 6px, md: 8px, lg: 12px, xl: 16px, pill: 999px);
