@@ -15,6 +15,7 @@ import sn.unchk.office.communication.repository.PeopleStaffRoRepository;
 import sn.unchk.office.communication.repository.ReunionParticipantRepository;
 import sn.unchk.office.communication.repository.ReunionRepository;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -77,6 +78,75 @@ public class ServiceReunion {
                 "ReunionPlanifiee", event);
 
         return versDto(reunion);
+    }
+
+    /**
+     * Modifie une réunion existante et réaffecte ses participants.
+     * <p>
+     * Charge l'agrégat non supprimé, applique les champs du corps puis émet un événement
+     * {@code ReunionModifiee} sur le même topic que la planification (les read-models et
+     * les convocations restent ainsi à jour).
+     *
+     * @param id      identifiant de la réunion à modifier
+     * @param requete nouvelles données (même DTO que la création)
+     * @throws RessourceIntrouvableException si la réunion n'existe pas (ou est supprimée)
+     */
+    @Transactional
+    public ReunionDto modifier(UUID id, ReunionCreationRequest requete) {
+        // Contrôle de cohérence métier (identique à la planification).
+        if (requete.endsAt() != null && requete.endsAt().isBefore(requete.startsAt())) {
+            throw new IllegalArgumentException("La fin doit être postérieure ou égale au début.");
+        }
+
+        Reunion reunion = reunionRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new RessourceIntrouvableException("Réunion introuvable."));
+
+        // On applique les champs modifiables (jamais id, createdBy, status... depuis le client).
+        reunion.setTitle(requete.title());
+        reunion.setType(requete.type());
+        reunion.setDescription(requete.description());
+        reunion.setLocation(requete.location());
+        reunion.setStartsAt(requete.startsAt());
+        reunion.setEndsAt(requete.endsAt());
+        reunion.setOrganizerId(requete.organizerId());
+        reunion.setFormationRef(requete.formationRef());
+        reunion = reunionRepository.save(reunion);
+
+        // Réaffectation complète des participants : on efface puis on réenregistre.
+        participantRepository.deleteByIdReunionId(reunion.getId());
+        List<UUID> participantIds = enregistrerParticipants(reunion.getId(), requete.participants());
+
+        // Émission de l'événement de modification (même topic que la planification).
+        ReunionEvent event = ReunionEvent.de(reunion, participantIds);
+        enregistreur.enregistrer("Reunion", reunion.getId(), Topics.COMMUNICATION_REUNIONS,
+                "ReunionModifiee", event);
+
+        return versDto(reunion);
+    }
+
+    /**
+     * Supprime logiquement une réunion (soft-delete via {@code deletedAt}) et émet un
+     * événement de suppression sur le topic des réunions.
+     *
+     * @param id identifiant de la réunion à supprimer
+     * @throws RessourceIntrouvableException si la réunion n'existe pas (ou est déjà supprimée)
+     */
+    @Transactional
+    public void supprimer(UUID id) {
+        Reunion reunion = reunionRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new RessourceIntrouvableException("Réunion introuvable."));
+
+        // Suppression logique : on horodate deletedAt, l'agrégat reste en base.
+        reunion.setDeletedAt(Instant.now());
+        reunion = reunionRepository.save(reunion);
+
+        // On retire aussi les participants liés (réaffectation complète à vide).
+        participantRepository.deleteByIdReunionId(reunion.getId());
+
+        // Événement de suppression (état final, sans participants).
+        ReunionEvent event = ReunionEvent.de(reunion, List.of());
+        enregistreur.enregistrer("Reunion", reunion.getId(), Topics.COMMUNICATION_REUNIONS,
+                "ReunionSupprimee", event);
     }
 
     /** Liste les réunions non supprimées (les plus récentes d'abord). */

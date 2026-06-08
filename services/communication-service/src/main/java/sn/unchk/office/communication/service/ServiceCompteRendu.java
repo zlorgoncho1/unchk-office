@@ -88,6 +88,61 @@ public class ServiceCompteRendu {
         return versDto(cr);
     }
 
+    /**
+     * Modifie un compte rendu existant.
+     * <p>
+     * Charge l'agrégat non supprimé, applique les champs du corps puis émet un événement
+     * {@code CompteRenduModifie} sur le même topic que la rédaction (les projections des
+     * autres services restent à jour).
+     *
+     * @param id      identifiant du compte rendu à modifier
+     * @param requete nouvelles données (même DTO que la rédaction)
+     * @throws RessourceIntrouvableException si introuvable (ou supprimé)
+     */
+    @Transactional
+    public CompteRenduDto modifier(UUID id, CompteRenduCreationRequest requete) {
+        CompteRendu cr = compteRenduRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new RessourceIntrouvableException("Compte rendu introuvable."));
+
+        // On applique les champs modifiables (jamais id, createdBy, published... depuis le client).
+        cr.setReunionId(requete.reunionId());
+        cr.setTitle(requete.title());
+        cr.setType(requete.type());
+        cr.setBody(requete.body());
+        cr.setDocumentRef(requete.documentRef());
+        cr.setMeetingDate(requete.meetingDate());
+        cr.setAuthorId(requete.authorId());
+        cr.setVisibility(new HashSet<>(requete.visibility()));
+        cr = compteRenduRepository.save(cr);
+
+        // Émission de l'événement de modification (même topic que la rédaction).
+        enregistreur.enregistrer("CompteRendu", cr.getId(), Topics.COMMUNICATION_COMPTESRENDUS,
+                "CompteRenduModifie", CompteRenduEvent.de(cr));
+
+        return versDto(cr);
+    }
+
+    /**
+     * Supprime logiquement un compte rendu (soft-delete via {@code deletedAt}) et émet un
+     * événement de suppression sur le topic des comptes rendus.
+     *
+     * @param id identifiant du compte rendu à supprimer
+     * @throws RessourceIntrouvableException si introuvable (ou déjà supprimé)
+     */
+    @Transactional
+    public void supprimer(UUID id) {
+        CompteRendu cr = compteRenduRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new RessourceIntrouvableException("Compte rendu introuvable."));
+
+        // Suppression logique : on horodate deletedAt, l'agrégat reste en base.
+        cr.setDeletedAt(Instant.now());
+        cr = compteRenduRepository.save(cr);
+
+        // Événement de suppression (état final de l'agrégat).
+        enregistreur.enregistrer("CompteRendu", cr.getId(), Topics.COMMUNICATION_COMPTESRENDUS,
+                "CompteRenduSupprime", CompteRenduEvent.de(cr));
+    }
+
     /** Liste les comptes rendus non supprimés (les plus récents d'abord). */
     @Transactional(readOnly = true)
     public List<CompteRenduDto> lister() {
