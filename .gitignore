@@ -1,0 +1,37 @@
+# Build Java / Maven
+target/
+build/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+
+# Frontend / Node
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+coverage/
+
+# Environnement / secrets
+.env
+*.env.local
+secrets/
+*.pem
+*.key
+!**/jwks/*.pub
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs / runtime
+*.log
+logs/
+
+# Données conteneurs (si montées en local)
+.data/
+volumes/
