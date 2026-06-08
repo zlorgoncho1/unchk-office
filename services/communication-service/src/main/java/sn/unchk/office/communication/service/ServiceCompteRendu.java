@@ -8,7 +8,9 @@ import sn.unchk.office.communication.dto.CompteRenduCreationRequest;
 import sn.unchk.office.communication.dto.CompteRenduDto;
 import sn.unchk.office.communication.messaging.payload.CompteRenduEvent;
 import sn.unchk.office.communication.messaging.producer.EnregistreurEvenement;
+import sn.unchk.office.communication.projection.IdentityUserRo;
 import sn.unchk.office.communication.projection.PeopleStaffRo;
+import sn.unchk.office.communication.repository.IdentityUserRoRepository;
 import sn.unchk.office.communication.repository.CompteRenduRepository;
 import sn.unchk.office.communication.repository.PeopleStaffRoRepository;
 
@@ -29,13 +31,16 @@ public class ServiceCompteRendu {
 
     private final CompteRenduRepository compteRenduRepository;
     private final PeopleStaffRoRepository staffRo;
+    private final IdentityUserRoRepository identityUserRo;
     private final EnregistreurEvenement enregistreur;
 
     public ServiceCompteRendu(CompteRenduRepository compteRenduRepository,
                               PeopleStaffRoRepository staffRo,
+                              IdentityUserRoRepository identityUserRo,
                               EnregistreurEvenement enregistreur) {
         this.compteRenduRepository = compteRenduRepository;
         this.staffRo = staffRo;
+        this.identityUserRo = identityUserRo;
         this.enregistreur = enregistreur;
     }
 
@@ -166,9 +171,14 @@ public class ServiceCompteRendu {
 
     /** Construit le DTO en enrichissant le nom de l'auteur depuis le read-model local. */
     private CompteRenduDto versDto(CompteRendu cr) {
-        String authorName = staffRo.findById(cr.getAuthorId())
-                .map(PeopleStaffRo::getFullName)
-                .orElse(null);
+        // Nom de l'auteur : read-model du personnel, sinon read-model des comptes
+        // (l'auteur peut être un utilisateur non-staff, ex : l'admin) ; null si non renseigné.
+        String authorName = cr.getAuthorId() == null ? null
+                : staffRo.findById(cr.getAuthorId())
+                        .map(PeopleStaffRo::getFullName)
+                        .orElseGet(() -> identityUserRo.findById(cr.getAuthorId())
+                                .map(IdentityUserRo::getFullName)
+                                .orElse(null));
         return CompteRenduDto.de(cr, authorName);
     }
 }

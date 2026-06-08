@@ -10,7 +10,9 @@ import sn.unchk.office.communication.dto.ReunionCreationRequest;
 import sn.unchk.office.communication.dto.ReunionDto;
 import sn.unchk.office.communication.messaging.payload.ReunionEvent;
 import sn.unchk.office.communication.messaging.producer.EnregistreurEvenement;
+import sn.unchk.office.communication.projection.IdentityUserRo;
 import sn.unchk.office.communication.projection.PeopleStaffRo;
+import sn.unchk.office.communication.repository.IdentityUserRoRepository;
 import sn.unchk.office.communication.repository.PeopleStaffRoRepository;
 import sn.unchk.office.communication.repository.ReunionParticipantRepository;
 import sn.unchk.office.communication.repository.ReunionRepository;
@@ -32,15 +34,18 @@ public class ServiceReunion {
     private final ReunionRepository reunionRepository;
     private final ReunionParticipantRepository participantRepository;
     private final PeopleStaffRoRepository staffRo;
+    private final IdentityUserRoRepository identityUserRo;
     private final EnregistreurEvenement enregistreur;
 
     public ServiceReunion(ReunionRepository reunionRepository,
                           ReunionParticipantRepository participantRepository,
                           PeopleStaffRoRepository staffRo,
+                          IdentityUserRoRepository identityUserRo,
                           EnregistreurEvenement enregistreur) {
         this.reunionRepository = reunionRepository;
         this.participantRepository = participantRepository;
         this.staffRo = staffRo;
+        this.identityUserRo = identityUserRo;
         this.enregistreur = enregistreur;
     }
 
@@ -188,9 +193,13 @@ public class ServiceReunion {
 
     /** Construit le DTO en enrichissant le nom de l'organisateur depuis le read-model local. */
     private ReunionDto versDto(Reunion reunion) {
+        // Nom de l'organisateur : d'abord le read-model du personnel, sinon le read-model
+        // des comptes (l'organisateur peut être un utilisateur non-staff, ex : l'admin).
         String organizerName = staffRo.findById(reunion.getOrganizerId())
                 .map(PeopleStaffRo::getFullName)
-                .orElse(null);
+                .orElseGet(() -> identityUserRo.findById(reunion.getOrganizerId())
+                        .map(IdentityUserRo::getFullName)
+                        .orElse(null));
         List<ParticipantDto> participants = participantRepository.findByIdReunionId(reunion.getId())
                 .stream()
                 .map(p -> new ParticipantDto(p.getPersonRef(), p.getPersonKind(), p.getIsPresent()))
