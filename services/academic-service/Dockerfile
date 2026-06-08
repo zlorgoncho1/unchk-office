@@ -17,6 +17,8 @@ COPY libs/common ./libs/common
 COPY services/academic-service/pom.xml ./services/academic-service/pom.xml
 
 # Installe d'abord la librairie commune dans le dépôt local Maven du conteneur.
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -N -f pom.xml install
+# Installe le POM parent dans le .m2 pour resoudre les modules dependants.
 RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Pré-téléchargement des dépendances du service (cache) ; tolère l'absence de sources.

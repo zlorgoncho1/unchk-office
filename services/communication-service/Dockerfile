@@ -16,6 +16,8 @@ COPY libs/common ./libs/common
 COPY services/communication-service/pom.xml ./services/communication-service/pom.xml
 
 # Installe la librairie commune dans le dépôt local Maven.
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -N -f pom.xml install
+# Installe le POM parent dans le .m2 pour resoudre les modules dependants.
 RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Sources du service, puis empaquetage.

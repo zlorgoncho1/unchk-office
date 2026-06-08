@@ -13,6 +13,8 @@ COPY libs/common ./libs/common
 COPY services/document-service/pom.xml ./services/document-service/pom.xml
 
 # Installe la librairie commune (dépendance du service).
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -N -f pom.xml install
+# Installe le POM parent dans le .m2 pour resoudre les modules dependants.
 RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Sources du service puis package du jar exécutable.
