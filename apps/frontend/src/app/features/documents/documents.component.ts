@@ -1,10 +1,19 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, computed, inject } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 
 import { Document, DocumentsService } from '../../core/data';
+import { CATEGORIES_DOCUMENT } from './categories-document';
 import {
   ChampForm,
   ColonneTable,
@@ -43,17 +52,41 @@ import {
     DataTableComponent,
     EmptyStateComponent,
     MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './documents.component.html',
+  styles: [
+    `
+      /* Sélecteur de catégorie compact dans l'en-tête de la carte. */
+      .doc-filtre-categorie {
+        width: 220px;
+        margin: 0;
+      }
+      /* Le mat-form-field « outline » réserve de la place sous le champ : on la retire ici. */
+      .doc-filtre-categorie ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+    `,
+  ],
 })
 export class DocumentsComponent {
   private readonly svc = inject(DocumentsService);
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
 
-  // Ressource paginée : on charge la première page (50 éléments) via le gateway.
-  protected readonly data = chargerDepuis(() => this.svc.lister(0, 50));
+  // Catégories proposées au filtre (« » = toutes les catégories).
+  protected readonly categories = CATEGORIES_DOCUMENT;
+
+  // Catégorie sélectionnée dans le filtre ('' = toutes). Pilote l'appel filtré.
+  protected readonly categorieFiltre = signal<string>('');
+
+  // Ressource paginée : on charge la première page (50 éléments) via le gateway,
+  // filtrée par la catégorie courante ('' -> liste complète).
+  protected readonly data = chargerDepuis(() =>
+    this.svc.lister(0, 50, this.categorieFiltre() || undefined)
+  );
 
   // Lignes du tableau : contenu de la page (vide si indisponible).
   protected readonly lignes = computed<Document[]>(
@@ -89,9 +122,16 @@ export class DocumentsComponent {
   ];
 
   // Champs du formulaire d'édition des métadonnées = DTO MettreAJourDocumentRequete.
-  // (Le binaire et la catégorie ne sont pas modifiables : ils sont figés au dépôt.)
+  // (Le binaire reste figé au dépôt ; la catégorie est reclassable.)
   private readonly champs: ChampForm[] = [
     { cle: 'title', libelle: 'Titre', requis: true, largeur: 'pleine' },
+    {
+      cle: 'category',
+      libelle: 'Catégorie',
+      type: 'select',
+      // Mêmes options que le filtre / le dépôt (codes alignés sur le backend).
+      options: CATEGORIES_DOCUMENT.map((c) => ({ valeur: c.valeur, libelle: c.libelle })),
+    },
     { cle: 'description', libelle: 'Description', type: 'textarea', largeur: 'pleine' },
     {
       cle: 'archived',
@@ -116,6 +156,16 @@ export class DocumentsComponent {
       aide: 'Rôle autorisé à voir le document.',
     },
   ];
+
+  /**
+   * Change la catégorie filtrée puis recharge la table.
+   * Une valeur vide ('') retire le filtre (toutes les catégories).
+   */
+  protected onFiltrerCategorie(categorie: string): void {
+    this.categorieFiltre.set(categorie);
+    // La source de chargement relit le signal : on relance simplement la requête.
+    this.data.recharger();
+  }
 
   /**
    * Ouvre le dialog de dépôt (upload) en panneau latéral, puis envoie le multipart.
@@ -144,6 +194,7 @@ export class DocumentsComponent {
     // Valeurs initiales adaptées aux champs select (booléen -> chaîne, liste -> 1er rôle).
     const initial: Record<string, unknown> = {
       title: d.title,
+      category: d.category,
       description: d.description,
       archived: d.archived ? 'true' : 'false',
       visibility: d.visibility?.[0],
@@ -153,6 +204,7 @@ export class DocumentsComponent {
         // On normalise le corps pour le DTO : archived booléen, visibility en liste.
         const charge: Record<string, unknown> = {
           title: corps['title'],
+          category: corps['category'],
           description: corps['description'],
           archived: corps['archived'] === 'true',
         };

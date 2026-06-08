@@ -11,6 +11,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
+import { CATEGORIES_DOCUMENT } from './categories-document';
+
 /** Résultat renvoyé à la fermeture du dialog : métadonnées + fichier à déposer. */
 export interface UploadDocumentResultat {
   meta: {
@@ -192,14 +194,7 @@ export class UploadDocumentDialogComponent {
     );
 
   /** Catégories autorisées par le backend (title et category sont obligatoires). */
-  protected readonly categories = [
-    { valeur: 'courrier', libelle: 'Courrier' },
-    { valeur: 'note_service', libelle: 'Note de service' },
-    { valeur: 'circulaire', libelle: 'Circulaire' },
-    { valeur: 'rapport', libelle: 'Rapport' },
-    { valeur: 'compte_rendu', libelle: 'Compte rendu' },
-    { valeur: 'autre', libelle: 'Autre' },
-  ];
+  protected readonly categories = CATEGORIES_DOCUMENT;
 
   /** Fichier choisi via l'input natif (signal pour piloter l'état du bouton). */
   protected readonly fichier = signal<File | null>(null);

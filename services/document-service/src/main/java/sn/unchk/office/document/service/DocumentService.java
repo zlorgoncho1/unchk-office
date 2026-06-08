@@ -191,6 +191,10 @@ public class DocumentService {
         if (requete.title() != null && !requete.title().isBlank()) {
             document.setTitle(requete.title());
         }
+        // La catégorie peut être reclassée (ex : « courrier » -> « courrier_arrive »).
+        if (requete.category() != null && !requete.category().isBlank()) {
+            document.setCategory(CategorieDocument.depuisCode(requete.category()));
+        }
         if (requete.description() != null) {
             document.setDescription(requete.description());
         }
@@ -288,9 +292,12 @@ public class DocumentService {
         return normalises;
     }
 
-    /** Choisit le bucket selon la catégorie (courrier -> bucket dédié). */
+    /** Choisit le bucket selon la catégorie (tout courrier -> bucket dédié). */
     private String bucketPour(CategorieDocument categorie) {
-        return categorie == CategorieDocument.COURRIER
+        boolean estCourrier = categorie == CategorieDocument.COURRIER
+                || categorie == CategorieDocument.COURRIER_ARRIVE
+                || categorie == CategorieDocument.COURRIER_DEPART;
+        return estCourrier
                 ? minioProprietes.bucketCourriers()
                 : minioProprietes.bucketDefaut();
     }
