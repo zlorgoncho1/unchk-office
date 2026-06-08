@@ -1,0 +1,20 @@
+# ============================================================
+# Configuration spécifique : people-service
+# Détient les entités CANONIQUES Étudiant et Personnel/Formateur,
+# référencées par UUID dans les autres services.
+# Topics Kafka publiés : people.students, people.staff
+# Base PostgreSQL : people
+# ============================================================
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/people
+
+# Topics Kafka émis par ce service (référence documentaire).
+unchk:
+  kafka:
+    topics:
+      students: people.students
+      staff: people.staff

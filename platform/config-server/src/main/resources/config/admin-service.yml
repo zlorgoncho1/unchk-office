@@ -1,0 +1,18 @@
+# ============================================================
+# Configuration spécifique : admin-service
+# Gestion budgétaire (projet de budget, budget réalisé).
+# Topic Kafka publié : admin.budget
+# Base PostgreSQL : admin
+# ============================================================
+server:
+  port: 8087
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/admin
+
+# Topic Kafka émis par ce service (référence documentaire).
+unchk:
+  kafka:
+    topics:
+      budget: admin.budget
