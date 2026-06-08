@@ -221,8 +221,11 @@ services:
     environment:
       <<: *service-env
       DB_NAME: identity
-      DB_URL: jdbc:postgresql://postgres:5432/identity
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/identity
+      # stringtype=unspecified : laisse PostgreSQL inférer le type des paramètres String
+      # pour transtyper varchar -> enum role_code (la colonne 'role' de la clé composite
+      # user_roles est un ENUM PG ; @ColumnTransformer est ignoré sur les @EmbeddedId).
+      DB_URL: jdbc:postgresql://postgres:5432/identity?stringtype=unspecified
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/identity?stringtype=unspecified
     ports:
       - "8081:8080"
     depends_on: *service-depends
