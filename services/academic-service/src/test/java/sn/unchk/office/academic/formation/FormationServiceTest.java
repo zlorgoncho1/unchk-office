@@ -54,8 +54,12 @@ class FormationServiceTest {
                 Financement.ETAT, LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31),
                 30, 20, null);
         when(formationRepository.existsByCode("LIC-INFO")).thenReturn(false);
-        // Le dépôt renvoie l'entité qu'on lui passe (simule la persistance).
-        when(formationRepository.save(any(Formation.class))).thenAnswer(inv -> inv.getArgument(0));
+        // Le dépôt renvoie l'entité qu'on lui passe en lui affectant un ID (simule la persistance).
+        when(formationRepository.save(any(Formation.class))).thenAnswer(inv -> {
+            Formation f = inv.getArgument(0);
+            if (f.getId() == null) f.setId(UUID.randomUUID());
+            return f;
+        });
 
         // Quand on crée la formation...
         Formation creee = formationService.creer(dto, createur);

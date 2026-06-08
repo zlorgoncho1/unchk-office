@@ -53,7 +53,11 @@ class ServiceCompteRenduTest {
         CompteRenduCreationRequest requete = new CompteRenduCreationRequest(
                 null, "Conseil de mai", MeetingType.conseil_universite, "Contenu",
                 null, LocalDate.now(), UUID.randomUUID(), Set.of("enseignant", "administratif"));
-        when(compteRenduRepository.save(any(CompteRendu.class))).thenAnswer(i -> i.getArgument(0));
+        when(compteRenduRepository.save(any(CompteRendu.class))).thenAnswer(i -> {
+            CompteRendu crSauvegarde = i.getArgument(0);
+            if (crSauvegarde.getId() == null) crSauvegarde.setId(UUID.randomUUID());
+            return crSauvegarde;
+        });
         when(staffRo.findById(any())).thenReturn(Optional.empty());
 
         // Quand on rédige
@@ -79,7 +83,11 @@ class ServiceCompteRenduTest {
         cr.setCreatedBy(UUID.randomUUID());
         cr.setVisibility(Set.of("enseignant"));
         when(compteRenduRepository.findByIdAndDeletedAtIsNull(id)).thenReturn(Optional.of(cr));
-        when(compteRenduRepository.save(any(CompteRendu.class))).thenAnswer(i -> i.getArgument(0));
+        when(compteRenduRepository.save(any(CompteRendu.class))).thenAnswer(i -> {
+            CompteRendu crSauvegarde = i.getArgument(0);
+            if (crSauvegarde.getId() == null) crSauvegarde.setId(UUID.randomUUID());
+            return crSauvegarde;
+        });
         when(staffRo.findById(any())).thenReturn(Optional.empty());
 
         // Quand on publie
