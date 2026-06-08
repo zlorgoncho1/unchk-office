@@ -80,14 +80,15 @@ iconify-icon { display: inline-block; vertical-align: middle; line-height: 1; }
   font-size: 1.2rem;
 }
 
-// Quand un champ a une icône préfixe, Material met padding-left:0 sur le wrapper
-// et l'icône colle à la bordure. On restaure un padding horizontal confortable
-// (les paddings sur le wrapper d'icône sont écrasés par Material -> on cible le
-// .mat-mdc-text-field-wrapper avec !important). L'icône garde sa respiration vers le texte.
-.mat-mdc-text-field-wrapper {
-  padding-left: 18px !important;
-  padding-right: 18px !important;
+// Espace bordure -> icône (préfixe) et icône -> bordure (suffixe) SANS casser le
+// libellé flottant : on élargit les conteneurs d'icône (le libellé et l'input,
+// situés dans l'infix, se décalent alors ensemble et restent alignés).
+.mat-mdc-form-field-icon-prefix {
+  padding-left: 16px !important;
+}
+.mat-mdc-form-field-icon-suffix {
+  padding-right: 16px !important;
 }
 .mat-mdc-form-field-icon-prefix iconify-icon {
-  margin-inline-end: 14px;
+  margin-inline-end: 12px;
 }
