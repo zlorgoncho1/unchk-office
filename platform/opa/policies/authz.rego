@@ -75,3 +75,13 @@ allow_objet if "admin" in input.subject.roles
 allow_objet if input.resource.ownerId == input.subject.id
 
 allow_objet if object_visible
+
+# Domaine « insertion » (suivi du devenir, registre de contact, situations) : les rôles de
+# gestion de l'insertion accèdent aux fiches de TOUS les étudiants suivis — c'est leur
+# périmètre métier (déclaré côté service par INSERTION_ROLES). Reste cantonné aux types
+# insertion : ne réouvre pas l'IDOR sur documents/comptes rendus.
+allow_objet if {
+	input.resource.type in {"insertion", "outcome"}
+	some r in input.subject.roles
+	r in {"administratif", "appui-insertion"}
+}
