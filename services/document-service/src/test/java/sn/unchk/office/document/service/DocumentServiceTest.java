@@ -68,7 +68,7 @@ class DocumentServiceTest {
     void preparer() {
         AuditLogger audit = new AuditLogger();
         service = new DocumentService(documents, visibilites, partages, outbox, stockage,
-                minioProprietes, uploadProprietes, new ObjectMapper(), audit);
+                minioProprietes, uploadProprietes, new ObjectMapper().findAndRegisterModules(), audit);
 
         // On simule un utilisateur authentifié (claim sub = UUID).
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
