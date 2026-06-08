@@ -13,6 +13,11 @@ dist/
 npm-debug.log*
 coverage/
 
+# Playwright (artefacts de test E2E)
+test-results/
+playwright-report/
+.playwright/
+
 # Environnement / secrets
 .env
 *.env.local
