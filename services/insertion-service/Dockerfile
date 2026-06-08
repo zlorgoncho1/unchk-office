@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ============================================================
 # Dockerfile multi-étapes de l'insertion-service.
 # Contexte de build = RACINE du dépôt (le Dockerfile copie le POM parent,
@@ -16,11 +17,11 @@ COPY libs/common ./libs/common
 COPY services/insertion-service/pom.xml ./services/insertion-service/pom.xml
 
 # Installe la librairie commune dans le dépôt local Maven du conteneur.
-RUN mvn -q -f libs/common/pom.xml -DskipTests install
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Copie des sources du service puis construction du jar exécutable.
 COPY services/insertion-service/src ./services/insertion-service/src
-RUN mvn -q -f services/insertion-service/pom.xml -DskipTests package
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f services/insertion-service/pom.xml -DskipTests package
 
 # ---- Étape 2 : image d'exécution minimale ----
 FROM eclipse-temurin:21-jre

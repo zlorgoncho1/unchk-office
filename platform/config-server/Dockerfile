@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ============================================================
 # Image multi-étapes du Config Server (Spring Cloud Config).
 # Étape 1 : build Maven dans un conteneur (PAS de Maven local).
@@ -15,7 +16,7 @@ COPY platform/config-server/pom.xml ./platform/config-server/pom.xml
 COPY platform/config-server/src ./platform/config-server/src
 
 # Compile et empaquète uniquement le module config-server (et son parent).
-RUN mvn -q -B -f platform/config-server/pom.xml clean package -DskipTests
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -B -f platform/config-server/pom.xml clean package -DskipTests
 
 # --- Étape d'exécution ---
 FROM eclipse-temurin:21-jre AS run

@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ============================================================
 # Dockerfile multi-étapes de l'API Gateway.
 # Étape 1 (build)  : image Maven officielle (PAS de Maven local requis).
@@ -14,11 +15,11 @@ COPY pom.xml ./pom.xml
 COPY apps/api-gateway/pom.xml ./apps/api-gateway/pom.xml
 
 # Pré-téléchargement des dépendances (cache) ; ignore l'absence éventuelle des modules frères.
-RUN mvn -q -f apps/api-gateway/pom.xml -DskipTests dependency:go-offline || true
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f apps/api-gateway/pom.xml -DskipTests dependency:go-offline || true
 
 # Copie des sources puis construction du jar exécutable.
 COPY apps/api-gateway/src ./apps/api-gateway/src
-RUN mvn -q -f apps/api-gateway/pom.xml -DskipTests clean package
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f apps/api-gateway/pom.xml -DskipTests clean package
 
 # ---- Étape 2 : image d'exécution minimale ----
 FROM eclipse-temurin:21-jre

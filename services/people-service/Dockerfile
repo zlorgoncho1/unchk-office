@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ============================================================
 # people-service — image multi-etapes.
 # Contexte de build = RACINE du depot (pour acceder a pom.xml + libs/common).
@@ -14,11 +15,11 @@ COPY libs/common ./libs/common
 COPY services/people-service/pom.xml ./services/people-service/pom.xml
 
 # Construit et installe la librairie commune dans le depot local Maven.
-RUN mvn -q -f libs/common/pom.xml -DskipTests install
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Code du service, puis package du jar executable.
 COPY services/people-service/src ./services/people-service/src
-RUN mvn -q -f services/people-service/pom.xml -DskipTests package
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f services/people-service/pom.xml -DskipTests package
 
 # --- Etape 2 : execution (JRE seul, image legere) ---
 FROM eclipse-temurin:21-jre

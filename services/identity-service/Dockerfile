@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ============================================================
 # Dockerfile multi-étapes de l'identity-service.
 # Contexte de build = RACINE du dépôt (pour accéder à pom.xml + libs/common).
@@ -15,11 +16,11 @@ COPY libs/common ./libs/common
 COPY services/identity-service/pom.xml ./services/identity-service/pom.xml
 
 # Installe d'abord la librairie commune dans le dépôt local Maven du conteneur.
-RUN mvn -q -f libs/common/pom.xml -DskipTests install
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Copie les sources du service puis construit le jar exécutable.
 COPY services/identity-service/src ./services/identity-service/src
-RUN mvn -q -f services/identity-service/pom.xml -DskipTests package
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f services/identity-service/pom.xml -DskipTests package
 
 # ---- Étape 2 : image d'exécution minimale ----
 FROM eclipse-temurin:21-jre
