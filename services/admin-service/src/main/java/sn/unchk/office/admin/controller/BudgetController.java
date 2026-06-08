@@ -2,6 +2,8 @@ package sn.unchk.office.admin.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,6 +70,14 @@ public class BudgetController {
     @VerifieAccesObjet(type = "budget", action = "update", idParam = "id")
     public BudgetDto mettreAJour(@PathVariable UUID id, @Valid @RequestBody MajBudgetDto dto) {
         return budgetService.mettreAJour(id, dto);
+    }
+
+    /** Supprime un budget et ses lignes (propriétaire requis : ABAC delete). */
+    @DeleteMapping("/{id}")
+    @VerifieAccesObjet(type = "budget", action = "delete", idParam = "id")
+    public ResponseEntity<Void> supprimer(@PathVariable UUID id) {
+        budgetService.supprimer(id);
+        return ResponseEntity.noContent().build();
     }
 
     /** Fait évoluer le statut d'un budget. */
