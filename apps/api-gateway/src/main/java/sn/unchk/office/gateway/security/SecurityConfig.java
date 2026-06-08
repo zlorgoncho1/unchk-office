@@ -66,6 +66,8 @@ public class SecurityConfig {
                 .pathMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 // Endpoints publics de supervision (sondes Docker).
                 .pathMatchers("/actuator/health/**", "/actuator/info").permitAll()
+                // Authentification (connexion / rafraîchissement) : publique, pas de JWT requis.
+                .pathMatchers("/api/identity/auth/**").permitAll()
                 // Tout le reste exige un JWT valide.
                 .anyExchange().authenticated()
             )

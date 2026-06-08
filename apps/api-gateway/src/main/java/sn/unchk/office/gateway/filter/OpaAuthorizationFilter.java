@@ -46,7 +46,7 @@ public class OpaAuthorizationFilter implements GlobalFilter, Ordered {
 
     // Chemins publics non soumis à l'autorisation OPA (alignés sur SecurityConfig).
     private static final List<String> CHEMINS_PUBLICS = List.of(
-            "/actuator/health", "/actuator/info"
+            "/actuator/health", "/actuator/info", "/api/identity/auth"
     );
 
     private final OpaClient opaClient;
