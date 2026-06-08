@@ -1,0 +1,22 @@
+<!-- Carte de section : en-tête optionnel (titre + actions), puis corps projeté. -->
+<section class="section-card">
+  @if (titre(); as t) {
+    <header class="section-card__entete">
+      <div class="section-card__titre-zone">
+        @if (icone(); as ic) {
+          <iconify-icon
+            class="section-card__icone"
+            [attr.icon]="'solar:' + ic"
+          ></iconify-icon>
+        }
+        <h2 class="section-card__titre">{{ t }}</h2>
+      </div>
+      <div class="section-card__actions">
+        <ng-content select="[actions]"></ng-content>
+      </div>
+    </header>
+  }
+  <div class="section-card__corps" [class.section-card__corps--plat]="sansBordure()">
+    <ng-content></ng-content>
+  </div>
+</section>

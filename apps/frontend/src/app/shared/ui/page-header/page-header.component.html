@@ -1,0 +1,19 @@
+<!-- En-tête de page : titre + sous-titre à gauche, actions projetées à droite. -->
+<header class="page-header">
+  <div class="page-header__gauche">
+    @if (icone(); as ic) {
+      <span class="page-header__icone">
+        <iconify-icon [attr.icon]="'solar:' + ic"></iconify-icon>
+      </span>
+    }
+    <div>
+      <h1 class="page-header__titre">{{ titre() }}</h1>
+      @if (sousTitre(); as st) {
+        <p class="page-header__sous-titre">{{ st }}</p>
+      }
+    </div>
+  </div>
+  <div class="page-header__actions">
+    <ng-content></ng-content>
+  </div>
+</header>

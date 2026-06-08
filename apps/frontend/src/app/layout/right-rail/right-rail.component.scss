@@ -1,0 +1,251 @@
+// Rail droit brandé UNCHK — thème clair, variables --unchk-*.
+:host {
+  display: block;
+  height: 100%;
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px 18px;
+  background: var(--unchk-surface);
+  border-left: 1px solid var(--unchk-border);
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--unchk-border) transparent;
+
+  // --- Bloc générique ---
+  &__bloc {
+    background: var(--unchk-background);
+    border: 1px solid var(--unchk-line);
+    border-radius: var(--unchk-radius-lg);
+    padding: 14px;
+  }
+
+  &__entete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  &__titre {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--unchk-navy);
+
+    iconify-icon {
+      color: var(--unchk-blue);
+      font-size: 1.15rem;
+    }
+  }
+
+  &__compteur {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: var(--unchk-radius-pill);
+    background: var(--unchk-orange);
+    color: var(--unchk-white);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  &__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  // --- Notification ---
+  &__notif {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px;
+    border-radius: var(--unchk-radius-md);
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: var(--unchk-line);
+    }
+
+    &-puce {
+      width: 8px;
+      height: 8px;
+      margin-top: 6px;
+      flex-shrink: 0;
+      border-radius: var(--unchk-radius-pill);
+      background: var(--unchk-border);
+    }
+
+    &--non-lu .rail__notif-puce {
+      background: var(--unchk-blue);
+    }
+    &--non-lu .rail__notif-texte {
+      font-weight: 600;
+      color: var(--unchk-navy);
+    }
+
+    &-corps {
+      min-width: 0;
+    }
+
+    &-texte {
+      margin: 0;
+      font-size: 0.84rem;
+      color: var(--unchk-text);
+      line-height: 1.35;
+    }
+
+    &-temps {
+      margin: 2px 0 0;
+      font-size: 0.74rem;
+      color: var(--unchk-text-subtle);
+    }
+  }
+
+  // --- État temps réel ---
+  &__etat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0 0;
+    font-size: 0.74rem;
+    color: var(--unchk-text-muted);
+
+    &-point {
+      width: 7px;
+      height: 7px;
+      border-radius: var(--unchk-radius-pill);
+      background: var(--unchk-text-subtle);
+    }
+
+    &[data-etat='connecte'] .rail__etat-point {
+      background: var(--unchk-success);
+      box-shadow: 0 0 0 3px rgba(54, 169, 59, 0.18);
+    }
+    &[data-etat='connexion'] .rail__etat-point {
+      background: var(--unchk-orange);
+    }
+  }
+
+  // --- Activité ---
+  &__activite {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 4px;
+
+    &-icone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      border-radius: var(--unchk-radius-md);
+      font-size: 1.1rem;
+
+      &[data-ton='blue'] {
+        color: var(--unchk-blue);
+        background: rgba(28, 117, 188, 0.1);
+      }
+      &[data-ton='green'] {
+        color: var(--unchk-green);
+        background: rgba(54, 169, 59, 0.1);
+      }
+      &[data-ton='orange'] {
+        color: var(--unchk-orange);
+        background: rgba(243, 146, 0, 0.12);
+      }
+    }
+
+    &-corps {
+      min-width: 0;
+    }
+
+    &-texte {
+      margin: 0;
+      font-size: 0.84rem;
+      color: var(--unchk-text);
+      line-height: 1.35;
+    }
+
+    &-temps {
+      margin: 2px 0 0;
+      font-size: 0.74rem;
+      color: var(--unchk-text-subtle);
+    }
+  }
+
+  // --- Contact ---
+  &__contact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 4px;
+
+    &-avatar {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      border-radius: var(--unchk-radius-pill);
+      background: var(--unchk-blue);
+      color: var(--unchk-white);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    &-statut {
+      position: absolute;
+      right: -1px;
+      bottom: -1px;
+      width: 11px;
+      height: 11px;
+      border-radius: var(--unchk-radius-pill);
+      background: var(--unchk-text-subtle);
+      border: 2px solid var(--unchk-background);
+
+      &--en-ligne {
+        background: var(--unchk-success);
+      }
+    }
+
+    &-corps {
+      min-width: 0;
+    }
+
+    &-nom {
+      margin: 0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--unchk-navy);
+    }
+
+    &-role {
+      margin: 1px 0 0;
+      font-size: 0.74rem;
+      color: var(--unchk-text-muted);
+    }
+  }
+}

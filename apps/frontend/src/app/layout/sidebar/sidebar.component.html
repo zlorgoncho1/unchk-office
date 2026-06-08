@@ -1,0 +1,52 @@
+<!-- Barre latérale : logo, navigation filtrée par rôle, profil en pied. -->
+<aside class="sidebar">
+  <!-- Logo horizontal en haut. -->
+  <a class="sidebar__logo" routerLink="/accueil" (click)="naviguer.emit()">
+    <img
+      src="assets/brand/unchk-horizontal.png"
+      alt="UNCHK Office"
+      height="34"
+    />
+  </a>
+
+  <!-- Navigation groupée par sections. -->
+  <nav class="sidebar__nav" aria-label="Navigation principale">
+    @for (section of sections(); track section.titre) {
+      <div class="sidebar__section">
+        @if (section.titre) {
+          <p class="sidebar__section-titre">{{ section.titre }}</p>
+        }
+        <ul class="sidebar__liste">
+          @for (item of section.elements; track item.chemin) {
+            <li>
+              <a
+                class="sidebar__lien"
+                [routerLink]="['/', item.chemin]"
+                routerLinkActive="sidebar__lien--actif"
+                [routerLinkActiveOptions]="{ exact: false }"
+                (click)="naviguer.emit()"
+              >
+                <iconify-icon
+                  class="sidebar__lien-icone"
+                  [attr.icon]="'solar:' + item.icone"
+                ></iconify-icon>
+                <span class="sidebar__lien-libelle">{{ item.libelle }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </nav>
+
+  <!-- Profil utilisateur en pied de barre. -->
+  @if (user(); as u) {
+    <div class="sidebar__profil">
+      <span class="sidebar__avatar">{{ initiales() }}</span>
+      <div class="sidebar__profil-texte">
+        <p class="sidebar__profil-nom">{{ u.fullName || u.email }}</p>
+        <p class="sidebar__profil-role">{{ roleLibelle() }}</p>
+      </div>
+    </div>
+  }
+</aside>

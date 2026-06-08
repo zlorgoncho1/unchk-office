@@ -1,0 +1,26 @@
+<!-- Carte KPI : icône à gauche, libellé + valeur + variation. -->
+<article class="stat" [attr.data-ton]="ton()">
+  <span class="stat__icone">
+    <iconify-icon [attr.icon]="'solar:' + icone()"></iconify-icon>
+  </span>
+  <div class="stat__corps">
+    <p class="stat__libelle">{{ libelle() }}</p>
+    <p class="stat__valeur">{{ valeur() }}</p>
+    @if (variation(); as v) {
+      <p
+        class="stat__variation"
+        [class.stat__variation--positive]="variationPositive()"
+        [class.stat__variation--negative]="!variationPositive()"
+      >
+        <iconify-icon
+          [attr.icon]="
+            variationPositive()
+              ? 'solar:arrow-right-up-linear'
+              : 'solar:arrow-right-down-linear'
+          "
+        ></iconify-icon>
+        <span>{{ v }}</span>
+      </p>
+    }
+  </div>
+</article>

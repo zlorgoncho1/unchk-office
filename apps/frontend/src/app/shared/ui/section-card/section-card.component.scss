@@ -1,0 +1,54 @@
+// Carte de section brandée — variables --unchk-*.
+:host {
+  display: block;
+}
+
+.section-card {
+  background: var(--unchk-surface);
+  border: 1px solid var(--unchk-border);
+  border-radius: var(--unchk-radius-lg);
+  box-shadow: var(--unchk-shadow-card);
+  overflow: hidden;
+
+  &__entete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--unchk-line);
+  }
+
+  &__titre-zone {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  &__icone {
+    color: var(--unchk-blue);
+    font-size: 1.25rem;
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--unchk-navy);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__corps {
+    padding: 20px;
+
+    &--plat {
+      padding: 0;
+    }
+  }
+}

@@ -1,0 +1,275 @@
+// Barre supérieure brandée UNCHK — thème clair, variables --unchk-*.
+:host {
+  display: block;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 64px;
+  padding: 0 24px;
+  background: var(--unchk-surface);
+  border-bottom: 1px solid var(--unchk-border);
+
+  // --- Gauche : burger + fil d'Ariane ---
+  &__gauche {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  &__burger {
+    display: none; // visible seulement en mobile (cf. media query)
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: var(--unchk-radius-md);
+    background: var(--unchk-line);
+    color: var(--unchk-navy);
+    font-size: 1.3rem;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--unchk-border);
+    }
+  }
+
+  &__fil {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    font-size: 0.9rem;
+
+    &-lien {
+      color: var(--unchk-text-muted);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--unchk-blue);
+      }
+    }
+
+    &-courant {
+      font-weight: 600;
+      color: var(--unchk-navy);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &-sep {
+      color: var(--unchk-text-subtle);
+      font-size: 1rem;
+    }
+  }
+
+  // --- Recherche ---
+  &__recherche {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 1 320px;
+    margin-left: auto;
+    padding: 0 14px;
+    height: 40px;
+    border-radius: var(--unchk-radius-pill);
+    background: var(--unchk-background);
+    border: 1px solid transparent;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    &:focus-within {
+      background: var(--unchk-surface);
+      border-color: var(--unchk-blue);
+    }
+
+    &-icone {
+      color: var(--unchk-text-subtle);
+      font-size: 1.2rem;
+    }
+
+    &-champ {
+      flex: 1 1 auto;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      font: inherit;
+      font-size: 0.9rem;
+      color: var(--unchk-navy);
+
+      &::placeholder {
+        color: var(--unchk-text-subtle);
+      }
+    }
+  }
+
+  // --- Actions ---
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__icone-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: var(--unchk-radius-md);
+    background: transparent;
+    color: var(--unchk-slate);
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: var(--unchk-line);
+      color: var(--unchk-navy);
+    }
+  }
+
+  &__langue {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  // Badge de notifications.
+  &__badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--unchk-radius-pill);
+    background: var(--unchk-orange);
+    color: var(--unchk-white);
+    font-size: 0.64rem;
+    font-weight: 700;
+    line-height: 1;
+    border: 2px solid var(--unchk-surface);
+  }
+
+  &__separateur {
+    width: 1px;
+    height: 28px;
+    margin: 0 6px;
+    background: var(--unchk-border);
+  }
+
+  // --- Avatar ---
+  &__avatar-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 8px 5px 5px;
+    border: none;
+    border-radius: var(--unchk-radius-pill);
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: var(--unchk-line);
+    }
+  }
+
+  &__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: var(--unchk-radius-pill);
+    background: var(--unchk-blue);
+    color: var(--unchk-white);
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  &__avatar-texte {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+    text-align: left;
+  }
+
+  &__avatar-nom {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--unchk-navy);
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__avatar-role {
+    font-size: 0.72rem;
+    color: var(--unchk-text-muted);
+  }
+
+  &__avatar-chevron {
+    color: var(--unchk-text-subtle);
+    font-size: 1.05rem;
+  }
+
+  // --- Responsive ---
+  @media (max-width: 1024px) {
+    padding: 0 16px;
+
+    &__burger {
+      display: inline-flex;
+    }
+    &__recherche {
+      flex-basis: 200px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    &__fil {
+      display: none;
+    }
+    &__recherche {
+      display: none;
+    }
+    &__avatar-texte {
+      display: none;
+    }
+    &__avatar-chevron {
+      display: none;
+    }
+  }
+}
+
+// --- Menu utilisateur (overlay Material) ---
+.topbar__menu-entete {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--unchk-line);
+
+  .topbar__menu-nom {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--unchk-navy);
+  }
+  .topbar__menu-mail {
+    margin: 2px 0 0;
+    font-size: 0.78rem;
+    color: var(--unchk-text-muted);
+  }
+}
