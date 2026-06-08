@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ============================================================
 # document-service — image multi-étapes (contexte de build = RACINE du dépôt)
 # Étape 1 : build Maven (compile common puis le service).
@@ -12,11 +13,11 @@ COPY libs/common ./libs/common
 COPY services/document-service/pom.xml ./services/document-service/pom.xml
 
 # Installe la librairie commune (dépendance du service).
-RUN mvn -q -f libs/common/pom.xml -DskipTests install
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Sources du service puis package du jar exécutable.
 COPY services/document-service/src ./services/document-service/src
-RUN mvn -q -f services/document-service/pom.xml -DskipTests package
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f services/document-service/pom.xml -DskipTests package
 
 # ------------------------------------------------------------
 FROM eclipse-temurin:21-jre

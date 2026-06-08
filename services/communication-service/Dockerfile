@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ============================================================
 # Dockerfile multi-étapes du communication-service.
 # Contexte de build = RACINE du dépôt (pour accéder à pom.xml + libs/common).
@@ -15,11 +16,11 @@ COPY libs/common ./libs/common
 COPY services/communication-service/pom.xml ./services/communication-service/pom.xml
 
 # Installe la librairie commune dans le dépôt local Maven.
-RUN mvn -q -f libs/common/pom.xml -DskipTests install
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Sources du service, puis empaquetage.
 COPY services/communication-service/src ./services/communication-service/src
-RUN mvn -q -f services/communication-service/pom.xml -DskipTests package
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f services/communication-service/pom.xml -DskipTests package
 
 # --- Étape 2 : image d'exécution légère (JRE 21) ---
 FROM eclipse-temurin:21-jre

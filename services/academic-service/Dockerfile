@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ============================================================
 # Dockerfile multi-étapes du academic-service.
 # Contexte de build = RACINE du dépôt (le compose copie le POM parent,
@@ -16,14 +17,14 @@ COPY libs/common ./libs/common
 COPY services/academic-service/pom.xml ./services/academic-service/pom.xml
 
 # Installe d'abord la librairie commune dans le dépôt local Maven du conteneur.
-RUN mvn -q -f libs/common/pom.xml -DskipTests install
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Pré-téléchargement des dépendances du service (cache) ; tolère l'absence de sources.
-RUN mvn -q -f services/academic-service/pom.xml -DskipTests dependency:go-offline || true
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f services/academic-service/pom.xml -DskipTests dependency:go-offline || true
 
 # Copie des sources puis construction du jar exécutable.
 COPY services/academic-service/src ./services/academic-service/src
-RUN mvn -q -f services/academic-service/pom.xml -DskipTests package
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f services/academic-service/pom.xml -DskipTests package
 
 # ---- Étape 2 : image d'exécution minimale ----
 FROM eclipse-temurin:21-jre

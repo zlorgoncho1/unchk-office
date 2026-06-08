@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ============================================================
 # Dockerfile multi-étapes du service Administration (admin-service).
 # Contexte de build = RACINE du dépôt (le Dockerfile copie le POM parent,
@@ -17,11 +18,11 @@ COPY libs/common ./libs/common
 COPY services/admin-service/pom.xml ./services/admin-service/pom.xml
 
 # La librairie commune est une dépendance : on l'installe d'abord dans le dépôt local.
-RUN mvn -q -f libs/common/pom.xml -DskipTests install
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Copie des sources du service puis construction du jar exécutable.
 COPY services/admin-service/src ./services/admin-service/src
-RUN mvn -q -f services/admin-service/pom.xml -DskipTests package
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f services/admin-service/pom.xml -DskipTests package
 
 # ---- Étape 2 : image d'exécution minimale ----
 FROM eclipse-temurin:21-jre
