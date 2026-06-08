@@ -1,0 +1,13 @@
+# Contexte de build Docker (racine du dépôt).
+# On exclut tout ce qui est lourd ou inutile à la compilation des services.
+# Les Dockerfile copient explicitement les chemins requis (pom.xml + module).
+.git/
+**/node_modules/
+**/target/
+**/.angular/
+**/dist/
+**/.idea/
+**/*.iml
+**/.vscode/
+**/.DS_Store
+*.log
