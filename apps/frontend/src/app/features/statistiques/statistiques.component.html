@@ -3,7 +3,17 @@
   titre="Statistiques d'insertion"
   sousTitre="Répartition des étudiants insérés par type et par formation"
   icone="chart-2-bold-duotone"
-></unchk-page-header>
+>
+  <!-- Exports des statistiques d'insertion (PDF / Excel). -->
+  <button mat-stroked-button (click)="exporterInsertionPdf()">
+    <iconify-icon icon="solar:file-text-bold"></iconify-icon>
+    <span>&nbsp;Export PDF</span>
+  </button>
+  <button mat-stroked-button (click)="exporterInsertionExcel()">
+    <iconify-icon icon="solar:file-download-bold"></iconify-icon>
+    <span>&nbsp;Export Excel</span>
+  </button>
+</unchk-page-header>
 
 @if (data.etat().chargement) {
   <!-- Chargement initial des statistiques. -->
@@ -97,3 +107,25 @@
     }
   </div>
 }
+
+<!-- Exports des statistiques de formations par genre (PDF / Excel), toujours disponibles. -->
+<unchk-section-card
+  titre="Statistiques de formations (par genre)"
+  icone="square-academic-cap-bold-duotone"
+>
+  <div class="stats__exports">
+    <p class="stats__exports-texte">
+      Téléchargez la répartition des formés par genre et par formation.
+    </p>
+    <div class="stats__exports-actions">
+      <button mat-stroked-button (click)="exporterFormationsPdf()">
+        <iconify-icon icon="solar:file-text-bold"></iconify-icon>
+        <span>&nbsp;Export PDF</span>
+      </button>
+      <button mat-stroked-button (click)="exporterFormationsExcel()">
+        <iconify-icon icon="solar:file-download-bold"></iconify-icon>
+        <span>&nbsp;Export Excel</span>
+      </button>
+    </div>
+  </div>
+</unchk-section-card>

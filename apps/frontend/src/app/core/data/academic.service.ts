@@ -19,6 +19,20 @@ export class AcademicService {
     return this.http.get<Formation[]>(`${this.base}/api/academic/formations`);
   }
 
+  /** Export PDF des statistiques de formations par genre (fichier binaire, JWT par l'intercepteur). */
+  exporterFormationsPdf(): Observable<Blob> {
+    return this.http.get(`${this.base}/api/academic/statistiques/formations.pdf`, {
+      responseType: 'blob',
+    });
+  }
+
+  /** Export Excel (xlsx) des statistiques de formations par genre (fichier binaire, JWT par l'intercepteur). */
+  exporterFormationsXlsx(): Observable<Blob> {
+    return this.http.get(`${this.base}/api/academic/statistiques/formations.xlsx`, {
+      responseType: 'blob',
+    });
+  }
+
   // --- CRUD formations (corps = FormationCreationDto / FormationMajDto :
   //     code, label, level, kind, funding, startDate, endDate,
   //     trainedMale, trainedFemale, responsibleRef[, active à la modification]) ---
