@@ -18,6 +18,10 @@ import {
 } from '../../shared/ui';
 import { chargerDepuis } from '../../shared/util/loadable';
 import { humaniser } from '../../shared/util/format.util';
+import {
+  UploadDocumentDialogComponent,
+  UploadDocumentResultat,
+} from './upload-document-dialog.component';
 
 /**
  * Page « Documents ».
@@ -26,8 +30,9 @@ import { humaniser } from '../../shared/util/format.util';
  *
  * NB : la CRÉATION d'un document est multipart côté backend (métadonnées + fichier binaire
  * déposé sur MinIO via @RequestPart("file")). Le form-drawer générique ne gère pas la sélection
- * d'un fichier ; l'upload binaire n'est donc PAS exposé ici. On couvre la MODIFICATION des
- * métadonnées (PATCH : titre, description, archivage, visibilité) et la SUPPRESSION (DELETE).
+ * d'un fichier ; on passe donc par un dialog dédié (UploadDocumentDialogComponent) ouvert en
+ * panneau latéral pour le DÉPÔT. On couvre aussi la MODIFICATION des métadonnées (PATCH : titre,
+ * description, archivage, visibilité) et la SUPPRESSION (DELETE).
  */
 @Component({
   selector: 'app-documents',
@@ -111,6 +116,28 @@ export class DocumentsComponent {
       aide: 'Rôle autorisé à voir le document.',
     },
   ];
+
+  /**
+   * Ouvre le dialog de dépôt (upload) en panneau latéral, puis envoie le multipart.
+   * La sélection d'un fichier n'étant pas gérée par le form-drawer générique, on passe par
+   * un dialog dédié qui renvoie les métadonnées + le fichier choisi.
+   */
+  protected nouveau(): void {
+    this.dialog
+      .open(
+        UploadDocumentDialogComponent,
+        optionsDrawer<undefined>(undefined)
+      )
+      .afterClosed()
+      .subscribe((res: UploadDocumentResultat | undefined) => {
+        if (res) {
+          this.ecrire(
+            this.svc.creerDocument(res.meta, res.fichier),
+            'Document déposé.'
+          );
+        }
+      });
+  }
 
   /** Ouvre le drawer d'édition des métadonnées (pré-rempli). */
   protected onModifier(d: Document): void {
