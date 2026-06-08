@@ -27,4 +27,30 @@ export class CommunicationService {
       `${this.base}/api/communication/comptes-rendus`
     );
   }
+
+  // --- Écriture réunions (corps = ReunionCreationRequest : title, type, startsAt,
+  //     endsAt, location, organizerId) ---
+  // Note : le backend n'expose que la création (POST). Pas de PUT/DELETE côté
+  //   communication-service, donc pas de modification ni de suppression ici.
+
+  /** Planifie (crée) une réunion. */
+  creerReunion(corps: Record<string, unknown>): Observable<Reunion> {
+    return this.http.post<Reunion>(
+      `${this.base}/api/communication/reunions`,
+      corps
+    );
+  }
+
+  // --- Écriture comptes rendus (corps = CompteRenduCreationRequest : title, type,
+  //     meetingDate, authorId, visibility) ---
+  // Note : le backend n'expose que la création (POST) et la publication (PATCH).
+  //   Pas de PUT/DELETE, donc pas de modification ni de suppression ici.
+
+  /** Rédige (crée) un compte rendu en brouillon. */
+  creerCompteRendu(corps: Record<string, unknown>): Observable<CompteRendu> {
+    return this.http.post<CompteRendu>(
+      `${this.base}/api/communication/comptes-rendus`,
+      corps
+    );
+  }
 }
