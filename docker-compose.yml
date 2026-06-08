@@ -1,0 +1,140 @@
+name: unchk-office
+
+# Plan d'infrastructure. Les services applicatifs (gateway, identity, métier, frontend)
+# sont ajoutés au fur et à mesure. Démarrage infra :
+#   docker compose up -d kafka postgres minio opa kafka-ui
+
+services:
+  # ============================================================
+  # Messaging : Apache Kafka en mode KRaft (cluster natif, SANS ZooKeeper)
+  # Nœud unique combiné (broker + controller), extensible en cluster 3 nœuds.
+  # ============================================================
+  kafka:
+    image: apache/kafka:3.8.1
+    container_name: unchk-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: INTERNAL://kafka:19092,CONTROLLER://kafka:9093,EXTERNAL://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+    networks: [unchk-net]
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: unchk-kafka-ui
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8085:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: unchk
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:19092
+      DYNAMIC_CONFIG_ENABLED: "true"
+    networks: [unchk-net]
+
+  # ============================================================
+  # Base de données : PostgreSQL (une base par microservice)
+  # ============================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: unchk-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./platform/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [unchk-net]
+
+  # ============================================================
+  # Stockage objet : MinIO (S3) + initialisation des buckets
+  # ============================================================
+  minio:
+    image: minio/minio:latest
+    container_name: unchk-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    networks: [unchk-net]
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: unchk-minio-init
+    depends_on:
+      minio:
+        condition: service_started
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD}; do
+        echo 'attente de MinIO...'; sleep 2;
+      done;
+      mc mb -p local/logos local/documents local/courriers local/comptes-rendus local/avatars;
+      mc anonymous set download local/logos;
+      echo 'buckets MinIO prêts';
+      "
+    networks: [unchk-net]
+
+  # ============================================================
+  # Autorisation : OPA (Policy Decision Point)
+  # ============================================================
+  opa:
+    image: openpolicyagent/opa:0.68.0-rootless
+    container_name: unchk-opa
+    command:
+      - "run"
+      - "--server"
+      - "--addr=0.0.0.0:8181"
+      - "--log-level=info"
+      - "/policies"
+    ports:
+      - "8181:8181"
+    volumes:
+      - ./platform/opa/policies:/policies:ro
+    networks: [unchk-net]
+
+networks:
+  unchk-net:
+    driver: bridge
+
+volumes:
+  kafka-data:
+  pg-data:
+  minio-data:
