@@ -99,8 +99,8 @@ export const routes: Routes = [
         canActivate: [roleGuard('admin', 'administratif', 'enseignant', 'etudiant')],
         data: { titre: 'Emplois du temps', icone: 'calendar-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/emplois-du-temps/emplois-du-temps.component').then(
+            (m) => m.EmploisDuTempsComponent
           ),
       },
       {
