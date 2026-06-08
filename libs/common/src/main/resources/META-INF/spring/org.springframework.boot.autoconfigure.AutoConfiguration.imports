@@ -1,0 +1,3 @@
+# Auto-configuration de la librairie commune UNCHK Office.
+# Spring Boot importe automatiquement cette classe dans tout service qui dépend de "common".
+sn.unchk.office.common.CommonAutoConfiguration
