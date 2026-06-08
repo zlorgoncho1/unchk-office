@@ -9,6 +9,7 @@ import { CommunicationService, Reunion } from '../../core/data';
 import {
   ChampForm,
   ColonneTable,
+  ConfirmDialog,
   DataTableComponent,
   EmptyStateComponent,
   FormDrawerComponent,
@@ -25,9 +26,7 @@ import { humaniser } from '../../shared/util/format.util';
  * Source : CommunicationService.listerReunions() (tableau Reunion[]).
  * Tableau brandé filtrable avec pastilles de type et de statut.
  *
- * Le backend communication-service n'expose que la création (POST) des réunions :
- * il n'y a ni PUT ni DELETE, donc on ne câble pas la modification ni la suppression
- * (on ne propose pas de boutons qui échoueraient toujours).
+ * Gestion complète : création, modification (drawer pré-rempli) et suppression (confirmation).
  */
 @Component({
   selector: 'app-reunions',
@@ -127,6 +126,54 @@ export class ReunionsComponent {
             organizerId: this.auth.currentUser()?.id,
           };
           this.ecrire(this.svc.creerReunion(charge), 'Réunion planifiée.');
+        }
+      });
+  }
+
+  /** Ouvre le drawer d'édition d'une réunion (pré-rempli ; dates ramenées en YYYY-MM-DD). */
+  protected onModifier(r: Reunion): void {
+    const initial = {
+      title: r.title,
+      type: r.type,
+      startsAt: r.startsAt ? r.startsAt.slice(0, 10) : '',
+      endsAt: r.endsAt ? r.endsAt.slice(0, 10) : '',
+      location: r.location ?? '',
+    };
+    this.dialog
+      .open(
+        FormDrawerComponent,
+        optionsDrawer({ titre: 'Modifier la réunion', champs: this.champs, valeurInitiale: initial })
+      )
+      .afterClosed()
+      .subscribe((corps?: Record<string, unknown>) => {
+        if (corps) {
+          const charge = {
+            ...corps,
+            startsAt: this.versDateHeure(corps['startsAt']),
+            endsAt: this.versDateHeure(corps['endsAt']),
+            organizerId: r.organizerId ?? this.auth.currentUser()?.id,
+          };
+          this.ecrire(this.svc.modifierReunion(r.id, charge), 'Réunion modifiée.');
+        }
+      });
+  }
+
+  /** Demande confirmation puis supprime la réunion. */
+  protected onSupprimer(r: Reunion): void {
+    this.dialog
+      .open(ConfirmDialog, {
+        data: {
+          titre: 'Supprimer la réunion',
+          message: `Confirmer la suppression de « ${r.title} » ? Cette action est définitive.`,
+          libelleConfirmer: 'Supprimer',
+          danger: true,
+        },
+        autoFocus: false,
+      })
+      .afterClosed()
+      .subscribe((ok) => {
+        if (ok) {
+          this.ecrire(this.svc.supprimerReunion(r.id), 'Réunion supprimée.');
         }
       });
   }

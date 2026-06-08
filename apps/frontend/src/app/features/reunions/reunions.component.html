@@ -19,7 +19,11 @@
 } @else {
   <unchk-section-card sansBordure>
     <unchk-data-table
-        detaillable
+      detaillable
+      modifiable
+      supprimable
+      (modifier)="onModifier($event)"
+      (supprimer)="onSupprimer($event)"
       [colonnes]="colonnes"
       [lignes]="lignes()"
       [chargement]="data.etat().chargement"
