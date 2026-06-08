@@ -62,7 +62,9 @@ export class ComptesRendusComponent {
       type: 'pastille',
       // Colonne courte (pastille) : largeur fixe pour ne pas voler l'espace au texte.
       largeur: '120px',
-      ton: (c) => this.tonStatut(c.status),
+      // Le statut publié/brouillon se lit fiablement de la présence de publishedAt.
+      valeur: (c) => (c.publishedAt ? 'Publié' : 'Brouillon'),
+      ton: (c) => (c.publishedAt ? 'succes' : 'attention'),
     },
     // Colonne date courte : largeur fixe, les colonnes de texte long s'étirent.
     { cle: 'publishedAt', libelle: 'Publié le', type: 'date', largeur: '120px' },
