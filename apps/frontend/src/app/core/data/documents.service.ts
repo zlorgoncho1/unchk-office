@@ -24,4 +24,38 @@ export class DocumentsService {
       params,
     });
   }
+
+  // --- CRUD documents ---
+  // NB : la création est multipart (métadonnées JSON « metadata » + fichier binaire « file »
+  //      vers MinIO). La mise à jour des métadonnées est un PATCH (titre, description,
+  //      archived, visibility). La suppression est logique côté backend.
+
+  /**
+   * Dépose un nouveau document (multipart : métadonnées + fichier binaire).
+   * Le champ « metadata » porte le DTO CreerDocumentRequete (title, category, description,
+   * visibility, sourceService, sourceRef) ; le champ « file » porte le binaire.
+   */
+  creer(metadata: Record<string, unknown>, fichier: File): Observable<Document> {
+    const corps = new FormData();
+    // Les métadonnées voyagent en JSON sous le nom de part « metadata ».
+    corps.append(
+      'metadata',
+      new Blob([JSON.stringify(metadata)], { type: 'application/json' })
+    );
+    corps.append('file', fichier);
+    return this.http.post<Document>(`${this.base}/api/documents`, corps);
+  }
+
+  /**
+   * Met à jour les métadonnées d'un document (PATCH côté backend).
+   * Corps = MettreAJourDocumentRequete : title, description, archived, visibility.
+   */
+  modifier(id: string, corps: Record<string, unknown>): Observable<Document> {
+    return this.http.patch<Document>(`${this.base}/api/documents/${id}`, corps);
+  }
+
+  /** Supprime (logiquement) un document. */
+  supprimer(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/api/documents/${id}`);
+  }
 }

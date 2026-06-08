@@ -14,10 +14,14 @@
 } @else {
   <unchk-section-card sansBordure>
     <unchk-data-table
-        detaillable
+      detaillable
       [colonnes]="colonnes"
       [lignes]="lignes()"
       [chargement]="data.etat().chargement"
+      modifiable
+      supprimable
+      (modifier)="onModifier($event)"
+      (supprimer)="onSupprimer($event)"
       filtrable
       placeholderFiltre="Filtrer par titre, catégorie, type…"
       titreVide="Aucun document"
