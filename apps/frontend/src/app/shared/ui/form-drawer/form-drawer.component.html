@@ -1,0 +1,59 @@
+<!-- En-tête figé : titre + fermer. -->
+<div class="fd-entete">
+  <h2 class="fd-titre">
+    <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
+    <span>{{ data.titre }}</span>
+  </h2>
+  <button mat-icon-button class="fd-fermer" type="button" (click)="annuler()" aria-label="Fermer">
+    <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+  </button>
+</div>
+
+<!-- Corps défilant : formulaire réactif, une colonne. -->
+<form class="fd-corps" [formGroup]="form" (ngSubmit)="valider()">
+  @for (champ of data.champs; track champ.cle) {
+    <mat-form-field appearance="outline">
+      <mat-label>{{ champ.libelle }}</mat-label>
+
+      @switch (champ.type) {
+        @case ('textarea') {
+          <textarea matInput [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" rows="3"></textarea>
+        }
+        @case ('select') {
+          <mat-select [formControlName]="champ.cle">
+            @for (o of champ.options || []; track o.valeur) {
+              <mat-option [value]="o.valeur">{{ o.libelle }}</mat-option>
+            }
+          </mat-select>
+        }
+        @case ('date') {
+          <input matInput type="date" [formControlName]="champ.cle" />
+        }
+        @case ('nombre') {
+          <input matInput type="number" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
+        }
+        @case ('email') {
+          <input matInput type="email" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
+        }
+        @case ('tel') {
+          <input matInput type="tel" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
+        }
+        @default {
+          <input matInput type="text" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
+        }
+      }
+
+      @if (champ.aide) {
+        <mat-hint>{{ champ.aide }}</mat-hint>
+      }
+    </mat-form-field>
+  }
+</form>
+
+<!-- Actions figées en bas. -->
+<div class="fd-actions">
+  <button mat-stroked-button type="button" (click)="annuler()">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="valider()" [disabled]="form.invalid">
+    {{ data.libelleValider || 'Enregistrer' }}
+  </button>
+</div>

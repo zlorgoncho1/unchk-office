@@ -58,15 +58,26 @@
                     <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
                   </button>
                 }
-                @for (a of actionsVisibles(ligne); track a.cle) {
+                @if (modifiable()) {
                   <button
                     type="button"
                     class="dt-action-btn"
-                    [title]="a.libelle"
-                    [attr.aria-label]="a.libelle"
-                    (click)="declencher(a, ligne, $event)"
+                    title="Modifier"
+                    aria-label="Modifier"
+                    (click)="emettreModifier(ligne, $event)"
                   >
-                    <iconify-icon [attr.icon]="'solar:' + a.icone"></iconify-icon>
+                    <iconify-icon icon="solar:pen-2-linear"></iconify-icon>
+                  </button>
+                }
+                @if (supprimable()) {
+                  <button
+                    type="button"
+                    class="dt-action-btn dt-action-btn--danger"
+                    title="Supprimer"
+                    aria-label="Supprimer"
+                    (click)="emettreSupprimer(ligne, $event)"
+                  >
+                    <iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon>
                   </button>
                 }
               </td>
