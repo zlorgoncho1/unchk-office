@@ -102,7 +102,7 @@ public class CompteRendu {
     @Column(name = "role", nullable = false)
     private Set<String> visibility = new HashSet<>();
 
-    protected CompteRendu() {
+    public CompteRendu() {
         // Requis par JPA.
     }
 

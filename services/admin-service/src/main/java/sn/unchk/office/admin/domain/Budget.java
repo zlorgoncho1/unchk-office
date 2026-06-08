@@ -81,7 +81,7 @@ public class Budget {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    protected Budget() {
+    public Budget() {
         // Requis par JPA.
     }
 

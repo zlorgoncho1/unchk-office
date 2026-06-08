@@ -64,7 +64,7 @@ public class InsertionOutcome {
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
 
-    protected InsertionOutcome() {
+    public InsertionOutcome() {
         // Requis par JPA.
     }
 

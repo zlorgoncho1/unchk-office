@@ -46,7 +46,7 @@ public class PeopleStudentRo {
     @Column(name = "event_offset")
     private Long eventOffset;
 
-    protected PeopleStudentRo() {
+    public PeopleStudentRo() {
         // Requis par JPA.
     }
 

@@ -90,7 +90,7 @@ public class Reunion {
     @Column(name = "deleted_at")
     private Instant deletedAt;
 
-    protected Reunion() {
+    public Reunion() {
         // Constructeur requis par JPA.
     }
 

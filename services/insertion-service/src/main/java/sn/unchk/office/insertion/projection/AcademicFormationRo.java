@@ -35,7 +35,7 @@ public class AcademicFormationRo {
     @Column(name = "event_offset")
     private Long eventOffset;
 
-    protected AcademicFormationRo() {
+    public AcademicFormationRo() {
         // Requis par JPA.
     }
 

@@ -83,7 +83,7 @@ public class Document {
     @Column(name = "deleted_at")
     private Instant deletedAt;
 
-    protected Document() {
+    public Document() {
         // Constructeur requis par JPA.
     }
 
