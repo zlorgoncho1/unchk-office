@@ -15,13 +15,36 @@ html {
       primary: unchk.$primary-palette,
       tertiary: unchk.$tertiary-palette,
     ),
-    typography: (
-      plain-family: 'Miranda Sans',
-      brand-family: 'Miranda Sans',
-    ),
+    typography: 'Miranda Sans',
     density: 0,
   ));
   color-scheme: light;
+  // Garantit la police de marque sur TOUS les composants Material (tokens système M3) :
+  // le réglage `typography` du thème ne propage pas toujours la famille personnalisée.
+  --mat-sys-brand-font-family: 'Miranda Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --mat-sys-plain-font-family: 'Miranda Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+// Material 3 génère ses tokens de police de rôle SANS guillemets : une famille
+// contenant un espace ("Miranda Sans") devient une valeur CSS invalide et le
+// navigateur retombe sur une police système (Arial). On force donc la famille,
+// correctement entre guillemets, sur les composants Material.
+.mat-typography,
+.mat-mdc-button-base,
+.mdc-button__label,
+.mat-mdc-card,
+.mat-mdc-form-field,
+.mat-mdc-input-element,
+.mat-mdc-select,
+.mat-mdc-menu-content,
+.mat-mdc-list-base,
+.mat-mdc-table,
+.mat-mdc-chip,
+.mat-mdc-tab-group,
+.mat-mdc-paginator,
+.mat-mdc-tooltip,
+.mat-mdc-dialog-container {
+  font-family: 'Miranda Sans', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
 }
 
 html, body { height: 100%; }
