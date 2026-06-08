@@ -1,0 +1,26 @@
+{
+  "role_permissions": {
+    "admin": [
+      { "method": "*", "path": "/**" }
+    ],
+    "administratif": [
+      { "method": "GET", "path": "/api/**" },
+      { "method": "POST", "path": "/api/documents/**" },
+      { "method": "POST", "path": "/api/communication/**" },
+      { "method": "POST", "path": "/api/admin/**" }
+    ],
+    "enseignant": [
+      { "method": "GET", "path": "/api/**" },
+      { "method": "POST", "path": "/api/academic/**" },
+      { "method": "POST", "path": "/api/communication/comptes-rendus/**" }
+    ],
+    "appui-insertion": [
+      { "method": "GET", "path": "/api/insertion/**" },
+      { "method": "POST", "path": "/api/insertion/**" }
+    ],
+    "etudiant": [
+      { "method": "GET", "path": "/api/etudiants/me/**" },
+      { "method": "GET", "path": "/api/academic/emplois-du-temps/**" }
+    ]
+  }
+}
