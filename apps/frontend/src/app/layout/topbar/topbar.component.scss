@@ -21,7 +21,7 @@
   }
 
   &__burger {
-    display: none; // visible seulement en mobile (cf. media query)
+    display: inline-flex; // toggle : replie la sidebar (desktop) / ouvre l'overlay (mobile)
     align-items: center;
     justify-content: center;
     width: 38px;

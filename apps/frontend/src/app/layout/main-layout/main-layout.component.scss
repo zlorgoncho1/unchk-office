@@ -1,19 +1,25 @@
-// Mise en page principale brandée UNCHK — grille 3 colonnes responsive.
+// Mise en page principale brandée UNCHK — grille 3 colonnes responsive et repliable.
 :host {
   display: block;
   height: 100vh;
   overflow: hidden;
 }
 
-// Largeurs des colonnes latérales.
+// Largeurs par défaut.
 $largeur-sidebar: 260px;
+$largeur-sidebar-mini: 76px;
 $largeur-rail: 312px;
 
 .layout {
+  // Largeurs de colonnes pilotées par variables (repli desktop).
+  --col-sidebar: #{$largeur-sidebar};
+  --col-rail: #{$largeur-rail};
+
   display: grid;
-  grid-template-columns: $largeur-sidebar 1fr $largeur-rail;
+  grid-template-columns: var(--col-sidebar) 1fr var(--col-rail);
   height: 100vh;
   background: var(--unchk-background);
+  transition: grid-template-columns 0.22s ease;
 
   &__sidebar {
     grid-column: 1;
@@ -57,9 +63,26 @@ $largeur-rail: 312px;
     background: rgba(22, 49, 74, 0.4);
   }
 
-  // --- Responsive : on masque le rail droit en tablette ---
+  // --- Repli desktop (gestion de l'espace) ---
+  &--sidebar-replie {
+    @media (min-width: 1025px) {
+      --col-sidebar: #{$largeur-sidebar-mini};
+    }
+  }
+
+  &--rail-replie {
+    @media (min-width: 1281px) {
+      --col-rail: 0px;
+
+      .layout__rail {
+        display: none;
+      }
+    }
+  }
+
+  // --- Responsive : rail droit en overlay sous 1280px ---
   @media (max-width: 1280px) {
-    grid-template-columns: $largeur-sidebar 1fr;
+    grid-template-columns: var(--col-sidebar) 1fr;
 
     .layout__rail {
       position: fixed;
@@ -74,7 +97,7 @@ $largeur-rail: 312px;
     }
   }
 
-  // --- Responsive : sidebar repliable en tablette / mobile ---
+  // --- Responsive : sidebar en overlay sous 1024px ---
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
 
@@ -95,7 +118,7 @@ $largeur-rail: 312px;
     }
   }
 
-  // --- États ouverts (déclenchés depuis la topbar) ---
+  // --- États overlay ouverts (mobile, déclenchés depuis la topbar) ---
   &--menu-ouvert {
     @media (max-width: 1024px) {
       .layout__sidebar {

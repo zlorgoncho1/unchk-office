@@ -30,23 +30,33 @@ export class MainLayoutComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationService);
 
-  // États d'ouverture des panneaux latéraux (utiles en mobile).
+  // États mobile : panneaux en overlay.
   readonly menuOuvert = signal(false);
   readonly railOuvert = signal(false);
+  // États desktop : repli pour gérer l'espace (sidebar en mini-icônes, rail masqué).
+  readonly sidebarReplie = signal(false);
+  readonly railReplie = signal(false);
 
   ngOnInit(): void {
     // Ouvre le canal de notifications temps réel à l'entrée de l'espace connecté.
     this.notifications.connecter();
   }
 
-  /** Ouvre/ferme la barre latérale (mobile). */
+  /** Bouton menu : replie la sidebar (desktop) ou ouvre l'overlay (mobile). */
   basculerMenu(): void {
-    this.menuOuvert.update((v) => !v);
+    if (this.estPetitEcran(1024)) this.menuOuvert.update((v) => !v);
+    else this.sidebarReplie.update((v) => !v);
   }
 
-  /** Ouvre/ferme le rail droit (mobile). */
+  /** Bouton cloche : masque le rail (desktop) ou ouvre l'overlay (mobile). */
   basculerRail(): void {
-    this.railOuvert.update((v) => !v);
+    if (this.estPetitEcran(1280)) this.railOuvert.update((v) => !v);
+    else this.railReplie.update((v) => !v);
+  }
+
+  /** Vrai si la fenêtre est <= max (breakpoint tablette/mobile). */
+  private estPetitEcran(max: number): boolean {
+    return typeof window !== 'undefined' && window.innerWidth <= max;
   }
 
   /** Ferme les deux panneaux (clic sur le voile ou navigation). */
