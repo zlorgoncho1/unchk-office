@@ -47,9 +47,12 @@ export class ComptesRendusComponent {
       cle: 'status',
       libelle: 'Statut',
       type: 'pastille',
+      // Colonne courte (pastille) : largeur fixe pour ne pas voler l'espace au texte.
+      largeur: '120px',
       ton: (c) => this.tonStatut(c.status),
     },
-    { cle: 'publishedAt', libelle: 'Publié le', type: 'date' },
+    // Colonne date courte : largeur fixe, les colonnes de texte long s'étirent.
+    { cle: 'publishedAt', libelle: 'Publié le', type: 'date', largeur: '120px' },
     {
       cle: 'visibility',
       libelle: 'Visibilité',

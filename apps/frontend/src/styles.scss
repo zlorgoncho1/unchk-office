@@ -92,3 +92,23 @@ iconify-icon { display: inline-block; vertical-align: middle; line-height: 1; }
 .mat-mdc-form-field-icon-prefix iconify-icon {
   margin-inline-end: 12px;
 }
+
+// --- Drawer latéral droit (panneau de détail glissant) ---
+// panelClass appliqué au dialog Material ouvert en position { top, right }.
+// La surface occupe toute la hauteur, est plaquée à droite (coin gauche carré),
+// porte une ombre vers la gauche et glisse depuis la droite à l'ouverture.
+.unchk-drawer .mat-mdc-dialog-surface {
+  height: 100vh;
+  border-radius: 0;
+  box-shadow: var(--unchk-shadow-overlay, 0 0 32px rgba(22, 49, 74, 0.18));
+  animation: unchk-drawer-in 0.22s ease;
+}
+
+@keyframes unchk-drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

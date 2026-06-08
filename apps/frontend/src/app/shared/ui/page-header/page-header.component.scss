@@ -14,7 +14,7 @@
   &__gauche {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     min-width: 0;
   }
 
@@ -40,7 +40,7 @@
   }
 
   &__sous-titre {
-    margin: 2px 0 0;
+    margin: 4px 0 0;
     font-size: 0.9rem;
     color: var(--unchk-text-muted);
   }
@@ -48,7 +48,7 @@
   &__actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
   }
 }

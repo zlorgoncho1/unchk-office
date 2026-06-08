@@ -41,13 +41,15 @@ export class PersonnelComponent {
 
   // Colonnes du tableau brandé.
   protected readonly colonnes: ColonneTable<Personnel>[] = [
-    { cle: 'matricule', libelle: 'Matricule' },
+    // Colonnes courtes : largeur bornée pour laisser respirer le texte long.
+    { cle: 'matricule', libelle: 'Matricule', largeur: '120px' },
     { cle: 'lastName', libelle: 'Nom' },
     { cle: 'firstName', libelle: 'Prénom' },
     {
       cle: 'kind',
       libelle: 'Catégorie',
       type: 'pastille',
+      largeur: '150px',
       // Catégorie humanisée (ex. « enseignant_associe » → « Enseignant associé »).
       valeur: (p) => humaniser(p.kind),
       ton: () => 'info',
@@ -59,6 +61,7 @@ export class PersonnelComponent {
       cle: 'active',
       libelle: 'Statut',
       type: 'pastille',
+      largeur: '110px',
       valeur: (p) => (p.active ? 'Actif' : 'Inactif'),
       ton: (p) => (p.active ? 'succes' : 'neutre'),
     },

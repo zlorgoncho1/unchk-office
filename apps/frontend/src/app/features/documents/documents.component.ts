@@ -49,10 +49,12 @@ export class DocumentsComponent {
       // Catégorie humanisée (underscores -> espaces, capitale initiale).
       valeur: (d) => humaniser(d.category),
       ton: () => 'info',
+      // Colonne courte : largeur figée pour laisser respirer le titre.
+      largeur: '140px',
     },
     { cle: 'mimeType', libelle: 'Type' },
-    { cle: 'sizeBytes', libelle: 'Taille', type: 'nombre' },
-    { cle: 'createdAt', libelle: 'Date', type: 'date' },
+    { cle: 'sizeBytes', libelle: 'Taille', type: 'nombre', largeur: '110px' },
+    { cle: 'createdAt', libelle: 'Date', type: 'date', largeur: '110px' },
     {
       cle: 'archived',
       libelle: 'État',
@@ -60,6 +62,8 @@ export class DocumentsComponent {
       // Libellé lisible selon l'archivage.
       valeur: (d) => (d.archived ? 'Archivé' : 'Actif'),
       ton: (d) => (d.archived ? 'succes' : 'neutre'),
+      // Colonne courte : largeur figée (pastille Actif/Archivé).
+      largeur: '110px',
     },
   ];
 }

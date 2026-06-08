@@ -41,8 +41,10 @@ export class EtudiantsComponent {
   );
 
   // Colonnes du tableau, alignées sur les champs du DTO Etudiant.
+  // Les colonnes courtes ont une largeur fixe pour éviter les retours à la ligne
+  // disgracieux ; nom/prénom/promo restent souples et occupent l'espace restant.
   protected readonly colonnes: ColonneTable<Etudiant>[] = [
-    { cle: 'matricule', libelle: 'Matricule' },
+    { cle: 'matricule', libelle: 'Matricule', largeur: '120px' },
     { cle: 'lastName', libelle: 'Nom' },
     { cle: 'firstName', libelle: 'Prénom' },
     {
@@ -50,17 +52,19 @@ export class EtudiantsComponent {
       libelle: 'Genre',
       type: 'pastille',
       align: 'centre',
+      largeur: '110px',
       // On affiche un libellé lisible plutôt que le code brut (M/F).
       valeur: (e) => this.libelleGenre(e.gender),
       ton: (e) => this.tonGenre(e.gender),
     },
     { cle: 'promotion', libelle: 'Promo' },
-    { cle: 'enrollmentYear', libelle: 'Année', type: 'nombre' },
+    { cle: 'enrollmentYear', libelle: 'Année', type: 'nombre', largeur: '90px' },
     {
       cle: 'status',
       libelle: 'Statut',
       type: 'pastille',
       align: 'centre',
+      largeur: '120px',
       ton: (e) => this.tonStatut(e.status),
     },
   ];

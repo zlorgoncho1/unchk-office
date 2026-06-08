@@ -182,11 +182,15 @@ export class DataTableComponent<T = Record<string, unknown>> {
       libelle: c.libelle,
       valeur: this.afficher(c, ligne),
     }));
+    // Ouverture en panneau latéral (drawer) collé au bord droit de l'écran.
     this.dialog.open(DetailLigneDialog, {
       data: { titre: 'Détail', champs },
       autoFocus: false,
-      width: '480px',
-      maxWidth: '92vw',
+      position: { top: '0', right: '0' },
+      height: '100vh',
+      width: '440px',
+      maxWidth: '95vw',
+      panelClass: 'unchk-drawer',
     });
   }
 

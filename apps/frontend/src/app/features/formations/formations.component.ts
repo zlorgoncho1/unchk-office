@@ -43,8 +43,10 @@ export class FormationsComponent {
   protected readonly lignes = computed(() => this.data.etat().donnees ?? []);
 
   // Description des colonnes du tableau brandé.
+  // Les colonnes courtes ont une largeur fixe pour laisser respirer
+  // les colonnes de texte long (Intitulé, Type, Financement).
   protected readonly colonnes: ColonneTable<Formation>[] = [
-    { cle: 'code', libelle: 'Code' },
+    { cle: 'code', libelle: 'Code', largeur: '110px' },
     { cle: 'label', libelle: 'Intitulé' },
     {
       cle: 'level',
@@ -52,6 +54,7 @@ export class FormationsComponent {
       type: 'pastille',
       valeur: (f) => humaniser(f.level),
       ton: () => 'info',
+      largeur: '120px',
     },
     { cle: 'kind', libelle: 'Type', valeur: (f) => humaniser(f.kind) },
     {
@@ -64,15 +67,17 @@ export class FormationsComponent {
       libelle: 'Formés',
       type: 'nombre',
       valeur: (f) => f.trainedMale + f.trainedFemale,
+      largeur: '90px',
     },
-    { cle: 'startDate', libelle: 'Début', type: 'date' },
-    { cle: 'endDate', libelle: 'Fin', type: 'date' },
+    { cle: 'startDate', libelle: 'Début', type: 'date', largeur: '110px' },
+    { cle: 'endDate', libelle: 'Fin', type: 'date', largeur: '110px' },
     {
       cle: 'active',
       libelle: 'Statut',
       type: 'pastille',
       valeur: (f) => (f.active ? 'Active' : 'Inactive'),
       ton: (f) => (f.active ? 'succes' : 'neutre'),
+      largeur: '110px',
     },
   ];
 }

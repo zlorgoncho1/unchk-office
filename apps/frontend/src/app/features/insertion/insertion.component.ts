@@ -40,18 +40,21 @@ export class InsertionComponent {
   );
 
   // Colonnes du tableau de suivi des stages.
+  // Les colonnes courtes ont une largeur fixe pour laisser respirer
+  // les colonnes de texte long (intitulé, maître de stage), qui s'étirent.
   protected readonly colonnes: ColonneTable<Stage>[] = [
     { cle: 'title', libelle: 'Intitulé' },
     { cle: 'supervisorName', libelle: 'Maître de stage' },
-    { cle: 'startDate', libelle: 'Début', type: 'date' },
-    { cle: 'endDate', libelle: 'Fin', type: 'date' },
+    { cle: 'startDate', libelle: 'Début', type: 'date', largeur: '110px' },
+    { cle: 'endDate', libelle: 'Fin', type: 'date', largeur: '110px' },
     {
       cle: 'status',
       libelle: 'Statut',
       type: 'pastille',
+      largeur: '130px',
       ton: (s) => this.tonStatut(s.status),
     },
-    { cle: 'grade', libelle: 'Note', type: 'nombre' },
+    { cle: 'grade', libelle: 'Note', type: 'nombre', largeur: '90px' },
   ];
 
   // Ton de la pastille selon le statut du stage.

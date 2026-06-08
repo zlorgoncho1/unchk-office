@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 2px 0 14px;
+  padding: 0 0 12px;
 
   iconify-icon {
     color: var(--unchk-text-subtle);
@@ -47,8 +47,10 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
+  line-height: 1.4;
 
   // En-têtes : fond clair, texte marine, capitales discrètes.
+  // Padding compact et régulier (vertical réduit, horizontal 16px).
   thead th {
     background: var(--unchk-line);
     color: var(--unchk-navy);
@@ -57,7 +59,8 @@
     text-transform: uppercase;
     letter-spacing: 0.03em;
     text-align: left;
-    padding: 11px 14px;
+    padding: 9px 16px;
+    vertical-align: middle;
     white-space: nowrap;
     border-bottom: 1px solid var(--unchk-border);
 
@@ -69,10 +72,10 @@
     }
   }
 
-  // Cellules : séparateur discret, alignement vertical centré.
+  // Cellules : lignes denses et régulières, séparateur fin, alignement centré.
   tbody td {
     color: var(--unchk-text);
-    padding: 12px 14px;
+    padding: 9px 16px;
     border-bottom: 1px solid var(--unchk-line);
     vertical-align: middle;
   }

@@ -43,6 +43,7 @@ export class ReunionsComponent {
 
   // Colonnes du tableau de réunions.
   protected readonly colonnes: ColonneTable<Reunion>[] = [
+    // Colonne de texte long : laissée libre de s'étirer.
     { cle: 'title', libelle: 'Titre' },
     {
       cle: 'type',
@@ -50,8 +51,10 @@ export class ReunionsComponent {
       type: 'pastille',
       valeur: (r) => humaniser(r.type),
       ton: () => 'info',
+      largeur: '140px', // pastille courte : largeur fixe
     },
-    { cle: 'startsAt', libelle: 'Début', type: 'date-heure' },
+    { cle: 'startsAt', libelle: 'Début', type: 'date-heure', largeur: '150px' }, // date+heure : largeur fixe
+    // Colonne de texte : laissée libre de s'étirer.
     { cle: 'location', libelle: 'Lieu' },
     {
       cle: 'status',
@@ -59,7 +62,9 @@ export class ReunionsComponent {
       type: 'pastille',
       valeur: (r) => humaniser(r.status),
       ton: (r) => this.tonStatut(r),
+      largeur: '120px', // pastille courte : largeur fixe
     },
+    // Colonne de texte : laissée libre de s'étirer.
     { cle: 'organizerName', libelle: 'Organisateur' },
   ];
 
