@@ -1,0 +1,15 @@
+// ============================================================
+// Styles de la page Notifications.
+// Rangée de compteurs (KPI) au-dessus du tableau brandé.
+// ============================================================
+:host {
+  display: block;
+}
+
+// Rangée de cartes KPI (s'adapte à la largeur disponible).
+.notif__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}

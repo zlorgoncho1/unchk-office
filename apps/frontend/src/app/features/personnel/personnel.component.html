@@ -1,0 +1,26 @@
+<!-- Page Personnel : en-tête brandé + tableau filtrable. -->
+<unchk-page-header
+  titre="Personnel"
+  sousTitre="Annuaire du personnel de l'université"
+  icone="users-group-two-rounded-bold-duotone"
+/>
+
+@if (data.etat().erreur) {
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Indisponible"
+    [message]="data.etat().erreur"
+  />
+} @else {
+  <unchk-section-card sansBordure>
+    <unchk-data-table
+      [colonnes]="colonnes"
+      [lignes]="lignes()"
+      [chargement]="data.etat().chargement"
+      filtrable
+      titreVide="Aucun agent"
+      messageVide="Aucun membre du personnel n'est enregistré pour le moment."
+      iconeVide="users-group-two-rounded-line-duotone"
+    />
+  </unchk-section-card>
+}

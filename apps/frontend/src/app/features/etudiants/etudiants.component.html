@@ -1,0 +1,29 @@
+<!-- Page Étudiants : en-tête brandé + tableau filtrable des étudiants. -->
+<unchk-page-header
+  titre="Étudiants"
+  sousTitre="Annuaire des étudiants : identité, promotion et statut"
+  icone="users-group-rounded-bold-duotone"
+/>
+
+@if (data.etat().erreur) {
+  <!-- Erreur de chargement : message neutre sans détail technique. -->
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Étudiants indisponibles"
+    [message]="data.etat().erreur"
+  />
+} @else {
+  <!-- Tableau brandé : filtre texte, états chargement et vide gérés en interne. -->
+  <unchk-section-card sansBordure>
+    <unchk-data-table
+      [colonnes]="colonnes"
+      [lignes]="lignes()"
+      [chargement]="data.etat().chargement"
+      filtrable
+      placeholderFiltre="Filtrer par matricule, nom, promo, statut…"
+      titreVide="Aucun étudiant"
+      messageVide="Aucun étudiant n'est enregistré pour le moment."
+      iconeVide="users-group-rounded-line-duotone"
+    />
+  </unchk-section-card>
+}

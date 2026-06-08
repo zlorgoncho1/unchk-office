@@ -88,8 +88,8 @@ export const routes: Routes = [
         title: 'Formations · UNCHK Office',
         data: { titre: 'Formations', icone: 'square-academic-cap-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/formations/formations.component').then(
+            (m) => m.FormationsComponent
           ),
       },
       {
@@ -108,8 +108,8 @@ export const routes: Routes = [
         canActivate: [roleGuard('admin', 'administratif', 'enseignant', 'appui-insertion')],
         data: { titre: 'Étudiants', icone: 'users-group-rounded-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/etudiants/etudiants.component').then(
+            (m) => m.EtudiantsComponent
           ),
       },
       {
@@ -118,8 +118,8 @@ export const routes: Routes = [
         canActivate: [roleGuard('admin', 'etudiant')],
         data: { titre: 'Mon dossier', icone: 'user-id-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/mon-dossier/mon-dossier.component').then(
+            (m) => m.MonDossierComponent
           ),
       },
 
@@ -129,8 +129,8 @@ export const routes: Routes = [
         title: 'Réunions · UNCHK Office',
         data: { titre: 'Réunions', icone: 'users-group-two-rounded-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/reunions/reunions.component').then(
+            (m) => m.ReunionsComponent
           ),
       },
       {
@@ -138,8 +138,8 @@ export const routes: Routes = [
         title: 'Comptes rendus · UNCHK Office',
         data: { titre: 'Comptes rendus', icone: 'document-text-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/comptes-rendus/comptes-rendus.component').then(
+            (m) => m.ComptesRendusComponent
           ),
       },
       {
@@ -147,8 +147,8 @@ export const routes: Routes = [
         title: 'Documents · UNCHK Office',
         data: { titre: 'Documents', icone: 'folder-with-files-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/documents/documents.component').then(
+            (m) => m.DocumentsComponent
           ),
       },
 
@@ -159,8 +159,8 @@ export const routes: Routes = [
         canActivate: [roleGuard('admin', 'administratif', 'appui-insertion', 'etudiant')],
         data: { titre: 'Suivi insertion', icone: 'case-round-minimalistic-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/insertion/insertion.component').then(
+            (m) => m.InsertionComponent
           ),
       },
       {
@@ -169,8 +169,8 @@ export const routes: Routes = [
         canActivate: [roleGuard('admin', 'appui-insertion')],
         data: { titre: 'Partenaires', icone: 'buildings-2-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/partenaires/partenaires.component').then(
+            (m) => m.PartenairesComponent
           ),
       },
       {
@@ -179,8 +179,8 @@ export const routes: Routes = [
         canActivate: [roleGuard('admin', 'administratif', 'appui-insertion')],
         data: { titre: "Statistiques d'insertion", icone: 'chart-2-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/statistiques/statistiques.component').then(
+            (m) => m.StatistiquesComponent
           ),
       },
 
@@ -191,8 +191,8 @@ export const routes: Routes = [
         canActivate: [roleGuard('admin', 'administratif')],
         data: { titre: 'Budgets', icone: 'wallet-money-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/budgets/budgets.component').then(
+            (m) => m.BudgetsComponent
           ),
       },
       {
@@ -201,8 +201,8 @@ export const routes: Routes = [
         canActivate: [roleGuard('admin', 'administratif')],
         data: { titre: 'Personnel', icone: 'users-group-rounded-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/personnel/personnel.component').then(
+            (m) => m.PersonnelComponent
           ),
       },
 
@@ -212,8 +212,8 @@ export const routes: Routes = [
         title: 'Notifications · UNCHK Office',
         data: { titre: 'Notifications', icone: 'bell-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/notifications/notifications.component').then(
+            (m) => m.NotificationsComponent
           ),
       },
       {
@@ -221,8 +221,8 @@ export const routes: Routes = [
         title: 'Paramètres · UNCHK Office',
         data: { titre: 'Paramètres', icone: 'settings-bold-duotone' },
         loadComponent: () =>
-          import('./features/placeholder/placeholder.component').then(
-            (m) => m.PlaceholderComponent
+          import('./features/parametres/parametres.component').then(
+            (m) => m.ParametresComponent
           ),
       },
 

@@ -1,0 +1,103 @@
+:host {
+  display: block;
+}
+
+// Barre de filtre au-dessus du tableau (cohérente avec .table-filtre des dashboards).
+.dt-filtre {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0 14px;
+
+  iconify-icon {
+    color: var(--unchk-text-subtle);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  input {
+    flex: 1;
+    border: 1px solid var(--unchk-border);
+    border-radius: var(--unchk-radius-md);
+    padding: 9px 12px;
+    font: inherit;
+    color: var(--unchk-navy);
+    background: var(--unchk-white);
+
+    &::placeholder {
+      color: var(--unchk-text-subtle);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--unchk-blue);
+      box-shadow: 0 0 0 3px rgba(28, 117, 188, 0.12);
+    }
+  }
+}
+
+// Conteneur défilant horizontalement sur petits écrans.
+.dt-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+// Tableau brandé UNCHK.
+.dt {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  // En-têtes : fond clair, texte marine, capitales discrètes.
+  thead th {
+    background: var(--unchk-line);
+    color: var(--unchk-navy);
+    font-weight: 700;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    text-align: left;
+    padding: 11px 14px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--unchk-border);
+
+    &:first-child {
+      border-top-left-radius: var(--unchk-radius-md);
+    }
+    &:last-child {
+      border-top-right-radius: var(--unchk-radius-md);
+    }
+  }
+
+  // Cellules : séparateur discret, alignement vertical centré.
+  tbody td {
+    color: var(--unchk-text);
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--unchk-line);
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  // Survol de ligne discret (même couleur que les dashboards).
+  tbody tr:hover {
+    background: var(--unchk-background);
+  }
+
+  // Alignements.
+  .dt--droite {
+    text-align: right;
+  }
+  .dt--centre {
+    text-align: center;
+  }
+
+  // Nombres et montants : chiffres tabulaires, semi-gras.
+  .dt-num {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--unchk-navy);
+  }
+}

@@ -1,0 +1,99 @@
+<!-- Page « Statistiques » d'insertion : KPIs et graphes de répartition. -->
+<unchk-page-header
+  titre="Statistiques d'insertion"
+  sousTitre="Répartition des étudiants insérés par type et par formation"
+  icone="chart-2-bold-duotone"
+></unchk-page-header>
+
+@if (data.etat().chargement) {
+  <!-- Chargement initial des statistiques. -->
+  <unchk-loading-state message="Chargement des statistiques…"></unchk-loading-state>
+} @else if (data.etat().erreur) {
+  <!-- Erreur de récupération : message brandé + bouton réessayer. -->
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Statistiques indisponibles"
+    [message]="data.etat().erreur"
+  >
+    <button type="button" class="bouton-reessayer" (click)="data.recharger()">
+      Réessayer
+    </button>
+  </unchk-empty-state>
+} @else if (!aDesDonnees()) {
+  <!-- Aucune donnée chiffrée à représenter. -->
+  <unchk-empty-state
+    icone="chart-2-bold-duotone"
+    titre="Aucune donnée"
+    message="Aucune statistique d'insertion n'est disponible pour le moment."
+  ></unchk-empty-state>
+} @else {
+  <!-- Compteurs clés (KPIs). -->
+  <section class="stats__kpis">
+    <unchk-stat-card
+      libelle="Étudiants insérés"
+      [valeur]="exposeNombre(total())"
+      icone="users-group-rounded-bold-duotone"
+      ton="blue"
+    ></unchk-stat-card>
+    <unchk-stat-card
+      libelle="Formations suivies"
+      [valeur]="nbFormations()"
+      icone="square-academic-cap-bold-duotone"
+      ton="green"
+    ></unchk-stat-card>
+    <unchk-stat-card
+      libelle="Types d'insertion"
+      [valeur]="nbTypes()"
+      icone="diagram-up-bold-duotone"
+      ton="orange"
+    ></unchk-stat-card>
+    <unchk-stat-card
+      libelle="Type dominant"
+      [valeur]="typeDominant()"
+      icone="medal-ribbons-star-bold-duotone"
+      ton="navy"
+    ></unchk-stat-card>
+  </section>
+
+  <!-- Graphes : répartition par type (camembert) et par formation (barres). -->
+  <div class="stats__graphes">
+    @if (nbTypes() > 0) {
+      <unchk-chart-card
+        titre="Répartition par type d'insertion"
+        icone="pie-chart-2-bold-duotone"
+        type="doughnut"
+        [data]="grapheTypes()"
+        [hauteur]="300"
+      ></unchk-chart-card>
+    } @else {
+      <unchk-section-card titre="Répartition par type d'insertion" icone="pie-chart-2-bold-duotone">
+        <unchk-empty-state
+          [compact]="true"
+          icone="chart-2-bold-duotone"
+          titre="Pas de données"
+          message="Aucun type d'insertion à représenter."
+        ></unchk-empty-state>
+      </unchk-section-card>
+    }
+
+    @if (nbFormations() > 0) {
+      <unchk-chart-card
+        titre="Insérés par formation"
+        icone="chart-square-bold-duotone"
+        type="bar"
+        [data]="grapheFormations()"
+        [options]="optionsBarres"
+        [hauteur]="300"
+      ></unchk-chart-card>
+    } @else {
+      <unchk-section-card titre="Insérés par formation" icone="chart-square-bold-duotone">
+        <unchk-empty-state
+          [compact]="true"
+          icone="chart-2-bold-duotone"
+          titre="Pas de données"
+          message="Aucune formation à représenter."
+        ></unchk-empty-state>
+      </unchk-section-card>
+    }
+  </div>
+}

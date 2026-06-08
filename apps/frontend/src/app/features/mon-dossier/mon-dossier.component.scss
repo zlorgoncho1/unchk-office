@@ -1,0 +1,31 @@
+// ============================================================
+// Retouches propres à la page « Mon dossier ».
+// Les styles structurants (.fiche, .home__section) proviennent de
+// home-shared.scss. On n'ajoute ici que le bouton « Réessayer ».
+// ============================================================
+:host {
+  display: block;
+}
+
+// Bouton « Réessayer » de l'état d'erreur (style sobre marqué UNCHK).
+.bouton-reessayer {
+  appearance: none;
+  cursor: pointer;
+  border: 1px solid var(--unchk-blue);
+  border-radius: var(--unchk-radius-md);
+  background: var(--unchk-white);
+  color: var(--unchk-blue);
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 16px;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--unchk-background);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(28, 117, 188, 0.12);
+  }
+}

@@ -1,0 +1,26 @@
+<!-- Page Formations : en-tête brandé + tableau de données filtrable. -->
+<unchk-page-header
+  titre="Formations"
+  sousTitre="Catalogue des formations et suivi des effectifs formés"
+  icone="square-academic-cap-bold-duotone"
+/>
+
+@if (data.etat().erreur) {
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Indisponible"
+    [message]="data.etat().erreur"
+  />
+} @else {
+  <unchk-section-card sansBordure>
+    <unchk-data-table
+      [colonnes]="colonnes"
+      [lignes]="lignes()"
+      [chargement]="data.etat().chargement"
+      filtrable
+      titreVide="Aucune formation"
+      messageVide="Aucune formation n'est enregistrée pour le moment."
+      iconeVide="square-academic-cap-line-duotone"
+    />
+  </unchk-section-card>
+}

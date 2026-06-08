@@ -1,0 +1,48 @@
+<!-- Page Notifications : liste des notifications temps réel reçues. -->
+<unchk-page-header
+  titre="Notifications"
+  sousTitre="Alertes sur les comptes rendus, circulaires et réunions"
+  icone="bell-bing-bold-duotone"
+>
+  <!-- Indicateur de l'état de la connexion temps réel. -->
+  <unchk-status-pill
+    [libelle]="libelleConnexion()"
+    [ton]="tonConnexion()"
+    [humaniserLibelle]="false"
+  ></unchk-status-pill>
+</unchk-page-header>
+
+<!-- Compteurs : total, non lues, lues. -->
+<section class="notif__kpis">
+  <unchk-stat-card
+    libelle="Notifications"
+    [valeur]="total()"
+    icone="bell-bing-bold-duotone"
+    ton="blue"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Non lues"
+    [valeur]="nonLues()"
+    icone="bell-off-bold-duotone"
+    ton="orange"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Lues"
+    [valeur]="lues()"
+    icone="check-read-line-duotone"
+    ton="green"
+  ></unchk-stat-card>
+</section>
+
+<!-- Tableau brandé des notifications (filtre + état vide soigné). -->
+<unchk-section-card sansBordure>
+  <unchk-data-table
+    [colonnes]="colonnes"
+    [lignes]="notifications()"
+    filtrable
+    placeholderFiltre="Filtrer par libellé, type…"
+    titreVide="Aucune notification"
+    messageVide="Vous n'avez aucune notification pour le moment. Les nouvelles alertes apparaîtront ici."
+    iconeVide="bell-off-bold-duotone"
+  ></unchk-data-table>
+</unchk-section-card>
