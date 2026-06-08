@@ -103,7 +103,7 @@ export const NAVIGATION: NavSection[] = [
         libelle: 'Registre de contact',
         chemin: 'registre-contact',
         icone: 'users-group-rounded-bold-duotone',
-        roles: ['admin', 'administratif', 'enseignant', 'appui-insertion'],
+        roles: ['admin', 'administratif', 'appui-insertion'],
       },
       {
         libelle: 'Partenaires',

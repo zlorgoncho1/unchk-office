@@ -170,7 +170,7 @@ export const routes: Routes = [
       {
         path: 'registre-contact',
         title: 'Registre de contact · UNCHK Office',
-        canActivate: [roleGuard('admin', 'administratif', 'enseignant', 'appui-insertion')],
+        canActivate: [roleGuard('admin', 'administratif', 'appui-insertion')],
         data: { titre: 'Registre de contact', icone: 'users-group-rounded-bold-duotone' },
         loadComponent: () =>
           import('./features/registre-contact/registre-contact.component').then(
