@@ -39,6 +39,20 @@ export class InsertionService {
     );
   }
 
+  /** Export PDF des statistiques d'insertion (fichier binaire, JWT ajouté par l'intercepteur). */
+  exporterStatistiquesPdf(): Observable<Blob> {
+    return this.http.get(`${this.base}/api/insertion/statistiques/export/pdf`, {
+      responseType: 'blob',
+    });
+  }
+
+  /** Export Excel des statistiques d'insertion (fichier binaire, JWT ajouté par l'intercepteur). */
+  exporterStatistiquesExcel(): Observable<Blob> {
+    return this.http.get(`${this.base}/api/insertion/statistiques/export/excel`, {
+      responseType: 'blob',
+    });
+  }
+
   // --- CRUD partenaires (corps = PartnerRequest : name, kind, sector, contactName,
   //     contactEmail, contactPhone, address, city) ---
 

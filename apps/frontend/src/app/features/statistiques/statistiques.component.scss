@@ -26,6 +26,28 @@
   }
 }
 
+// Bloc d'export des statistiques de formations : texte + boutons alignés.
+.stats__exports {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+// Texte d'accroche de l'export (couleur secondaire de la charte).
+.stats__exports-texte {
+  margin: 0;
+  color: var(--unchk-text-muted);
+}
+
+// Groupe de boutons d'export.
+.stats__exports-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 // Bouton « Réessayer » brandé (état d'erreur).
 .bouton-reessayer {
   margin-top: 12px;

@@ -4,9 +4,12 @@ import {
   computed,
   inject,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChartData, ChartOptions } from 'chart.js';
+import { Observable } from 'rxjs';
 
-import { InsertionService } from '../../core/data';
+import { AcademicService, InsertionService } from '../../core/data';
 import { StatistiquesInsertion } from '../../core/data/api.models';
 import {
   ChartCardComponent,
@@ -20,6 +23,7 @@ import {
 } from '../../shared/ui';
 import { chargerDepuis } from '../../shared/util/loadable';
 import { formaterNombre, humaniser } from '../../shared/util/format.util';
+import { telechargerBlob } from '../../shared/util/telechargement.util';
 
 /**
  * Page « Statistiques » d'insertion professionnelle.
@@ -37,6 +41,7 @@ import { formaterNombre, humaniser } from '../../shared/util/format.util';
     ChartCardComponent,
     EmptyStateComponent,
     LoadingStateComponent,
+    MatButtonModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './statistiques.component.html',
@@ -44,6 +49,8 @@ import { formaterNombre, humaniser } from '../../shared/util/format.util';
 })
 export class StatistiquesComponent {
   private readonly svc = inject(InsertionService);
+  private readonly academic = inject(AcademicService);
+  private readonly snack = inject(MatSnackBar);
 
   // Chargement des statistiques (état réactif : chargement / erreur / données).
   protected readonly data = chargerDepuis(() => this.svc.statistiques());
@@ -130,4 +137,51 @@ export class StatistiquesComponent {
 
   // Expose le formatage des nombres au template.
   protected readonly exposeNombre = formaterNombre;
+
+  // --- Exports PDF / Excel ------------------------------------------------
+
+  /** Exporte les statistiques d'insertion en PDF. */
+  protected exporterInsertionPdf(): void {
+    this.telecharger(
+      this.svc.exporterStatistiquesPdf(),
+      'statistiques-insertion.pdf'
+    );
+  }
+
+  /** Exporte les statistiques d'insertion en Excel. */
+  protected exporterInsertionExcel(): void {
+    this.telecharger(
+      this.svc.exporterStatistiquesExcel(),
+      'statistiques-insertion.xlsx'
+    );
+  }
+
+  /** Exporte les statistiques de formations (par genre) en PDF. */
+  protected exporterFormationsPdf(): void {
+    this.telecharger(
+      this.academic.exporterFormationsPdf(),
+      'statistiques-formations.pdf'
+    );
+  }
+
+  /** Exporte les statistiques de formations (par genre) en Excel. */
+  protected exporterFormationsExcel(): void {
+    this.telecharger(
+      this.academic.exporterFormationsXlsx(),
+      'statistiques-formations.xlsx'
+    );
+  }
+
+  /** Récupère le fichier binaire puis déclenche le téléchargement ; notifie en cas d'échec. */
+  private telecharger(source$: Observable<Blob>, nomFichier: string): void {
+    source$.subscribe({
+      next: (blob) => telechargerBlob(blob, nomFichier),
+      error: () =>
+        this.snack.open(
+          "Export impossible (droits insuffisants ou service indisponible).",
+          'OK',
+          { duration: 4000 }
+        ),
+    });
+  }
 }
