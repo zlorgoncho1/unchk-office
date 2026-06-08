@@ -23,6 +23,9 @@
           @for (col of colonnes(); track col.cle) {
             <th [class]="classe(col)" [style.width]="col.largeur || null">{{ col.libelle }}</th>
           }
+          @if (aDesActions()) {
+            <th class="dt--droite dt-actions-col">Actions</th>
+          }
         </tr>
       </thead>
       <tbody>
@@ -39,6 +42,32 @@
                   <span class="dt-num">{{ afficher(col, ligne) }}</span>
                 } @else {
                   {{ afficher(col, ligne) }}
+                }
+              </td>
+            }
+            @if (aDesActions()) {
+              <td class="dt--droite dt-actions">
+                @if (detaillable()) {
+                  <button
+                    type="button"
+                    class="dt-action-btn"
+                    title="Voir le détail"
+                    aria-label="Voir le détail"
+                    (click)="ouvrirDetail(ligne)"
+                  >
+                    <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
+                  </button>
+                }
+                @for (a of actionsVisibles(ligne); track a.cle) {
+                  <button
+                    type="button"
+                    class="dt-action-btn"
+                    [title]="a.libelle"
+                    [attr.aria-label]="a.libelle"
+                    (click)="declencher(a, ligne, $event)"
+                  >
+                    <iconify-icon [attr.icon]="'solar:' + a.icone"></iconify-icon>
+                  </button>
                 }
               </td>
             }

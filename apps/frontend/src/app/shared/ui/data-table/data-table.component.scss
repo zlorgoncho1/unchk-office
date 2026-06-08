@@ -100,4 +100,41 @@
     font-weight: 600;
     color: var(--unchk-navy);
   }
+
+  // Colonne d'actions : boutons icône discrets, alignés à droite.
+  .dt-actions-col {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  .dt-actions {
+    white-space: nowrap;
+  }
+
+  .dt-action-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--unchk-radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--unchk-slate);
+    transition: background 0.15s ease, color 0.15s ease;
+
+    iconify-icon {
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      background: var(--unchk-line);
+      color: var(--unchk-blue);
+    }
+
+    & + .dt-action-btn {
+      margin-left: 2px;
+    }
+  }
 }

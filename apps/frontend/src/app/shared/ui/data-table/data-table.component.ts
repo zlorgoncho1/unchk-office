@@ -3,9 +3,12 @@ import {
   Component,
   booleanAttribute,
   computed,
+  inject,
   input,
+  output,
   signal,
 } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import {
   formaterDate,
@@ -19,6 +22,7 @@ import {
   StatusPillComponent,
   StatusPillTon,
 } from '../status-pill/status-pill.component';
+import { DetailLigneDialog } from './detail-ligne-dialog.component';
 
 /** Type de rendu d'une colonne. */
 export type TypeColonne =
@@ -52,6 +56,22 @@ export interface ColonneTable<T = Record<string, unknown>> {
 }
 
 /**
+ * Action de ligne d'un {@link DataTableComponent} (bouton icône en fin de ligne).
+ *
+ * @typeParam T type d'une ligne de données
+ */
+export interface ActionTable<T = Record<string, unknown>> {
+  /** Identifiant de l'action (émis au clic). */
+  cle: string;
+  /** Libellé (infobulle + accessibilité). */
+  libelle: string;
+  /** Icône Solar (sans le préfixe « solar: »). */
+  icone: string;
+  /** Affiche l'action seulement si la condition est vraie pour la ligne. */
+  visible?: (ligne: T) => boolean;
+}
+
+/**
  * Tableau de données brandé UNCHK, réutilisable sur toutes les pages.
  * <p>
  * Pilotage par configuration de colonnes ({@link ColonneTable}) : rendu homogène
@@ -62,7 +82,7 @@ export interface ColonneTable<T = Record<string, unknown>> {
 @Component({
   selector: 'unchk-data-table',
   standalone: true,
-  imports: [StatusPillComponent, EmptyStateComponent, LoadingStateComponent],
+  imports: [StatusPillComponent, EmptyStateComponent, LoadingStateComponent, MatDialogModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './data-table.component.html',
   styleUrl: './data-table.component.scss',
@@ -84,6 +104,14 @@ export class DataTableComponent<T = Record<string, unknown>> {
   readonly messageVide = input<string | null>(null);
   /** Icône Solar de l'état vide. */
   readonly iconeVide = input<string>('inbox-line-duotone');
+  /** Actions de ligne optionnelles : une colonne « Actions » est ajoutée à droite. */
+  readonly actions = input<ActionTable<T>[]>([]);
+  /** Émis au clic d'une action de ligne : {@code { action: clé, ligne }}. */
+  readonly actionDeclenchee = output<{ action: string; ligne: T }>();
+  /** Ajoute un bouton « Voir » par ligne ouvrant un dialog de détail générique. */
+  readonly detaillable = input(false, { transform: booleanAttribute });
+
+  private readonly dialog = inject(MatDialog);
 
   protected readonly filtre = signal('');
 
@@ -141,5 +169,33 @@ export class DataTableComponent<T = Record<string, unknown>> {
     const align =
       col.align ?? (col.type === 'montant' || col.type === 'nombre' ? 'droite' : 'gauche');
     return align === 'droite' ? 'dt--droite' : align === 'centre' ? 'dt--centre' : '';
+  }
+
+  /** Indique si une colonne d'actions doit être affichée. */
+  protected aDesActions(): boolean {
+    return this.detaillable() || this.actions().length > 0;
+  }
+
+  /** Ouvre le dialog de détail générique avec les valeurs formatées de la ligne. */
+  protected ouvrirDetail(ligne: T): void {
+    const champs = this.colonnes().map((c) => ({
+      libelle: c.libelle,
+      valeur: this.afficher(c, ligne),
+    }));
+    this.dialog.open(DetailLigneDialog, {
+      data: { titre: 'Détail', champs },
+      autoFocus: false,
+    });
+  }
+
+  /** Actions visibles pour une ligne donnée. */
+  protected actionsVisibles(ligne: T): ActionTable<T>[] {
+    return this.actions().filter((a) => !a.visible || a.visible(ligne));
+  }
+
+  /** Émet l'action déclenchée pour la ligne (sans propager le clic à la ligne). */
+  protected declencher(action: ActionTable<T>, ligne: T, evt: Event): void {
+    evt.stopPropagation();
+    this.actionDeclenchee.emit({ action: action.cle, ligne });
   }
 }
