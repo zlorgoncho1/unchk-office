@@ -150,7 +150,7 @@ services:
   # Autorisation : OPA (Policy Decision Point)
   # ============================================================
   opa:
-    image: openpolicyagent/opa:0.68.0-rootless
+    image: openpolicyagent/opa:1.17.0
     container_name: unchk-opa
     command:
       - "run"
