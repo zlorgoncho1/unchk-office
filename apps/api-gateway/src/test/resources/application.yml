@@ -1,0 +1,29 @@
+# ============================================================
+# Configuration de TEST de l'API Gateway.
+# Objectif : permettre le chargement du contexte Spring hors-ligne
+# (pas d'appel réseau vers identity-service ni OPA au démarrage).
+#
+# On fournit uniquement jwk-set-uri (les clés JWKS sont récupérées à la
+# première validation de jeton, pas au démarrage) et on n'indique PAS
+# issuer-uri (qui déclencherait un appel OpenID Discovery au boot).
+# ============================================================
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:0/.well-known/jwks.json
+
+# OPA et CORS : valeurs locales factices (non appelées pendant le test de contexte).
+opa:
+  url: http://localhost:8181
+  timeout-ms: 500
+
+cors:
+  allowed-origin: http://localhost:4200
+
+gateway:
+  rate-limit:
+    capacity: 100
+    window-seconds: 60
