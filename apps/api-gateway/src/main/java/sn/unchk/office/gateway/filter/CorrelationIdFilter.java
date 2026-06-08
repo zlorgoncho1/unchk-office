@@ -44,8 +44,13 @@ public class CorrelationIdFilter implements GlobalFilter, Ordered {
                 .header(CORRELATION_HEADER, idFinal)
                 .build();
 
-        // Le renvoie aussi au client dans la réponse.
-        exchange.getResponse().getHeaders().set(CORRELATION_HEADER, idFinal);
+        // Le renvoie aussi au client, mais via beforeCommit (juste avant l'envoi) :
+        // modifier la réponse de façon synchrone AVANT le routage fige son état et fait
+        // perdre le corps proxifié par Spring Cloud Gateway (corps vide / content-length 0).
+        exchange.getResponse().beforeCommit(() -> {
+            exchange.getResponse().getHeaders().set(CORRELATION_HEADER, idFinal);
+            return Mono.empty();
+        });
 
         return chain.filter(exchange.mutate().request(requeteMutee).build());
     }

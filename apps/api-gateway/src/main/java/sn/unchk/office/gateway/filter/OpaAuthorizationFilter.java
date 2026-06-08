@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -17,32 +17,24 @@ import sn.unchk.office.gateway.security.OpaClient;
 import sn.unchk.office.gateway.security.OpaInput;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Filtre global d'autorisation RBAC délégué à OPA (rôle × route).
  *
- * <p>Pour chaque requête authentifiée, ce filtre :</p>
- * <ol>
- *   <li>récupère le contexte de sécurité réactif (JWT déjà validé par Spring Security) ;</li>
- *   <li>construit l'entrée OPA (sujet + rôles, action déduite de la méthode HTTP, chemin) ;</li>
- *   <li>interroge OPA et laisse passer SEULEMENT si la décision est "allow".</li>
- * </ol>
- *
- * <p>Principe deny-by-default : absence d'authentification, absence de décision,
- * ou OPA injoignable => 403 Forbidden, sans détail interne.</p>
- *
- * <p>Ce filtre s'exécute APRÈS la validation JWT de Spring Security et APRÈS les
- * filtres de corrélation / en-têtes, mais AVANT le routage effectif vers le service.</p>
+ * <p>Le contexte de sécurité réactif n'est PAS propagé de façon fiable aux GlobalFilters
+ * de Spring Cloud Gateway (ni {@code ReactiveSecurityContextHolder}, ni
+ * {@code exchange.getPrincipal()} ne portent l'authentification ici). On décode donc le JWT
+ * — déjà validé en amont par le resource server — pour en extraire le sujet et les rôles,
+ * puis on interroge OPA. Principe deny-by-default : pas de jeton, jeton invalide,
+ * décision négative ou OPA injoignable => 403, sans détail interne.</p>
  */
 @Component
 public class OpaAuthorizationFilter implements GlobalFilter, Ordered {
 
     private static final Logger log = LoggerFactory.getLogger(OpaAuthorizationFilter.class);
 
-    // Préfixe ajouté aux rôles par Spring Security (retiré avant l'envoi à OPA).
-    private static final String ROLE_PREFIX = "ROLE_";
+    // Claim du JWT portant la liste des rôles.
+    private static final String CLAIM_ROLES = "roles";
 
     // Chemins publics non soumis à l'autorisation OPA (alignés sur SecurityConfig).
     private static final List<String> CHEMINS_PUBLICS = List.of(
@@ -50,9 +42,11 @@ public class OpaAuthorizationFilter implements GlobalFilter, Ordered {
     );
 
     private final OpaClient opaClient;
+    private final ReactiveJwtDecoder jwtDecoder;
 
-    public OpaAuthorizationFilter(OpaClient opaClient) {
+    public OpaAuthorizationFilter(OpaClient opaClient, ReactiveJwtDecoder jwtDecoder) {
         this.opaClient = opaClient;
+        this.jwtDecoder = jwtDecoder;
     }
 
     @Override
@@ -66,25 +60,19 @@ public class OpaAuthorizationFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        // On récupère le JWT validé depuis le contexte de sécurité réactif.
-        return ReactiveSecurityContextHolder.getContext()
-                .map(ctx -> ctx.getAuthentication())
-                .flatMap(authentication -> {
-                    if (authentication == null || !authentication.isAuthenticated()) {
-                        return refuser(exchange, "non authentifié");
-                    }
+        String token = jetonBearer(request);
+        if (token == null) {
+            return refuser(exchange, "jeton Bearer absent");
+        }
 
-                    // Le principal est le JWT (cf. JwtRolesConverter) : on en tire le sujet (UUID).
-                    String subjectId = authentication.getName();
-                    if (authentication.getPrincipal() instanceof Jwt jwt) {
-                        subjectId = jwt.getSubject();
-                    }
-
-                    List<String> roles = extraireRoles(authentication.getAuthorities());
-
+        // Décodage du JWT (déjà validé) -> sujet + rôles -> décision OPA.
+        return jwtDecoder.decode(token)
+                .flatMap(jwt -> {
+                    String subjectId = jwt.getSubject();
+                    List<String> roles = lireRoles(jwt);
                     OpaInput input = construireEntree(subjectId, roles, method, path);
 
-                    // Appel OPA : on ne route que si la décision est "allow".
+                    // On ne route que si la décision OPA est "allow".
                     return opaClient.isAllowed(input).flatMap(allowed -> {
                         if (Boolean.TRUE.equals(allowed)) {
                             return chain.filter(exchange);
@@ -92,8 +80,23 @@ public class OpaAuthorizationFilter implements GlobalFilter, Ordered {
                         return refuser(exchange, "autorisation OPA refusée pour " + method + " " + path);
                     });
                 })
-                // Aucun contexte de sécurité => non authentifié => refus.
-                .switchIfEmpty(refuser(exchange, "contexte de sécurité absent"));
+                .onErrorResume(e -> refuser(exchange, "jeton invalide"));
+    }
+
+    /** Extrait le jeton du header Authorization: Bearer &lt;jwt&gt;. */
+    private String jetonBearer(ServerHttpRequest request) {
+        String h = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (h != null && h.regionMatches(true, 0, "Bearer ", 0, 7)) {
+            String t = h.substring(7).trim();
+            return t.isEmpty() ? null : t;
+        }
+        return null;
+    }
+
+    /** Lit la liste des rôles depuis le claim "roles" (vide si absent). */
+    private List<String> lireRoles(Jwt jwt) {
+        List<String> roles = jwt.getClaimAsStringList(CLAIM_ROLES);
+        return roles != null ? roles : List.of();
     }
 
     /** Construit l'entrée OPA conforme à la politique unchk.authz. */
@@ -121,19 +124,10 @@ public class OpaAuthorizationFilter implements GlobalFilter, Ordered {
      */
     private String typeRessource(String path) {
         String[] segments = path.split("/");
-        // segments[0] = "", segments[1] = "api", segments[2] = ressource.
         if (segments.length >= 3 && "api".equals(segments[1])) {
             return segments[2];
         }
         return "";
-    }
-
-    /** Retire le préfixe ROLE_ pour transmettre à OPA les rôles UNCHK bruts. */
-    private List<String> extraireRoles(java.util.Collection<? extends GrantedAuthority> authorities) {
-        return authorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(a -> a.startsWith(ROLE_PREFIX) ? a.substring(ROLE_PREFIX.length()) : a)
-                .collect(Collectors.toList());
     }
 
     /** Termine la requête en 403 (refus) sans divulguer de détail interne au client. */
@@ -149,7 +143,6 @@ public class OpaAuthorizationFilter implements GlobalFilter, Ordered {
 
     /**
      * Ordre d'exécution : juste après l'authentification mais avant le routage.
-     * Une valeur basse (mais positive) le place tôt dans la chaîne des filtres globaux.
      */
     @Override
     public int getOrder() {
