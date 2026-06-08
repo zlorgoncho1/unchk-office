@@ -26,6 +26,10 @@ x-service-env: &service-env
   JWT_ISSUER: http://identity-service:8080
   JWT_ISSUER_URI: http://identity-service:8080
   JWT_JWKS_URI: http://identity-service:8080/.well-known/jwks.json
+  # Active uniformément le resource-server JWT de Spring Boot : certains services
+  # n'avaient pas de chaîne JWT et retombaient sur la sécurité Basic par défaut.
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://identity-service:8080/.well-known/jwks.json
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://identity-service:8080
   CONFIG_SERVER_URI: http://config-server:8888
   CONFIG_SERVER_URL: http://config-server:8888
   CONFIG_IMPORT: "optional:configserver:http://config-server:8888"
