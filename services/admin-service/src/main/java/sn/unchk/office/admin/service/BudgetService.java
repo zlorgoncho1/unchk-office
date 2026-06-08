@@ -88,6 +88,28 @@ public class BudgetService {
         return chargerDto(enregistre);
     }
 
+    /**
+     * Supprime un budget et toutes ses lignes.
+     * <p>
+     * Le modèle Budget ne porte pas de {@code deletedAt} : on effectue donc une suppression
+     * physique (budget + lignes), puis on publie un événement {@code BudgetSupprime} sur
+     * {@code admin.budget} pour que les read-models des autres services se purgent à leur tour.
+     */
+    @Transactional
+    public void supprimer(UUID budgetId) {
+        Budget budget = chargerOuLever(budgetId);
+        // On capture l'état avant suppression : il sert de charge utile à l'événement
+        // (type inféré via var, comme les autres méthodes, pour éviter un import).
+        var payload = mapper.versPayload(budget);
+
+        // Suppression physique : d'abord les lignes (dépendantes), puis l'entête.
+        budgetLineRepository.deleteByBudgetId(budgetId);
+        budgetRepository.delete(budget);
+
+        audit.succes("SUPPRESSION_BUDGET", "budget", budgetId.toString());
+        producteur.publier("BudgetSupprime", payload);
+    }
+
     /** Fait évoluer le statut d'un budget (projet → voté → en exécution → clôturé). */
     @Transactional
     public BudgetDto changerStatut(UUID budgetId, ChangementStatutBudgetDto dto) {
