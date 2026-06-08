@@ -1,0 +1,93 @@
+# ============================================================
+# Configuration de l'insertion-service (Spring Boot 3.3.4 / Java 21, servlet/MVC).
+# Appui à l'insertion : suivi étudiant, bilans de stages, statistiques
+# (auto-emploi vs emploi salarié), base de partenaires.
+# Communication 100% Kafka : émet insertion.events, projette people.students
+# et academic.formations en read-models locaux. AUCUN appel REST inter-service.
+#
+# Les valeurs sensibles passent par des variables d'environnement avec une
+# valeur de repli adaptée au réseau Docker (docker-compose).
+# ============================================================
+
+server:
+  # Port applicatif de l'insertion-service (cf. docs/architecture.md §9.3).
+  port: ${SERVER_PORT:8086}
+
+spring:
+  application:
+    name: insertion-service
+
+  # Import optionnel de la configuration centralisée (Config Server).
+  # optional: -> le service démarre même si le Config Server est absent.
+  config:
+    import: ${CONFIG_IMPORT:optional:configserver:http://config-server:8888}
+
+  # --- Source de données PostgreSQL (base « insertion ») ---
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:insertion}
+    username: ${POSTGRES_USER:unchk}
+    password: ${POSTGRES_PASSWORD:unchk_dev_pwd}
+    driver-class-name: org.postgresql.Driver
+
+  # --- JPA / Hibernate : le schéma est géré par Flyway, Hibernate valide seulement. ---
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  # --- Flyway : migrations versionnées depuis db/migration ---
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  # --- Kafka (KRaft) : SEUL canal inter-services. Pas d'auto-création de topics. ---
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:kafka:19092}
+    consumer:
+      # Groupe de consommation propre à ce service (read-models locaux).
+      group-id: ${KAFKA_GROUP_ID:insertion-service}
+      auto-offset-reset: earliest
+    producer:
+      acks: all
+      properties:
+        enable.idempotence: true
+
+# --- Validation des JWT RS256 émis par identity-service (via JWKS) ---
+# Consommées par la librairie common (ConfigurationServeurRessources).
+unchk:
+  security:
+    jwt:
+      issuer: ${JWT_ISSUER:unchk-office}
+      audience: ${JWT_AUDIENCE:unchk-office}
+      jwks-uri: ${JWT_JWKS_URI:http://identity-service:8080/.well-known/jwks.json}
+  # --- Autorisation externalisée OPA (PDP Rego) — ABAC anti-IDOR au niveau objet ---
+  authz:
+    opa:
+      url: ${OPA_URL:http://opa:8181}
+      chemin: ${OPA_CHEMIN:/v1/data/unchk/authz/allow}
+      timeout: ${OPA_TIMEOUT_MS:2000}
+  # Nom du topic émis (référence documentaire).
+  kafka:
+    topics:
+      events: insertion.events
+
+# --- Supervision (santé / info) pour les sondes Docker ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+# --- Journalisation : niveau INFO, détail DEBUG sur notre paquet ---
+logging:
+  level:
+    root: INFO
+    sn.unchk.office: DEBUG
