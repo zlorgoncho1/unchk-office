@@ -31,6 +31,11 @@ x-service-env: &service-env
   CONFIG_IMPORT: "optional:configserver:http://config-server:8888"
   SPRING_CONFIG_IMPORT: "optional:configserver:http://config-server:8888"
   SERVER_PORT: "8080"
+  # Flyway gère le schéma ; on désactive la validation Hibernate
+  # (types PostgreSQL citext / enum / inet non reconnus par la validation).
+  SPRING_JPA_HIBERNATE_DDL_AUTO: none
+  # libs/common fournit un KafkaTemplate JSON qui doit primer sur l'auto-config Boot.
+  SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
 
 x-service-depends: &service-depends
   postgres:
@@ -80,7 +85,7 @@ services:
       kafka:
         condition: service_healthy
     ports:
-      - "8085:8080"
+      - "8090:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: unchk
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:19092
