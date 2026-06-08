@@ -3,7 +3,12 @@
   titre="Documents"
   sousTitre="Gestion documentaire : courriers, notes, circulaires et pièces archivées"
   icone="folder-with-files-bold-duotone"
-/>
+>
+  <button mat-flat-button color="primary" (click)="nouveau()">
+    <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+    <span>&nbsp;Nouveau document</span>
+  </button>
+</unchk-page-header>
 
 @if (data.etat().erreur) {
   <unchk-empty-state

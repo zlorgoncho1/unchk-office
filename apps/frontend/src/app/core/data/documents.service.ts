@@ -47,6 +47,32 @@ export class DocumentsService {
   }
 
   /**
+   * Dépose un document à partir d'un formulaire typé (titre, catégorie, description,
+   * visibilité) + le fichier binaire. Construit la requête multipart attendue par le
+   * backend : la part « metadata » porte le JSON, la part « file » porte le binaire.
+   * On ne fixe PAS le Content-Type : le navigateur ajoute lui-même la boundary multipart.
+   */
+  creerDocument(
+    meta: {
+      title: string;
+      category: string;
+      description?: string;
+      visibility?: string[];
+    },
+    fichier: File
+  ): Observable<Document> {
+    const corps = new FormData();
+    // Métadonnées en JSON sous le nom de part « metadata » (Blob application/json).
+    corps.append(
+      'metadata',
+      new Blob([JSON.stringify(meta)], { type: 'application/json' })
+    );
+    // Fichier binaire sous le nom de part « file » (on conserve le nom d'origine).
+    corps.append('file', fichier, fichier.name);
+    return this.http.post<Document>(`${this.base}/api/documents`, corps);
+  }
+
+  /**
    * Met à jour les métadonnées d'un document (PATCH côté backend).
    * Corps = MettreAJourDocumentRequete : title, description, archived, visibility.
    */
