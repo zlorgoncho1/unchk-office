@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { BudgetResume, StatutBudget } from './api.models';
+import { BudgetDetail, BudgetResume, StatutBudget } from './api.models';
 
 /**
  * Accès aux données « admin » (budgets) via le gateway.
@@ -49,5 +49,52 @@ export class AdminService {
   /** Supprime un budget. */
   supprimerBudget(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/api/admin/budgets/${id}`);
+  }
+
+  // --- Lignes budgétaires (budget réalisé). Le backend renvoie à chaque écriture
+  //     le budget complet (entête + lignes + totaux recalculés). On expose donc
+  //     consulterBudget() pour charger le détail, puis les opérations sur les lignes. ---
+
+  /**
+   * Charge le détail d'un budget (entête + lignes). Les lignes ne sont pas exposées
+   * par un endpoint dédié : elles sont portées par BudgetDto (GET /{id}).
+   */
+  consulterBudget(id: string): Observable<BudgetDetail> {
+    return this.http.get<BudgetDetail>(`${this.base}/api/admin/budgets/${id}`);
+  }
+
+  /**
+   * Liste les lignes d'un budget. S'appuie sur le détail du budget (le backend ne
+   * propose pas de route /lignes en lecture seule, les lignes vivent dans le détail).
+   */
+  listerLignesBudget(id: string): Observable<BudgetDetail['lignes']> {
+    return this.consulterBudget(id).pipe(map((b) => b.lignes ?? []));
+  }
+
+  /** Ajoute une ligne (corps = CreationLigneBudgetaireDto : category, direction, plannedAmount, label). */
+  ajouterLigneBudget(id: string, corps: Record<string, unknown>): Observable<BudgetDetail> {
+    return this.http.post<BudgetDetail>(
+      `${this.base}/api/admin/budgets/${id}/lignes`,
+      corps
+    );
+  }
+
+  /** Saisit/met à jour le montant réalisé d'une ligne (corps = RealisationLigneDto : realizedAmount). */
+  majRealisationLigne(
+    id: string,
+    ligneId: string,
+    corps: Record<string, unknown>
+  ): Observable<BudgetDetail> {
+    return this.http.patch<BudgetDetail>(
+      `${this.base}/api/admin/budgets/${id}/lignes/${ligneId}/realisation`,
+      corps
+    );
+  }
+
+  /** Supprime une ligne budgétaire (renvoie le budget recalculé). */
+  supprimerLigneBudget(id: string, ligneId: string): Observable<BudgetDetail> {
+    return this.http.delete<BudgetDetail>(
+      `${this.base}/api/admin/budgets/${id}/lignes/${ligneId}`
+    );
   }
 }
