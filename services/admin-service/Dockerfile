@@ -18,6 +18,8 @@ COPY libs/common ./libs/common
 COPY services/admin-service/pom.xml ./services/admin-service/pom.xml
 
 # La librairie commune est une dépendance : on l'installe d'abord dans le dépôt local.
+RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -N -f pom.xml install
+# Installe le POM parent dans le .m2 pour resoudre les modules dependants.
 RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -q -f libs/common/pom.xml -DskipTests install
 
 # Copie des sources du service puis construction du jar exécutable.
