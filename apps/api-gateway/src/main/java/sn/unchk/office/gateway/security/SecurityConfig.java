@@ -68,6 +68,9 @@ public class SecurityConfig {
                 .pathMatchers("/actuator/health/**", "/actuator/info").permitAll()
                 // Authentification (connexion / rafraîchissement) : publique, pas de JWT requis.
                 .pathMatchers("/api/identity/auth/**").permitAll()
+                // Handshake WebSocket : le navigateur ne pose pas d'en-tête Authorization ;
+                // le JWT est passé en ?access_token et validé par le service au handshake.
+                .pathMatchers("/ws/notifications/**").permitAll()
                 // Tout le reste exige un JWT valide.
                 .anyExchange().authenticated()
             )
