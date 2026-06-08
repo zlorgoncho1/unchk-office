@@ -62,7 +62,7 @@ class StudentServiceTest {
                 "INE-2024-001", "MAT-001", "Awa", "Diop", Genre.femme,
                 LocalDate.of(2002, 1, 15), "Dakar", "awa.diop@unchk.sn", "770000000",
                 "Dakar, Senegal", null, null, "2024-2025", (short) 2024, null, null,
-                StudentStatus.inscrit,
+                null, StudentStatus.inscrit,
                 List.of(new DiplomeDto(null, "Baccalaureat", "secondaire", LocalDate.of(2020, 7, 1))));
     }
 
