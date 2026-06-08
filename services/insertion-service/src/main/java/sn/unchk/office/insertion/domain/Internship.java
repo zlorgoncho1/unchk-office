@@ -86,7 +86,7 @@ public class Internship {
     @Column(name = "deleted_at")
     private OffsetDateTime deletedAt;
 
-    protected Internship() {
+    public Internship() {
         // Requis par JPA.
     }
 

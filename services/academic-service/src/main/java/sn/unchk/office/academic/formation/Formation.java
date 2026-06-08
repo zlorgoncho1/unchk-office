@@ -97,7 +97,7 @@ public class Formation {
     @Column(name = "deleted_at")
     private Instant deletedAt;
 
-    protected Formation() {
+    public Formation() {
         // Constructeur requis par JPA.
     }
 

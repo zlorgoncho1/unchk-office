@@ -77,7 +77,7 @@ public class Partner {
     @Column(name = "deleted_at")
     private OffsetDateTime deletedAt;
 
-    protected Partner() {
+    public Partner() {
         // Requis par JPA.
     }
 

@@ -57,7 +57,7 @@ public class BudgetLine {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    protected BudgetLine() {
+    public BudgetLine() {
         // Requis par JPA.
     }
 

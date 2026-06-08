@@ -62,7 +62,7 @@ public class Notification {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    protected Notification() {
+    public Notification() {
         // Requis par JPA.
     }
 
