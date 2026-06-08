@@ -77,10 +77,10 @@ class StatistiquesServiceTest {
     void doitRenvoyerUnLibelleParDefautSiFormationNonProjetee() {
         UUID formationInconnue = UUID.randomUUID();
 
-        when(outcomes.compterParTypeCourant()).thenReturn(List.of(
+        when(outcomes.compterParTypeCourant()).thenReturn(List.<Object[]>of(
                 new Object[]{InsertionKind.recherche_emploi, 1L}
         ));
-        when(outcomes.compterParFormationEtTypeCourant()).thenReturn(List.of(
+        when(outcomes.compterParFormationEtTypeCourant()).thenReturn(List.<Object[]>of(
                 new Object[]{formationInconnue, InsertionKind.recherche_emploi, 1L}
         ));
         // La formation n'est pas (encore) dans le read-model : libellé « n/a ».
