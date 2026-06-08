@@ -32,6 +32,13 @@
     <module>libs/common</module>
     <module>apps/api-gateway</module>
     <module>platform/config-server</module>
+    <module>services/identity-service</module>
+    <module>services/people-service</module>
+    <module>services/document-service</module>
+    <module>services/communication-service</module>
+    <module>services/academic-service</module>
+    <module>services/insertion-service</module>
+    <module>services/admin-service</module>
   </modules>
 
   <dependencyManagement>
