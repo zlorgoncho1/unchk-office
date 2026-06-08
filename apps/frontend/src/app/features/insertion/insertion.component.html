@@ -1,0 +1,27 @@
+<!-- Suivi des stages d'insertion : tableau brandé filtrable. -->
+<unchk-page-header
+  titre="Suivi insertion"
+  sousTitre="Suivi des stages des étudiants"
+  icone="case-round-bold-duotone"
+/>
+
+@if (data.etat().erreur) {
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Indisponible"
+    [message]="data.etat().erreur"
+  />
+} @else {
+  <unchk-section-card sansBordure>
+    <unchk-data-table
+      [colonnes]="colonnes"
+      [lignes]="lignes()"
+      [chargement]="data.etat().chargement"
+      filtrable
+      placeholderFiltre="Filtrer par intitulé, maître de stage, statut…"
+      titreVide="Aucun stage"
+      messageVide="Aucun stage enregistré pour le moment."
+      iconeVide="case-round-line-duotone"
+    />
+  </unchk-section-card>
+}

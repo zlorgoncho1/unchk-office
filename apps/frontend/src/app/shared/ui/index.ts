@@ -6,3 +6,4 @@ export * from './empty-state/empty-state.component';
 export * from './loading-state/loading-state.component';
 export * from './chart-card/chart-card.component';
 export * from './status-pill/status-pill.component';
+export * from './data-table/data-table.component';

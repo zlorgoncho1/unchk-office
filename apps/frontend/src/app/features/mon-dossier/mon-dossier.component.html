@@ -1,0 +1,97 @@
+<!-- Page « Mon dossier » : fiche personnelle de l'étudiant connecté + diplômes. -->
+<unchk-page-header
+  titre="Mon dossier"
+  sousTitre="Votre fiche étudiante UNCHK"
+  icone="user-id-bold-duotone"
+></unchk-page-header>
+
+@if (fiche.etat().chargement) {
+  <!-- Chargement initial de la fiche. -->
+  <unchk-section-card titre="Ma fiche" icone="user-id-bold-duotone">
+    <unchk-loading-state message="Chargement de votre dossier…"></unchk-loading-state>
+  </unchk-section-card>
+} @else if (fiche.etat().erreur) {
+  <!-- Compte non rattaché (404) ou accès refusé : état vide explicite. -->
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Dossier indisponible"
+    [message]="fiche.etat().erreur"
+  >
+    <button type="button" class="bouton-reessayer" (click)="fiche.recharger()">
+      Réessayer
+    </button>
+  </unchk-empty-state>
+} @else if (etudiant()) {
+  @if (etudiant(); as e) {
+  <!-- Fiche d'identité en paires clé/valeur (style partagé .fiche). -->
+  <unchk-section-card titre="Ma fiche" icone="user-id-bold-duotone">
+    <div class="fiche">
+      <div class="fiche__champ">
+        <span class="fiche__libelle">Nom complet</span>
+        <span class="fiche__valeur">{{ e.firstName }} {{ e.lastName }}</span>
+      </div>
+      <div class="fiche__champ">
+        <span class="fiche__libelle">Matricule</span>
+        <span class="fiche__valeur">{{ e.matricule ?? '—' }}</span>
+      </div>
+      <div class="fiche__champ">
+        <span class="fiche__libelle">INE</span>
+        <span class="fiche__valeur">{{ e.ine ?? '—' }}</span>
+      </div>
+      <div class="fiche__champ">
+        <span class="fiche__libelle">Genre</span>
+        <span class="fiche__valeur">{{ genreLisible(e.gender) }}</span>
+      </div>
+      <div class="fiche__champ">
+        <span class="fiche__libelle">Né(e) le</span>
+        <span class="fiche__valeur">{{ exposeDate(e.birthDate) }}</span>
+      </div>
+      <div class="fiche__champ">
+        <span class="fiche__libelle">Courriel</span>
+        <span class="fiche__valeur">{{ e.email ?? '—' }}</span>
+      </div>
+      <div class="fiche__champ">
+        <span class="fiche__libelle">Téléphone</span>
+        <span class="fiche__valeur">{{ e.phone ?? '—' }}</span>
+      </div>
+      <div class="fiche__champ">
+        <span class="fiche__libelle">Promotion</span>
+        <span class="fiche__valeur">{{ e.promotion ?? '—' }}</span>
+      </div>
+      <div class="fiche__champ">
+        <span class="fiche__libelle">Années de scolarité</span>
+        <span class="fiche__valeur">{{ anneesScolarite() }}</span>
+      </div>
+      <div class="fiche__champ">
+        <span class="fiche__libelle">Statut</span>
+        <span class="fiche__valeur">
+          <unchk-status-pill
+            [libelle]="e.status"
+            [ton]="tonStatut()"
+          ></unchk-status-pill>
+        </span>
+      </div>
+    </div>
+  </unchk-section-card>
+
+  <!-- Diplômes obtenus : tableau brandé (vide géré par le composant). -->
+  <section class="home__section">
+    <unchk-section-card titre="Mes diplômes" icone="diploma-bold-duotone">
+      <unchk-data-table
+        [colonnes]="colonnesDiplomes"
+        [lignes]="diplomes()"
+        titreVide="Aucun diplôme"
+        messageVide="Aucun diplôme n'est encore enregistré dans votre dossier."
+        iconeVide="diploma-line-duotone"
+      ></unchk-data-table>
+    </unchk-section-card>
+  </section>
+  }
+} @else {
+  <!-- Réponse vide (corps null sans erreur) : aucune fiche rattachée. -->
+  <unchk-empty-state
+    icone="user-cross-rounded-line-duotone"
+    titre="Aucun dossier"
+    message="Aucune fiche étudiante n'est rattachée à votre compte."
+  ></unchk-empty-state>
+}

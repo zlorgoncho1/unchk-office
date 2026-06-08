@@ -1,0 +1,25 @@
+<unchk-page-header
+  titre="Partenaires"
+  sousTitre="Réseau de partenaires de l'appui à l'insertion"
+  icone="buildings-2-bold-duotone"
+/>
+
+@if (data.etat().erreur) {
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Indisponible"
+    [message]="data.etat().erreur"
+  />
+} @else {
+  <unchk-section-card sansBordure>
+    <unchk-data-table
+      [colonnes]="colonnes"
+      [lignes]="lignes()"
+      [chargement]="data.etat().chargement"
+      filtrable
+      titreVide="Aucun partenaire"
+      messageVide="La base de partenaires est vide pour le moment."
+      iconeVide="buildings-2-line-duotone"
+    />
+  </unchk-section-card>
+}

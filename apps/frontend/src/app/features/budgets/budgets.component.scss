@@ -1,0 +1,7 @@
+// Grille des compteurs (stat-cards) en tête de page.
+.budgets__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}

@@ -1,0 +1,72 @@
+// ============================================================
+// Page Paramètres : fiche profil (clé/valeur) + préférences.
+// Réutilise les conventions des dashboards (.fiche) ; styles additionnels ci-dessous.
+// ============================================================
+:host {
+  display: block;
+}
+
+// Espace entre les blocs verticaux (aligné sur home-shared).
+.home__section {
+  margin-top: 16px;
+}
+
+// --- Fiche personnelle : liste de paires clé/valeur ---
+.fiche {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px 24px;
+  margin: 0;
+
+  &__champ {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__libelle {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--unchk-text-subtle);
+  }
+
+  &__valeur {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--unchk-navy);
+    word-break: break-word;
+
+    // Variante mono pour les identifiants techniques (UUID).
+    &--mono {
+      font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--unchk-text-muted);
+    }
+  }
+}
+
+// --- Bloc des rôles (sous la fiche) ---
+.parametres__roles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--unchk-line);
+}
+
+.parametres__pastilles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// Note informative sous les préférences (lecture seule).
+.parametres__note {
+  margin: 14px 0 0;
+  font-size: 0.82rem;
+  color: var(--unchk-text-muted);
+}

@@ -1,0 +1,5 @@
+// Page Étudiants : la mise en forme est portée par les composants partagés
+// (page-header, section-card, data-table). On ne fait qu'assurer le bloc hôte.
+:host {
+  display: block;
+}

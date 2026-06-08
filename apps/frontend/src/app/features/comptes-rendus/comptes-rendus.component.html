@@ -1,0 +1,26 @@
+<!-- Page « Comptes rendus » : en-tête + tableau brandé filtrable. -->
+<unchk-page-header
+  titre="Comptes rendus"
+  sousTitre="Réunions, séminaires et conseils de l'Université"
+  icone="document-text-bold-duotone"
+/>
+
+@if (data.etat().erreur) {
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Indisponible"
+    [message]="data.etat().erreur"
+  />
+} @else {
+  <unchk-section-card sansBordure>
+    <unchk-data-table
+      [colonnes]="colonnes"
+      [lignes]="lignes()"
+      [chargement]="data.etat().chargement"
+      filtrable
+      titreVide="Aucun compte rendu"
+      messageVide="Aucun compte rendu n'a encore été publié."
+      iconeVide="document-text-line-duotone"
+    />
+  </unchk-section-card>
+}

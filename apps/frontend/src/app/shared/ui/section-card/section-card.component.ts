@@ -1,6 +1,7 @@
 import {
   CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  booleanAttribute,
   input,
 } from '@angular/core';
 
@@ -22,5 +23,5 @@ export class SectionCardComponent {
   // Icône Solar optionnelle (sans le préfixe « solar: »).
   readonly icone = input<string | null>(null);
   // Retire le rembourrage interne du corps (utile pour les listes/tableaux).
-  readonly sansBordure = input<boolean>(false);
+  readonly sansBordure = input(false, { transform: booleanAttribute });
 }

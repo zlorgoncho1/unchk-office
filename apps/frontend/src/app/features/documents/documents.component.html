@@ -1,0 +1,27 @@
+<!-- Page Documents : liste documentaire dans le tableau brandé. -->
+<unchk-page-header
+  titre="Documents"
+  sousTitre="Gestion documentaire : courriers, notes, circulaires et pièces archivées"
+  icone="folder-with-files-bold-duotone"
+/>
+
+@if (data.etat().erreur) {
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Documents indisponibles"
+    [message]="data.etat().erreur"
+  />
+} @else {
+  <unchk-section-card sansBordure>
+    <unchk-data-table
+      [colonnes]="colonnes"
+      [lignes]="lignes()"
+      [chargement]="data.etat().chargement"
+      filtrable
+      placeholderFiltre="Filtrer par titre, catégorie, type…"
+      titreVide="Aucun document"
+      messageVide="Aucun document n'est disponible pour le moment."
+      iconeVide="folder-open-line-duotone"
+    />
+  </unchk-section-card>
+}

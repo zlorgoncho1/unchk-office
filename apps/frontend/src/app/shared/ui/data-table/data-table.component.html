@@ -1,0 +1,50 @@
+@if (filtrable()) {
+  <div class="dt-filtre">
+    <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+    <input
+      type="text"
+      [placeholder]="placeholderFiltre()"
+      [value]="filtre()"
+      (input)="majFiltre($event)"
+      aria-label="Filtrer le tableau"
+    />
+  </div>
+}
+
+@if (chargement()) {
+  <unchk-loading-state />
+} @else if (lignesFiltrees().length === 0) {
+  <unchk-empty-state [icone]="iconeVide()" [titre]="titreVide()" [message]="messageVide()" />
+} @else {
+  <div class="dt-scroll">
+    <table class="dt">
+      <thead>
+        <tr>
+          @for (col of colonnes(); track col.cle) {
+            <th [class]="classe(col)" [style.width]="col.largeur || null">{{ col.libelle }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (ligne of lignesFiltrees(); track $index) {
+          <tr>
+            @for (col of colonnes(); track col.cle) {
+              <td [class]="classe(col)">
+                @if (col.type === 'pastille') {
+                  <unchk-status-pill
+                    [libelle]="afficher(col, ligne)"
+                    [ton]="ton(col, ligne)"
+                  />
+                } @else if (col.type === 'montant' || col.type === 'nombre') {
+                  <span class="dt-num">{{ afficher(col, ligne) }}</span>
+                } @else {
+                  {{ afficher(col, ligne) }}
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

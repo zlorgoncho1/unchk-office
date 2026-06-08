@@ -1,0 +1,70 @@
+<!-- Page Paramètres : profil du compte connecté + préférences (lecture seule). -->
+<unchk-page-header
+  titre="Paramètres"
+  sousTitre="Informations de votre compte et préférences d'affichage"
+  icone="settings-bold-duotone"
+/>
+
+@if (utilisateur()) {
+  <!-- Profil : paires clé/valeur issues des claims du JWT. -->
+  <unchk-section-card titre="Profil du compte" icone="user-circle-bold-duotone">
+    <dl class="fiche">
+      <div class="fiche__champ">
+        <dt class="fiche__libelle">Nom complet</dt>
+        <dd class="fiche__valeur">{{ nomAffiche() }}</dd>
+      </div>
+      <div class="fiche__champ">
+        <dt class="fiche__libelle">Adresse e-mail</dt>
+        <dd class="fiche__valeur">{{ utilisateur()!.email || '—' }}</dd>
+      </div>
+      <div class="fiche__champ">
+        <dt class="fiche__libelle">Identifiant</dt>
+        <dd class="fiche__valeur fiche__valeur--mono">{{ utilisateur()!.id || '—' }}</dd>
+      </div>
+    </dl>
+
+    <!-- Rôles : pastilles brandées. -->
+    <div class="parametres__roles">
+      <span class="fiche__libelle">Rôles</span>
+      @if (roles().length > 0) {
+        <div class="parametres__pastilles">
+          @for (role of roles(); track role) {
+            <unchk-status-pill
+              [libelle]="libelleRole(role)"
+              [humaniserLibelle]="false"
+              ton="info"
+            />
+          }
+        </div>
+      } @else {
+        <span class="fiche__valeur">Aucun rôle attribué</span>
+      }
+    </div>
+  </unchk-section-card>
+
+  <!-- Préférences statiques (lecture seule pour l'instant). -->
+  <section class="home__section">
+    <unchk-section-card titre="Préférences" icone="tuning-2-bold-duotone">
+      <dl class="fiche">
+        <div class="fiche__champ">
+          <dt class="fiche__libelle">Langue</dt>
+          <dd class="fiche__valeur">Français (FR)</dd>
+        </div>
+        <div class="fiche__champ">
+          <dt class="fiche__libelle">Thème</dt>
+          <dd class="fiche__valeur">Clair</dd>
+        </div>
+      </dl>
+      <p class="parametres__note">
+        La personnalisation des préférences sera disponible prochainement.
+      </p>
+    </unchk-section-card>
+  </section>
+} @else {
+  <!-- Session absente : aucun profil à afficher. -->
+  <unchk-empty-state
+    icone="user-cross-bold-duotone"
+    titre="Profil indisponible"
+    message="Aucune session active. Veuillez vous reconnecter pour consulter vos paramètres."
+  />
+}
