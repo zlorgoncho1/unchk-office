@@ -185,6 +185,8 @@ export class DataTableComponent<T = Record<string, unknown>> {
     this.dialog.open(DetailLigneDialog, {
       data: { titre: 'Détail', champs },
       autoFocus: false,
+      width: '480px',
+      maxWidth: '92vw',
     });
   }
 
