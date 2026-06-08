@@ -130,6 +130,42 @@ services:
       - ./platform/opa/policies:/policies:ro
     networks: [unchk-net]
 
+  # ============================================================
+  # Config Server : configuration centralisée (Spring Cloud Config, profil natif)
+  # Le contexte de build est la RACINE du dépôt (le Dockerfile copie le POM parent
+  # puis le module platform/config-server pour compiler dans le conteneur Maven).
+  # ============================================================
+  config-server:
+    build:
+      context: .
+      dockerfile: platform/config-server/Dockerfile
+    container_name: unchk-config-server
+    ports:
+      - "8888:8888"
+    networks: [unchk-net]
+
+  # ============================================================
+  # API Gateway : seul point d'entrée REST (Spring Cloud Gateway réactif / WebFlux)
+  # Le contexte de build est la RACINE du dépôt (le Dockerfile copie le POM parent
+  # puis le module apps/api-gateway pour compiler dans le conteneur Maven).
+  # ============================================================
+  api-gateway:
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
+    container_name: unchk-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      # URL du PDP OPA (autorisation RBAC au gateway).
+      OPA_URL: http://opa:8181
+    depends_on:
+      kafka:
+        condition: service_healthy
+      opa:
+        condition: service_started
+    networks: [unchk-net]
+
 networks:
   unchk-net:
     driver: bridge
