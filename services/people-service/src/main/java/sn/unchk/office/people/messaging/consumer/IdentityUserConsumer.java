@@ -12,6 +12,7 @@ import sn.unchk.office.people.domain.IdentityUserRo;
 import sn.unchk.office.people.domain.ProcessedEvent;
 import sn.unchk.office.people.repository.IdentityUserRoRepository;
 import sn.unchk.office.people.repository.ProcessedEventRepository;
+import sn.unchk.office.people.repository.StudentRepository;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -34,11 +35,14 @@ public class IdentityUserConsumer {
 
     private final IdentityUserRoRepository userRoRepository;
     private final ProcessedEventRepository processedEventRepository;
+    private final StudentRepository studentRepository;
 
     public IdentityUserConsumer(IdentityUserRoRepository userRoRepository,
-                                ProcessedEventRepository processedEventRepository) {
+                                ProcessedEventRepository processedEventRepository,
+                                StudentRepository studentRepository) {
         this.userRoRepository = userRoRepository;
         this.processedEventRepository = processedEventRepository;
+        this.studentRepository = studentRepository;
     }
 
     /**
@@ -100,6 +104,20 @@ public class IdentityUserConsumer {
         vue.setLastEventAt(Instant.now());
         vue.setEventOffset(offset);
         userRoRepository.save(vue);
+
+        // Lie l'etudiant a son compte : si le compte reference une personne (personRef)
+        // correspondant a un etudiant, on renseigne sa colonne user_ref. Cela permet la
+        // resolution cote serveur de /api/etudiants/me (anti-IDOR). No-op si personRef
+        // vise un personnel (aucun etudiant ne correspond a cet id).
+        UUID personRef = vue.getPersonRef();
+        if (personRef != null) {
+            studentRepository.findById(personRef).ifPresent(etudiant -> {
+                if (!id.equals(etudiant.getUserRef())) {
+                    etudiant.setUserRef(id);
+                    studentRepository.save(etudiant);
+                }
+            });
+        }
     }
 
     private void supprimerParCle(String cle) {
