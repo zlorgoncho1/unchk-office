@@ -324,6 +324,21 @@ services:
     depends_on: *service-depends
     networks: [unchk-net]
 
+  # ============================================================
+  # Frontend Angular (servi par nginx). Le navigateur appelle le gateway
+  # sur http://localhost:8080 (origine http://localhost:4200, autorisée par le CORS).
+  # ============================================================
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: unchk-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+    networks: [unchk-net]
+
 networks:
   unchk-net:
     driver: bridge
