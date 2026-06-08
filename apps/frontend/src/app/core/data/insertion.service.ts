@@ -3,7 +3,13 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Partenaire, Stage, StatistiquesInsertion } from './api.models';
+import {
+  ContactRegistre,
+  Partenaire,
+  SituationInsertionDto,
+  Stage,
+  StatistiquesInsertion,
+} from './api.models';
 
 /**
  * Accès aux données « insertion » (stages, partenaires, statistiques) via le gateway.
@@ -86,5 +92,44 @@ export class InsertionService {
   /** Supprime un stage. */
   supprimerStage(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/api/insertion/stages/${id}`);
+  }
+
+  // --- Registre de contact (/api/insertion/contacts) — suivi du devenir des diplômés ---
+
+  /** Historique de contact d'un étudiant (registre). */
+  historiqueContacts(studentRef: string): Observable<ContactRegistre[]> {
+    return this.http.get<ContactRegistre[]>(
+      `${this.base}/api/insertion/contacts/etudiant/${studentRef}`
+    );
+  }
+
+  /** Enregistre un contact de suivi (corps = ContactLogRequest). */
+  enregistrerContact(corps: Record<string, unknown>): Observable<ContactRegistre> {
+    return this.http.post<ContactRegistre>(`${this.base}/api/insertion/contacts`, corps);
+  }
+
+  // --- Situations d'insertion (/api/insertion/situations) — saisie alimentant les stats ---
+
+  /** Situations d'insertion déclarées pour un étudiant. */
+  situationsEtudiant(studentRef: string): Observable<SituationInsertionDto[]> {
+    return this.http.get<SituationInsertionDto[]>(
+      `${this.base}/api/insertion/situations/etudiant/${studentRef}`
+    );
+  }
+
+  /** Déclare une situation d'insertion (corps = InsertionOutcomeRequest). */
+  declarerSituation(corps: Record<string, unknown>): Observable<SituationInsertionDto> {
+    return this.http.post<SituationInsertionDto>(`${this.base}/api/insertion/situations`, corps);
+  }
+
+  /** Modifie une situation d'insertion existante. */
+  modifierSituation(
+    id: string,
+    corps: Record<string, unknown>
+  ): Observable<SituationInsertionDto> {
+    return this.http.put<SituationInsertionDto>(
+      `${this.base}/api/insertion/situations/${id}`,
+      corps
+    );
   }
 }

@@ -227,6 +227,35 @@ export interface Partenaire {
   active: boolean;
 }
 
+// --- Insertion : registre de contact (/api/insertion/contacts) ---
+export interface ContactRegistre {
+  id: string;
+  studentRef: string;
+  contactedAt: string | null;
+  channel: string | null;
+  notes: string | null;
+  agentRef: string | null;
+}
+
+// --- Insertion : situation d'insertion (/api/insertion/situations) ---
+export type SituationInsertion =
+  | 'emploi_salarie'
+  | 'auto_emploi'
+  | 'recherche_emploi'
+  | 'poursuite_etudes'
+  | 'sans_activite';
+
+export interface SituationInsertionDto {
+  id: string;
+  studentRef: string;
+  formationRef: string | null;
+  kind: SituationInsertion;
+  employerName: string | null;
+  jobTitle: string | null;
+  observedAt: string | null;
+  current: boolean;
+}
+
 // --- Insertion : statistiques (/api/insertion/statistiques) ---
 export interface StatistiqueFormation {
   formationRef: string | null;

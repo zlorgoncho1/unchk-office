@@ -1,0 +1,13 @@
+// ============================================================
+// Page « Registre de contact » : sélecteur d'étudiant + registre + situations.
+// Couleurs et rayons issus de la charte (variables --unchk-*).
+// ============================================================
+:host {
+  display: block;
+}
+
+// Sélecteur d'étudiant : largeur confortable, occupe la ligne en étroit.
+.rc-selecteur {
+  width: 420px;
+  max-width: 100%;
+}
