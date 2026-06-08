@@ -43,6 +43,12 @@ spring:
           predicates:
             - Path=/api/people/**
 
+        # ---- Fiche de l'étudiant connecté (résolue côté serveur via le JWT, anti-IDOR) ----
+        - id: etudiant-me
+          uri: http://people-service:8080
+          predicates:
+            - Path=/api/etudiants/**
+
         # ---- Documents (gestion documentaire + MinIO) ----
         - id: document-service
           uri: http://document-service:8080

@@ -19,7 +19,11 @@
       { "method": "POST", "path": "/api/insertion/**" }
     ],
     "etudiant": [
+      { "method": "GET", "path": "/api/etudiants/me" },
       { "method": "GET", "path": "/api/etudiants/me/**" },
+      { "method": "GET", "path": "/api/academic/formations" },
+      { "method": "GET", "path": "/api/academic/formations/**" },
+      { "method": "GET", "path": "/api/academic/emplois-du-temps" },
       { "method": "GET", "path": "/api/academic/emplois-du-temps/**" }
     ]
   }
