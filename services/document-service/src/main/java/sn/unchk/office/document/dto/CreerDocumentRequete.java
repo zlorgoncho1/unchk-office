@@ -26,7 +26,9 @@ public record CreerDocumentRequete(
 
         @NotBlank(message = "La catégorie est obligatoire.")
         @Pattern(
-                regexp = "logo|compte_rendu|courrier|note_service|circulaire|rapport|autre",
+                regexp = "logo|compte_rendu|courrier|courrier_arrive|courrier_depart"
+                        + "|note_service|note_service_interne|note_service_externe"
+                        + "|note_administrative|circulaire|rapport|autre",
                 message = "Catégorie invalide.")
         String category,
 

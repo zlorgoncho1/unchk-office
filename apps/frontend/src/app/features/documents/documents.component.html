@@ -17,7 +17,26 @@
     [message]="data.etat().erreur"
   />
 } @else {
-  <unchk-section-card sansBordure>
+  <unchk-section-card
+    sansBordure
+    titre="Catalogue documentaire"
+    icone="folder-with-files-line-duotone"
+  >
+    <!-- Filtre par catégorie : recharge la table sur la liste filtrée du backend. -->
+    <mat-form-field actions appearance="outline" class="doc-filtre-categorie">
+      <mat-label>Catégorie</mat-label>
+      <mat-select
+        [value]="categorieFiltre()"
+        (selectionChange)="onFiltrerCategorie($event.value)"
+      >
+        <!-- Option « Toutes » : valeur vide -> aucun filtre côté API. -->
+        <mat-option [value]="''">Toutes</mat-option>
+        @for (c of categories; track c.valeur) {
+          <mat-option [value]="c.valeur">{{ c.libelle }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
     <unchk-data-table
       detaillable
       [colonnes]="colonnes"
