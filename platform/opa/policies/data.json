@@ -16,7 +16,9 @@
     ],
     "appui-insertion": [
       { "method": "GET", "path": "/api/insertion/**" },
-      { "method": "POST", "path": "/api/insertion/**" }
+      { "method": "POST", "path": "/api/insertion/**" },
+      { "method": "GET", "path": "/api/people/students" },
+      { "method": "GET", "path": "/api/people/students/**" }
     ],
     "etudiant": [
       { "method": "GET", "path": "/api/etudiants/me" },
