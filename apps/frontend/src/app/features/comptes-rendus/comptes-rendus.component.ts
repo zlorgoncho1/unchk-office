@@ -9,6 +9,7 @@ import { CommunicationService, CompteRendu } from '../../core/data';
 import {
   ChampForm,
   ColonneTable,
+  ConfirmDialog,
   DataTableComponent,
   EmptyStateComponent,
   FormDrawerComponent,
@@ -20,13 +21,9 @@ import {
 import { chargerDepuis } from '../../shared/util/loadable';
 
 /**
- * Page « Comptes rendus » : liste tabulaire des comptes rendus de la
- * communication (réunions, séminaires, conseils…) + création. Source : gateway
- * /api/communication/comptes-rendus. Tableau brandé, filtrable.
- *
- * Le backend communication-service n'expose que la création (POST) et la
- * publication (PATCH) : il n'y a ni PUT ni DELETE, donc on ne câble ni la
- * modification ni la suppression (pas de boutons qui échoueraient toujours).
+ * Page « Comptes rendus » : liste tabulaire des comptes rendus de la communication
+ * (réunions, séminaires, conseils…) avec gestion complète : création, modification
+ * (drawer) et suppression (confirmation). Source : gateway /api/communication/comptes-rendus.
  */
 @Component({
   selector: 'app-comptes-rendus',
@@ -131,6 +128,50 @@ export class ComptesRendusComponent {
             visibility: corps['visibility'] ? [corps['visibility']] : [],
           };
           this.ecrire(this.svc.creerCompteRendu(charge), 'Compte rendu créé.');
+        }
+      });
+  }
+
+  /** Ouvre le drawer d'édition d'un compte rendu (pré-rempli avec ce que la liste expose). */
+  protected onModifier(c: CompteRendu): void {
+    const initial = {
+      title: c.title,
+      visibility: (c.visibility ?? [])[0] ?? '',
+    };
+    this.dialog
+      .open(
+        FormDrawerComponent,
+        optionsDrawer({ titre: 'Modifier le compte rendu', champs: this.champs, valeurInitiale: initial })
+      )
+      .afterClosed()
+      .subscribe((corps?: Record<string, unknown>) => {
+        if (corps) {
+          const charge = {
+            ...corps,
+            authorId: c.ownerId ?? this.auth.currentUser()?.id,
+            visibility: corps['visibility'] ? [corps['visibility']] : [],
+          };
+          this.ecrire(this.svc.modifierCompteRendu(c.id, charge), 'Compte rendu modifié.');
+        }
+      });
+  }
+
+  /** Demande confirmation puis supprime le compte rendu. */
+  protected onSupprimer(c: CompteRendu): void {
+    this.dialog
+      .open(ConfirmDialog, {
+        data: {
+          titre: 'Supprimer le compte rendu',
+          message: `Confirmer la suppression de « ${c.title} » ? Cette action est définitive.`,
+          libelleConfirmer: 'Supprimer',
+          danger: true,
+        },
+        autoFocus: false,
+      })
+      .afterClosed()
+      .subscribe((ok) => {
+        if (ok) {
+          this.ecrire(this.svc.supprimerCompteRendu(c.id), 'Compte rendu supprimé.');
         }
       });
   }
