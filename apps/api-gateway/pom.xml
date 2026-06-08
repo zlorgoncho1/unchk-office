@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Parent : POM agrégateur du monorepo (fournit Spring Boot 3.3.4 + Spring Cloud 2023.0.3) -->
+  <parent>
+    <groupId>sn.unchk.office</groupId>
+    <artifactId>unchk-office-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>api-gateway</artifactId>
+  <name>UNCHK Office — API Gateway</name>
+  <description>Point d'entrée REST unique (Spring Cloud Gateway réactif / WebFlux) : validation JWT (JWKS), autorisation OPA, en-têtes de sécurité, CORS, rate-limiting, corrélation</description>
+
+  <dependencies>
+    <!-- Cœur de la passerelle réactive (Spring Cloud Gateway, basé sur WebFlux/Netty).
+         IMPORTANT : la passerelle est 100% réactive, elle NE dépend PAS de libs/common (qui est servlet). -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-gateway</artifactId>
+    </dependency>
+
+    <!-- Validation des JWT RS256 émis par identity-service, via le serveur de ressources OAuth2 RÉACTIF.
+         Les clés publiques sont récupérées depuis l'endpoint JWKS d'identity-service. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    </dependency>
+
+    <!-- Supervision (santé / info) pour les sondes Docker et le monitoring. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <!-- Rate-limiting simple en mémoire (jetons à seau / token-bucket) par IP / sujet.
+         Version pure-Java (bucket4j-core), sans dépendance à un cache distribué. -->
+    <dependency>
+      <groupId>com.bucket4j</groupId>
+      <artifactId>bucket4j-core</artifactId>
+      <version>8.10.1</version>
+    </dependency>
+
+    <!-- Tests : facilités Spring Boot (JUnit 5) + outils de test réactif (StepVerifier). -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Construit un jar exécutable (fat-jar) lançable par java -jar. -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

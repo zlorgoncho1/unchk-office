@@ -1,0 +1,118 @@
+# ============================================================
+# Configuration de l'API Gateway (Spring Cloud Gateway RÉACTIF / WebFlux).
+# Seul point d'entrée REST de la plateforme (tier Middle).
+#
+# Les noms d'hôte utilisés (identity-service, people-service, ...) sont ceux
+# du réseau Docker (docker-compose). Les microservices écoutent en interne sur 8080.
+# ============================================================
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  # --- Sécurité : validation des JWT RS256 via JWKS d'identity-service ---
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Clés publiques de signature récupérées dynamiquement depuis identity-service.
+          jwk-set-uri: ${JWT_JWKS_URI:http://identity-service:8080/.well-known/jwks.json}
+          # On valide aussi l'émetteur (issuer) déclaré dans le jeton.
+          issuer-uri: ${JWT_ISSUER_URI:http://identity-service:8080}
+
+  # --- Spring Cloud Gateway : routes vers les microservices ---
+  cloud:
+    gateway:
+      # En-têtes par défaut retirés des réponses (on les repose nous-mêmes via le filtre).
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      # On laisse notre filtre CORS (SecurityConfig) gérer le CORS, pas le bloc globalcors du gateway.
+      routes:
+        # ---- Identité (authentification, JWKS, comptes) ----
+        - id: identity-service
+          uri: http://identity-service:8080
+          predicates:
+            - Path=/api/identity/**
+
+        # ---- People (étudiants + personnel/formateurs canoniques) ----
+        - id: people-service
+          uri: http://people-service:8080
+          predicates:
+            - Path=/api/people/**
+
+        # ---- Documents (gestion documentaire + MinIO) ----
+        - id: document-service
+          uri: http://document-service:8080
+          predicates:
+            - Path=/api/documents/**
+
+        # ---- Communication (comptes rendus, réunions, notifications) ----
+        - id: communication-service
+          uri: http://communication-service:8080
+          predicates:
+            - Path=/api/communication/**
+
+        # ---- Académique (formations, emplois du temps) ----
+        - id: academic-service
+          uri: http://academic-service:8080
+          predicates:
+            - Path=/api/academic/**
+
+        # ---- Insertion (suivi insertion, partenaires) ----
+        - id: insertion-service
+          uri: http://insertion-service:8080
+          predicates:
+            - Path=/api/insertion/**
+
+        # ---- Administration (budget, RH) ----
+        - id: admin-service
+          uri: http://admin-service:8080
+          predicates:
+            - Path=/api/admin/**
+
+        # ---- WebSocket : notifications temps réel poussées par communication-service ----
+        # Schéma ws:// pour activer le proxy WebSocket de Spring Cloud Gateway.
+        - id: ws-notifications
+          uri: ws://communication-service:8080
+          predicates:
+            - Path=/ws/notifications/**
+
+# --- Autorisation externalisée OPA (PDP Rego) ---
+# Le filtre OpaAuthorizationFilter appelle POST {opa.url}/v1/data/unchk/authz/allow.
+opa:
+  url: ${OPA_URL:http://opa:8181}
+  # Délai maximal d'attente d'une décision OPA (ms) ; au-delà => refus par défaut.
+  timeout-ms: ${OPA_TIMEOUT_MS:1500}
+
+# --- CORS : liste blanche (origine du frontend Angular) ---
+cors:
+  allowed-origin: ${FRONTEND_ORIGIN:http://localhost:4200}
+
+# --- Rate-limiting en mémoire (par sujet authentifié ou IP) ---
+gateway:
+  rate-limit:
+    # Nombre de requêtes autorisées par fenêtre.
+    capacity: ${RATE_LIMIT_CAPACITY:100}
+    # Durée de la fenêtre de recharge (secondes).
+    window-seconds: ${RATE_LIMIT_WINDOW:60}
+
+# --- Supervision (santé / info) exposée pour les sondes Docker ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+# --- Journalisation : niveau INFO, pas de fuite d'informations internes ---
+logging:
+  level:
+    root: INFO
+    sn.unchk.office: DEBUG
+    org.springframework.cloud.gateway: INFO
