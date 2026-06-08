@@ -46,3 +46,19 @@ route_allowed if {
 
 method_match(allowed, _) if allowed == "*"
 method_match(allowed, m) if allowed == m
+
+# ------------------------------------------------------------------
+# Décision d'accès au niveau OBJET (ABAC strict, anti-IDOR).
+# Interrogée par les services (ResourceAccessGuard / @VerifieAccesObjet) sur l'accès à une
+# ressource PRÉCISE par son id. Contrairement à `allow`, elle N'accorde PAS l'accès sur la
+# seule base du RBAC de route : disposer de `GET /api/**` ne suffit pas a lire un objet.
+# Il faut être admin, propriétaire de l'objet, ou que l'objet soit explicitement visible
+# par l'un des rôles du sujet (visibility déclarée en base). Empêche les IDOR où un rôle au
+# large droit de lecture lirait un objet hors de sa visibilité.
+default allow_objet := false
+
+allow_objet if "admin" in input.subject.roles
+
+allow_objet if input.resource.ownerId == input.subject.id
+
+allow_objet if object_visible

@@ -68,7 +68,7 @@ unchk:
   authz:
     opa:
       url: ${OPA_URL:http://opa:8181}
-      chemin: ${OPA_CHEMIN:/v1/data/unchk/authz/allow}
+      chemin: ${OPA_CHEMIN:/v1/data/unchk/authz/allow_objet}
       timeout: ${OPA_TIMEOUT_MS:2000}
   # Nom du topic émis (référence documentaire).
   kafka:

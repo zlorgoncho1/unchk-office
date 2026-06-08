@@ -62,7 +62,7 @@ unchk:
   authz:
     opa:
       url: ${OPA_URL:http://opa:8181}
-      chemin: /v1/data/unchk/authz/allow
+      chemin: /v1/data/unchk/authz/allow_objet
       timeout: 2000
 
 # --- Configuration MinIO (stockage objet) ---

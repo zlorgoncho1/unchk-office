@@ -25,7 +25,7 @@ unchk:
   authz:
     opa:
       url: http://localhost:0
-      chemin: /v1/data/unchk/authz/allow
+      chemin: /v1/data/unchk/authz/allow_objet
       timeout: 1000
 
 logging:
