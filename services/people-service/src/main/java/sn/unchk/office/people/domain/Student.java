@@ -92,6 +92,10 @@ public class Student {
     @Column(name = "exit_year")
     private Short exitYear;
 
+    /** Autres formations suivies (texte libre, hors catalogue academique). */
+    @Column(name = "other_trainings", columnDefinition = "text")
+    private String otherTrainings;
+
     /**
      * Reference logique vers identity.users.id (compte de l'etudiant).
      * Sert a resoudre la fiche "me" cote serveur (anti-IDOR), jamais expose au client.
@@ -273,6 +277,14 @@ public class Student {
 
     public void setExitYear(Short exitYear) {
         this.exitYear = exitYear;
+    }
+
+    public String getOtherTrainings() {
+        return otherTrainings;
+    }
+
+    public void setOtherTrainings(String otherTrainings) {
+        this.otherTrainings = otherTrainings;
     }
 
     public UUID getUserRef() {

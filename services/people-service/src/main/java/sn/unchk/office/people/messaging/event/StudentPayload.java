@@ -24,6 +24,7 @@ import java.util.UUID;
  * @param promotion      promotion
  * @param enrollmentYear annee de debut
  * @param exitYear       annee de sortie
+ * @param otherTrainings autres formations (texte libre)
  * @param status         statut (inscrit, diplome, abandon, suspendu)
  * @param updatedAt      horodatage de la derniere modification
  */
@@ -40,6 +41,7 @@ public record StudentPayload(
         String promotion,
         Short enrollmentYear,
         Short exitYear,
+        String otherTrainings,
         String status,
         Instant updatedAt
 ) {
@@ -58,6 +60,7 @@ public record StudentPayload(
                 s.getPromotion(),
                 s.getEnrollmentYear(),
                 s.getExitYear(),
+                s.getOtherTrainings(),
                 s.getStatus() != null ? s.getStatus().name() : null,
                 s.getUpdatedAt());
     }

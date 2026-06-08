@@ -42,6 +42,7 @@ export interface Etudiant {
   promotion: string | null;
   enrollmentYear: number | null;
   exitYear: number | null;
+  otherTrainings: string | null;
   status: StatutEtudiant;
   diplomas: DiplomeDto[];
   createdAt: string;
