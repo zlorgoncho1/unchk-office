@@ -79,3 +79,15 @@ iconify-icon { display: inline-block; vertical-align: middle; line-height: 1; }
   width: 1.25rem;
   font-size: 1.2rem;
 }
+
+// Espacement confortable des icônes de champ : respiration depuis la bordure
+// et depuis le texte (préfixe), et depuis la bordure droite (suffixe).
+.mat-mdc-form-field-icon-prefix {
+  padding-inline-start: 16px;
+}
+.mat-mdc-form-field-icon-prefix iconify-icon {
+  margin-inline-end: 14px;
+}
+.mat-mdc-form-field-icon-suffix {
+  padding-inline-end: 14px;
+}
