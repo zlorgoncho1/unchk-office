@@ -1,0 +1,104 @@
+# ============================================================
+# identity-service — Fournisseur d'identité fédéré maison (sans Keycloak).
+# Émet des JWT RS256, expose le JWKS, gère comptes/rôles/refresh tokens.
+# Base PostgreSQL : identity. Topic émis : identity.users. Port : 8081.
+#
+# La configuration centralisée (Config Server) peut surcharger ces valeurs ;
+# l'import du config-server est OPTIONNEL (optional:configserver) pour permettre
+# un démarrage autonome en l'absence du serveur de configuration.
+# ============================================================
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: identity-service
+
+  # On exclut l'auto-configuration de sécurité générique de common : l'identity-service
+  # fournit sa propre chaîne (endpoints d'auth/JWKS publics). Les autres briques de common
+  # (OPA, web, Kafka, audit, export) sont réimportées via ConfigurationCommuneIdentity.
+  autoconfigure:
+    exclude: sn.unchk.office.common.CommonAutoConfiguration
+
+  # Import optionnel du Config Server (ne bloque pas le démarrage s'il est absent).
+  config:
+    import: ${CONFIG_IMPORT:optional:configserver:http://config-server:8888}
+
+  # --- Source de données PostgreSQL (base dédiée : identity) ---
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:identity}
+    username: ${POSTGRES_USER:unchk}
+    password: ${POSTGRES_PASSWORD:unchk_dev_pwd}
+    driver-class-name: org.postgresql.Driver
+
+  # --- JPA / Hibernate : le schéma est géré par Flyway, Hibernate valide seulement ---
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  # --- Flyway : applique le DDL versionné au démarrage ---
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  # --- Kafka : SEUL canal inter-services (mode KRaft), listener interne ---
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:kafka:19092}
+    consumer:
+      # Groupe propre au service pour ses read-models locaux.
+      group-id: ${KAFKA_GROUP_ID:identity-service}
+      auto-offset-reset: earliest
+
+# --- Émission des jetons : identity-service est l'autorité d'émission ---
+# L'issuer et l'audience DOIVENT correspondre à ce que valident le gateway et les services.
+unchk:
+  identity:
+    jwt:
+      # Émetteur déclaré dans le claim iss des jetons produits.
+      issuer: ${JWT_ISSUER:unchk-office}
+      # Audience déclarée dans le claim aud des jetons produits.
+      audience: ${JWT_AUDIENCE:unchk-office}
+      # Durée de vie de l'access token (minutes).
+      access-ttl-min: ${JWT_ACCESS_TTL_MIN:30}
+      # Durée de vie du refresh token (jours).
+      refresh-ttl-days: ${JWT_REFRESH_TTL_DAYS:7}
+    securite:
+      # Verrouillage anti-bruteforce : nombre d'échecs avant blocage du compte.
+      max-echecs: ${LOGIN_MAX_FAILED:5}
+
+  # --- Validation locale des jetons reçus (défense en profondeur) ---
+  # Le service valide aussi sa propre signature via son JWKS local.
+  security:
+    jwt:
+      jwks-uri: ${JWT_JWKS_URI:http://localhost:8081/.well-known/jwks.json}
+      issuer: ${JWT_ISSUER:unchk-office}
+      audience: ${JWT_AUDIENCE:unchk-office}
+
+  # --- Autorisation externalisée OPA (PDP Rego) : ABAC anti-IDOR au niveau objet ---
+  authz:
+    opa:
+      url: ${OPA_URL:http://opa:8181}
+      chemin: ${OPA_PATH:/v1/data/unchk/authz/allow}
+
+# --- Supervision (santé / info) exposée pour les sondes Docker ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+# --- Journalisation : niveau INFO, pas de fuite d'informations internes ---
+logging:
+  level:
+    root: INFO
+    sn.unchk.office: INFO
