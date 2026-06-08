@@ -1,0 +1,13 @@
+// ============================================================
+// Page « Emplois du temps » : sélecteur de formation + tableau des créneaux.
+// Couleurs et rayons issus de la charte (variables --unchk-*).
+// ============================================================
+:host {
+  display: block;
+}
+
+// Sélecteur de formation : largeur confortable, occupe la ligne en étroit.
+.edt-selecteur {
+  width: 420px;
+  max-width: 100%;
+}

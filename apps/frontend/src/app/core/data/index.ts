@@ -2,6 +2,7 @@
 export * from './api.models';
 export * from './people.service';
 export * from './academic.service';
+export * from './emploi-temps.service';
 export * from './documents.service';
 export * from './communication.service';
 export * from './admin.service';

@@ -1,0 +1,59 @@
+<unchk-page-header
+  titre="Emplois du temps"
+  sousTitre="Créneaux de cours par formation"
+  icone="calendar-bold-duotone"
+>
+  @if (formationId()) {
+    <button mat-flat-button color="primary" (click)="nouveau()">
+      <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+      <span>&nbsp;Nouveau créneau</span>
+    </button>
+  }
+</unchk-page-header>
+
+@if (formations.etat().erreur) {
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Indisponible"
+    [message]="formations.etat().erreur"
+  />
+} @else {
+  <!-- Sélecteur de formation : pilote l'affichage des créneaux. -->
+  <unchk-section-card>
+    <mat-form-field appearance="outline" class="edt-selecteur">
+      <mat-label>Formation</mat-label>
+      <mat-select
+        [value]="formationId()"
+        (valueChange)="onChangerFormation($event)"
+        [disabled]="formations.etat().chargement || listeFormations().length === 0"
+      >
+        @for (f of listeFormations(); track f.id) {
+          <mat-option [value]="f.id">{{ f.code }} — {{ f.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </unchk-section-card>
+
+  @if (creneaux.etat().erreur) {
+    <unchk-empty-state
+      icone="shield-warning-line-duotone"
+      titre="Indisponible"
+      [message]="creneaux.etat().erreur"
+    />
+  } @else {
+    <unchk-section-card sansBordure>
+      <unchk-data-table
+        detaillable
+        [colonnes]="colonnes"
+        [lignes]="lignes()"
+        [chargement]="creneaux.etat().chargement"
+        supprimable
+        (supprimer)="onSupprimer($event)"
+        filtrable
+        titreVide="Aucun créneau"
+        messageVide="Aucun créneau n'est défini pour cette formation."
+        iconeVide="calendar-line-duotone"
+      />
+    </unchk-section-card>
+  }
+}
