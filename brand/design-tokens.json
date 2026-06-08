@@ -1,0 +1,67 @@
+{
+  "$description": "Source de vérité de la charte graphique UNCHK. Dérivée du logo (boucles bleu/vert/orange, texte bleu marine). Consommée par tokens.css, _tokens.scss et le thème Angular Material.",
+  "brand": {
+    "blue":   { "light": "#4F97D1", "base": "#1C75BC", "dark": "#155A91", "role": "Couleur primaire (navigation, liens, états actifs)" },
+    "green":  { "light": "#5BC65F", "base": "#36A93B", "dark": "#2A8530", "role": "Secondaire (succès, statistiques positives, actions secondaires)" },
+    "orange": { "light": "#FBA834", "base": "#F39200", "dark": "#C46F00", "role": "Accent (appels à l'action, mises en avant)" },
+    "navy":   { "light": "#2A4A66", "base": "#16314A", "role": "Texte principal (titres, libellés)" },
+    "slate":  { "base": "#3E6E8E", "role": "Texte secondaire, sous-titres" }
+  },
+  "neutral": {
+    "white":      "#FFFFFF",
+    "background":  "#F4F7FA",
+    "surface":     "#FFFFFF",
+    "border":      "#E3E8EF",
+    "line":        "#EDF1F6",
+    "text":        "#16314A",
+    "text-muted":  "#5B6B7B",
+    "text-subtle": "#8A98A6"
+  },
+  "semantic": {
+    "success": "#36A93B",
+    "warning": "#F39200",
+    "danger":  "#E5484D",
+    "info":    "#1C75BC"
+  },
+  "typography": {
+    "fontFamily": "'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif",
+    "scale": {
+      "display": "32px/40px 700",
+      "h1": "26px/34px 700",
+      "h2": "21px/30px 600",
+      "h3": "17px/26px 600",
+      "body": "14px/22px 400",
+      "small": "13px/20px 400",
+      "caption": "12px/18px 500"
+    }
+  },
+  "spacing": { "xs": "4px", "sm": "8px", "md": "12px", "lg": "16px", "xl": "24px", "2xl": "32px", "3xl": "48px", "4xl": "64px" },
+  "radius": { "sm": "6px", "md": "8px", "lg": "12px", "xl": "16px", "pill": "999px" },
+  "elevation": {
+    "card": "0 1px 2px rgba(22,49,74,0.06), 0 2px 8px rgba(22,49,74,0.05)",
+    "raised": "0 4px 16px rgba(22,49,74,0.10)",
+    "overlay": "0 12px 32px rgba(22,49,74,0.16)"
+  },
+  "iconography": {
+    "library": "Iconify",
+    "set": "Solar",
+    "delivery": "web component <iconify-icon> + @iconify-json/solar",
+    "style": "bold-duotone par défaut, bold pour les états actifs",
+    "examples": {
+      "dashboard": "solar:widget-5-bold-duotone",
+      "documents": "solar:documents-bold-duotone",
+      "communication": "solar:chat-round-line-bold-duotone",
+      "etudiants": "solar:users-group-rounded-bold-duotone",
+      "formations": "solar:square-academic-cap-bold-duotone",
+      "insertion": "solar:case-round-bold-duotone",
+      "administration": "solar:buildings-2-bold-duotone",
+      "notifications": "solar:bell-bing-bold-duotone",
+      "parametres": "solar:settings-bold-duotone"
+    }
+  },
+  "logo": {
+    "horizontal": "brand/logos/unchk-horizontal.png",
+    "vertical": "brand/logos/unchk-vertical.png",
+    "usage": "Horizontal pour la barre supérieure ; vertical pour l'écran de connexion. Toujours sur fond blanc, jamais sur fond chargé. Marge de protection = hauteur du monogramme."
+  }
+}
