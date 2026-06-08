@@ -3,7 +3,12 @@
   titre="Réunions"
   sousTitre="Réunions, séminaires et webinaires de l'université"
   icone="calendar-bold-duotone"
-></unchk-page-header>
+>
+  <button mat-flat-button color="primary" (click)="nouveau()">
+    <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+    <span>&nbsp;Nouvelle réunion</span>
+  </button>
+</unchk-page-header>
 
 @if (data.etat().erreur) {
   <unchk-empty-state

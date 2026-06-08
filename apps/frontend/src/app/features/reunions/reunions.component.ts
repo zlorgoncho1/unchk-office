@@ -1,21 +1,33 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, computed, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
 
+import { AuthService } from '../../core/auth';
 import { CommunicationService, Reunion } from '../../core/data';
 import {
+  ChampForm,
   ColonneTable,
   DataTableComponent,
   EmptyStateComponent,
+  FormDrawerComponent,
   PageHeaderComponent,
   SectionCardComponent,
   StatusPillTon,
+  optionsDrawer,
 } from '../../shared/ui';
 import { chargerDepuis } from '../../shared/util/loadable';
 import { humaniser } from '../../shared/util/format.util';
 
 /**
- * Page « Réunions » : liste tabulaire des réunions de communication.
+ * Page « Réunions » : liste tabulaire des réunions de communication + création.
  * Source : CommunicationService.listerReunions() (tableau Reunion[]).
  * Tableau brandé filtrable avec pastilles de type et de statut.
+ *
+ * Le backend communication-service n'expose que la création (POST) des réunions :
+ * il n'y a ni PUT ni DELETE, donc on ne câble pas la modification ni la suppression
+ * (on ne propose pas de boutons qui échoueraient toujours).
  */
 @Component({
   selector: 'app-reunions',
@@ -25,6 +37,7 @@ import { humaniser } from '../../shared/util/format.util';
     SectionCardComponent,
     DataTableComponent,
     EmptyStateComponent,
+    MatButtonModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './reunions.component.html',
@@ -32,6 +45,9 @@ import { humaniser } from '../../shared/util/format.util';
 })
 export class ReunionsComponent {
   private readonly svc = inject(CommunicationService);
+  private readonly auth = inject(AuthService);
+  private readonly dialog = inject(MatDialog);
+  private readonly snack = inject(MatSnackBar);
 
   // Ressource réactive : la liste des réunions via le gateway.
   protected readonly data = chargerDepuis(() => this.svc.listerReunions());
@@ -67,6 +83,77 @@ export class ReunionsComponent {
     // Colonne de texte : laissée libre de s'étirer.
     { cle: 'organizerName', libelle: 'Organisateur' },
   ];
+
+  // Champs du formulaire = sous-ensemble simple de ReunionCreationRequest.
+  // On omet les participants (optionnels) : champs simples uniquement.
+  private readonly champs: ChampForm[] = [
+    { cle: 'title', libelle: 'Titre', requis: true },
+    {
+      cle: 'type',
+      libelle: 'Type',
+      type: 'select',
+      requis: true,
+      options: [
+        { valeur: 'reunion', libelle: 'Réunion' },
+        { valeur: 'seminaire', libelle: 'Séminaire' },
+        { valeur: 'webinaire', libelle: 'Webinaire' },
+        { valeur: 'conseil_universite', libelle: "Conseil d'Université" },
+        { valeur: 'tutorat', libelle: 'Tutorat' },
+        { valeur: 'preparation_cours', libelle: 'Préparation de cours' },
+        { valeur: 'evaluation', libelle: 'Évaluation' },
+      ],
+    },
+    { cle: 'startsAt', libelle: 'Début', type: 'date', requis: true },
+    { cle: 'endsAt', libelle: 'Fin', type: 'date' },
+    { cle: 'location', libelle: 'Lieu (salle ou lien visio)' },
+  ];
+
+  /** Ouvre le drawer de création d'une réunion. */
+  protected nouveau(): void {
+    this.dialog
+      .open(
+        FormDrawerComponent,
+        optionsDrawer({ titre: 'Nouvelle réunion', champs: this.champs })
+      )
+      .afterClosed()
+      .subscribe((corps?: Record<string, unknown>) => {
+        if (corps) {
+          // organizerId est requis par le DTO : on prend l'UUID de l'utilisateur courant.
+          // startsAt/endsAt sont des OffsetDateTime : on convertit la date saisie en ISO.
+          const charge = {
+            ...corps,
+            startsAt: this.versDateHeure(corps['startsAt']),
+            endsAt: this.versDateHeure(corps['endsAt']),
+            organizerId: this.auth.currentUser()?.id,
+          };
+          this.ecrire(this.svc.creerReunion(charge), 'Réunion planifiée.');
+        }
+      });
+  }
+
+  /** Convertit une date « YYYY-MM-DD » en OffsetDateTime ISO (minuit UTC), ou undefined. */
+  private versDateHeure(valeur: unknown): string | undefined {
+    if (typeof valeur === 'string' && valeur !== '') {
+      return `${valeur}T00:00:00Z`;
+    }
+    return undefined;
+  }
+
+  /** Exécute une écriture, notifie et recharge la liste. */
+  private ecrire(source$: Observable<unknown>, messageOk: string): void {
+    source$.subscribe({
+      next: () => {
+        this.snack.open(messageOk, 'OK', { duration: 3000 });
+        this.data.recharger();
+      },
+      error: () =>
+        this.snack.open(
+          'Action impossible (droits insuffisants ou données invalides).',
+          'OK',
+          { duration: 4000 }
+        ),
+    });
+  }
 
   // Ton de la pastille selon le statut de la réunion.
   private tonStatut(r: Reunion): StatusPillTon {
