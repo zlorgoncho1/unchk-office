@@ -1,9 +1,14 @@
-<!-- Suivi des stages d'insertion : tableau brandé filtrable. -->
+<!-- Suivi des stages d'insertion : tableau brandé filtrable + gestion (CRUD). -->
 <unchk-page-header
   titre="Suivi insertion"
   sousTitre="Suivi des stages des étudiants"
   icone="case-round-bold-duotone"
-/>
+>
+  <button mat-flat-button color="primary" (click)="nouveau()">
+    <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+    <span>&nbsp;Nouveau stage</span>
+  </button>
+</unchk-page-header>
 
 @if (data.etat().erreur) {
   <unchk-empty-state
@@ -14,10 +19,14 @@
 } @else {
   <unchk-section-card sansBordure>
     <unchk-data-table
-        detaillable
+      detaillable
       [colonnes]="colonnes"
       [lignes]="lignes()"
       [chargement]="data.etat().chargement"
+      modifiable
+      supprimable
+      (modifier)="onModifier($event)"
+      (supprimer)="onSupprimer($event)"
       filtrable
       placeholderFiltre="Filtrer par intitulé, maître de stage, statut…"
       titreVide="Aucun stage"
