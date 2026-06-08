@@ -1,0 +1,25 @@
+# ============================================================
+# Configuration spécifique : identity-service
+# Identité fédérée maison : émet des JWT RS256 et expose un endpoint JWKS.
+# Topic Kafka publié : identity.users
+# Base PostgreSQL : identity
+# ============================================================
+server:
+  port: 8081
+
+spring:
+  datasource:
+    # Base dédiée au service (une base par microservice).
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/identity
+
+# Émission des jetons : clés RS256 générées/chargées par le service.
+security:
+  jwt:
+    access-ttl-min: ${JWT_ACCESS_TTL_MIN:30}
+    refresh-ttl-days: ${JWT_REFRESH_TTL_DAYS:7}
+
+# Topic Kafka émis par ce service (référence documentaire).
+unchk:
+  kafka:
+    topics:
+      users: identity.users

@@ -1,0 +1,77 @@
+# ============================================================
+# Configuration COMMUNE à tous les microservices UNCHK Office.
+# Servie par le Config Server à chaque service au démarrage.
+# Les fichiers par service (identity.yml, people.yml, ...) viennent
+# surcharger / compléter ces valeurs.
+#
+# Les valeurs sensibles utilisent des variables d'environnement avec
+# une valeur de repli adaptée à docker-compose (réseau interne).
+# ============================================================
+
+spring:
+  # --- Source de données PostgreSQL (gabarit commun) ---
+  # Le nom de base par défaut est l'application elle-même ;
+  # chaque service précise SA base dans son fichier dédié.
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:${spring.application.name}}
+    username: ${POSTGRES_USER:unchk}
+    password: ${POSTGRES_PASSWORD:unchk_dev_pwd}
+    driver-class-name: org.postgresql.Driver
+
+  # --- JPA / Hibernate (réglages communs prudents) ---
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  # --- Kafka : SEUL canal de communication inter-services (mode KRaft) ---
+  # On pointe vers le listener INTERNAL du broker dans le réseau Docker.
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:kafka:19092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # Garanties de livraison renforcées (idempotence + acks all).
+      acks: all
+      properties:
+        enable.idempotence: true
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "sn.unchk.office.*"
+
+# --- Autorisation externalisée OPA (PDP Rego) ---
+# Utilisé par les services pour l'ABAC (accès au niveau objet, anti-IDOR).
+opa:
+  url: ${OPA_URL:http://opa:8181}
+
+# --- Identité fédérée maison : validation des JWT RS256 via JWKS ---
+# Tous les services valident les jetons émis par identity-service.
+security:
+  jwt:
+    issuer: ${JWT_ISSUER:unchk-office}
+    # Endpoint JWKS exposé par identity-service (clés publiques de signature).
+    jwks-uri: ${JWT_JWKS_URI:http://identity-service:8080/.well-known/jwks.json}
+
+# --- Supervision (santé / info) exposée par chaque service ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+# --- Journalisation : format lisible, pas de fuite d'informations internes ---
+logging:
+  level:
+    root: INFO
+    sn.unchk.office: DEBUG

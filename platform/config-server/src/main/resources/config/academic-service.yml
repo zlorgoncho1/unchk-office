@@ -1,0 +1,19 @@
+# ============================================================
+# Configuration spécifique : academic-service
+# Formations (dates, type, niveau, financement, formés par genre),
+# emplois du temps, gestion des formateurs.
+# Topic Kafka publié : academic.formations
+# Base PostgreSQL : academic
+# ============================================================
+server:
+  port: 8085
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/academic
+
+# Topic Kafka émis par ce service (référence documentaire).
+unchk:
+  kafka:
+    topics:
+      formations: academic.formations

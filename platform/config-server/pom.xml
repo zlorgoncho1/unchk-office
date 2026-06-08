@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Parent : POM agrégateur du monorepo (fournit Spring Boot 3.3.4 + Spring Cloud 2023.0.3) -->
+  <parent>
+    <groupId>sn.unchk.office</groupId>
+    <artifactId>unchk-office-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>config-server</artifactId>
+  <name>UNCHK Office — Config Server</name>
+  <description>Serveur de configuration centralisé (Spring Cloud Config, profil natif/classpath)</description>
+
+  <dependencies>
+    <!-- Cœur du serveur de configuration Spring Cloud -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-config-server</artifactId>
+    </dependency>
+
+    <!-- Tests : facilités fournies par Spring Boot (JUnit 5, etc.) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Construit un jar exécutable (fat-jar) lançable par java -jar -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

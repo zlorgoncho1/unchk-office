@@ -1,0 +1,28 @@
+# ============================================================
+# Configuration spécifique : communication-service
+# Comptes rendus, réunions, notifications + push WebSocket vers le frontend.
+# Stockage des comptes rendus dans MinIO (S3).
+# Topics Kafka publiés : communication.comptesrendus, communication.reunions, notifications
+# Base PostgreSQL : communication
+# ============================================================
+server:
+  port: 8084
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/communication
+
+# Connexion au stockage objet MinIO (comptes rendus).
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://minio:9000}
+  access-key: ${MINIO_ROOT_USER:unchk}
+  secret-key: ${MINIO_ROOT_PASSWORD:unchk_dev_pwd}
+  bucket: comptes-rendus
+
+# Topics Kafka émis par ce service (référence documentaire).
+unchk:
+  kafka:
+    topics:
+      comptesrendus: communication.comptesrendus
+      reunions: communication.reunions
+      notifications: notifications

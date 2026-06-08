@@ -1,0 +1,19 @@
+# ============================================================
+# Configuration spécifique : insertion-service
+# Appui à l'insertion : suivi étudiant, bilans de stages, statistiques
+# d'insertion (auto-emploi vs emploi salarié), base de partenaires.
+# Topic Kafka publié : insertion.events
+# Base PostgreSQL : insertion
+# ============================================================
+server:
+  port: 8086
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/insertion
+
+# Topic Kafka émis par ce service (référence documentaire).
+unchk:
+  kafka:
+    topics:
+      events: insertion.events

@@ -1,0 +1,21 @@
+# ============================================================
+# Configuration spécifique : api-gateway
+# Seul point d'entrée REST (tier Middle), réactif (Spring Cloud Gateway / WebFlux).
+# Applique le RBAC grossier (rôle × route) via OPA, valide les JWT via JWKS,
+# et pousse les notifications temps réel au frontend (WebSocket).
+# Pas de base de données dédiée (le gateway ne persiste rien).
+# ============================================================
+server:
+  port: 8080
+
+spring:
+  # Le gateway est réactif : on désactive l'auto-configuration JPA/datasource.
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+# Verrou d'autorisation au gateway : appel au PDP OPA pour le RBAC route × rôle.
+opa:
+  # Chemin de la politique RBAC évaluée pour chaque requête entrante.
+  decision-path: ${OPA_DECISION_PATH:/v1/data/unchk/authz/allow}
