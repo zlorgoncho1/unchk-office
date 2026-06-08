@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimValidator;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtIssuerValidator;
 import org.springframework.security.oauth2.jwt.JwtTimestampValidator;
@@ -77,6 +78,7 @@ public class ConfigurationServeurRessources {
      * Décodeur JWT bâti à partir du JWKS, enrichi des validateurs issuer + audience + expiration.
      */
     @Bean
+    @Primary
     public JwtDecoder decodeurJwt() {
         NimbusJwtDecoder decodeur = NimbusJwtDecoder
                 .withJwkSetUri(proprietes.jwksUri())
