@@ -1,0 +1,9 @@
+<!-- Chargement : spinner Material centré + message. -->
+<div class="loading" [class.loading--compact]="compact()">
+  <mat-progress-spinner
+    [diameter]="compact() ? 28 : 40"
+    mode="indeterminate"
+    color="primary"
+  ></mat-progress-spinner>
+  <p class="loading__message">{{ message() }}</p>
+</div>

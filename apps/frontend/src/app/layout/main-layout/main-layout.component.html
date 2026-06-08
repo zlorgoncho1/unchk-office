@@ -1,0 +1,33 @@
+<!-- Grille principale : [sidebar | contenu | rail droit]. -->
+<div class="layout" [class.layout--menu-ouvert]="menuOuvert()" [class.layout--rail-ouvert]="railOuvert()">
+  <!-- Barre latérale (repliable en mobile). -->
+  <div class="layout__sidebar">
+    <app-sidebar (naviguer)="fermerPanneaux()"></app-sidebar>
+  </div>
+
+  <!-- Colonne centrale : topbar + contenu routé. -->
+  <div class="layout__centre">
+    <app-topbar
+      class="layout__topbar"
+      (basculerMenu)="basculerMenu()"
+      (basculerRail)="basculerRail()"
+      (deconnexion)="deconnexion()"
+    ></app-topbar>
+
+    <main class="layout__contenu">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <!-- Rail droit (repliable en mobile). -->
+  <div class="layout__rail">
+    <app-right-rail></app-right-rail>
+  </div>
+
+  <!-- Voile mobile : referme les panneaux latéraux. -->
+  <div
+    class="layout__voile"
+    (click)="fermerPanneaux()"
+    aria-hidden="true"
+  ></div>
+</div>

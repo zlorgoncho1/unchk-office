@@ -1,0 +1,13 @@
+<!-- État vide : icône, titre, message et action projetée. -->
+<div class="empty" [class.empty--compact]="compact()">
+  <span class="empty__icone">
+    <iconify-icon [attr.icon]="'solar:' + icone()"></iconify-icon>
+  </span>
+  <p class="empty__titre">{{ titre() }}</p>
+  @if (message(); as m) {
+    <p class="empty__message">{{ m }}</p>
+  }
+  <div class="empty__action">
+    <ng-content></ng-content>
+  </div>
+</div>

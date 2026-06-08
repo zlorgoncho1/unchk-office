@@ -1,0 +1,86 @@
+// Carte KPI brandée — variables --unchk-*.
+:host {
+  display: block;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--unchk-surface);
+  border: 1px solid var(--unchk-border);
+  border-radius: var(--unchk-radius-lg);
+  box-shadow: var(--unchk-shadow-card);
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+
+  &:hover {
+    box-shadow: var(--unchk-shadow-raised);
+    transform: translateY(-1px);
+  }
+
+  &__icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: var(--unchk-radius-md);
+    font-size: 1.6rem;
+  }
+
+  &__corps {
+    min-width: 0;
+  }
+
+  &__libelle {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--unchk-text-muted);
+  }
+
+  &__valeur {
+    margin: 2px 0 0;
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--unchk-navy);
+    letter-spacing: -0.01em;
+  }
+
+  &__variation {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 6px 0 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+
+    &--positive {
+      color: var(--unchk-success);
+    }
+    &--negative {
+      color: var(--unchk-orange);
+    }
+  }
+
+  // Tons de couleur de marque pour la pastille d'icône.
+  &[data-ton='blue'] .stat__icone {
+    color: var(--unchk-blue);
+    background: rgba(28, 117, 188, 0.1);
+  }
+  &[data-ton='green'] .stat__icone {
+    color: var(--unchk-green);
+    background: rgba(54, 169, 59, 0.1);
+  }
+  &[data-ton='orange'] .stat__icone {
+    color: var(--unchk-orange);
+    background: rgba(243, 146, 0, 0.12);
+  }
+  &[data-ton='navy'] .stat__icone {
+    color: var(--unchk-navy);
+    background: rgba(22, 49, 74, 0.08);
+  }
+}

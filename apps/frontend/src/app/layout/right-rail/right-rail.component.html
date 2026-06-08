@@ -1,0 +1,100 @@
+<!-- Rail droit : notifications temps réel, activités récentes, contacts. -->
+<aside class="rail">
+  <!-- Notifications -->
+  <section class="rail__bloc">
+    <header class="rail__entete">
+      <h2 class="rail__titre">
+        <iconify-icon icon="solar:bell-bing-bold-duotone"></iconify-icon>
+        Notifications
+      </h2>
+      @if (nonLues() > 0) {
+        <span class="rail__compteur">{{ nonLues() }}</span>
+      }
+    </header>
+
+    @if (notifications().length > 0) {
+      <ul class="rail__liste">
+        @for (n of notifications(); track n.id) {
+          <li
+            class="rail__notif"
+            [class.rail__notif--non-lu]="!n.lu"
+            (click)="marquerLue(n)"
+          >
+            <span class="rail__notif-puce"></span>
+            <div class="rail__notif-corps">
+              <p class="rail__notif-texte">{{ n.libelle }}</p>
+              <p class="rail__notif-temps">{{ tempsRelatif(n.horodatage) }}</p>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <unchk-empty-state
+        [compact]="true"
+        icone="bell-off-bold-duotone"
+        titre="Aucune notification"
+        message="Vous serez prévenu en temps réel."
+      ></unchk-empty-state>
+    }
+
+    <!-- Indicateur d'état du canal temps réel. -->
+    <p class="rail__etat" [attr.data-etat]="etat()">
+      <span class="rail__etat-point"></span>
+      @switch (etat()) {
+        @case ('connecte') { Temps réel actif }
+        @case ('connexion') { Connexion… }
+        @default { Hors ligne }
+      }
+    </p>
+  </section>
+
+  <!-- Activités récentes -->
+  <section class="rail__bloc">
+    <header class="rail__entete">
+      <h2 class="rail__titre">
+        <iconify-icon icon="solar:history-bold-duotone"></iconify-icon>
+        Activités récentes
+      </h2>
+    </header>
+    <ul class="rail__liste">
+      @for (a of activites; track a.texte) {
+        <li class="rail__activite">
+          <span class="rail__activite-icone" [attr.data-ton]="a.ton">
+            <iconify-icon [attr.icon]="'solar:' + a.icone"></iconify-icon>
+          </span>
+          <div class="rail__activite-corps">
+            <p class="rail__activite-texte">{{ a.texte }}</p>
+            <p class="rail__activite-temps">{{ a.quand }}</p>
+          </div>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <!-- Contacts -->
+  <section class="rail__bloc">
+    <header class="rail__entete">
+      <h2 class="rail__titre">
+        <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
+        Contacts
+      </h2>
+    </header>
+    <ul class="rail__liste">
+      @for (c of contacts; track c.nom) {
+        <li class="rail__contact">
+          <span class="rail__contact-avatar">
+            {{ c.initiales }}
+            <span
+              class="rail__contact-statut"
+              [class.rail__contact-statut--en-ligne]="c.enLigne"
+            ></span>
+          </span>
+          <div class="rail__contact-corps">
+            <p class="rail__contact-nom">{{ c.nom }}</p>
+            <p class="rail__contact-role">{{ c.role }}</p>
+          </div>
+        </li>
+      }
+    </ul>
+  </section>
+</aside>

@@ -1,0 +1,156 @@
+// Barre latérale brandée UNCHK — thème clair, variables --unchk-*.
+:host {
+  display: block;
+  height: 100%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--unchk-surface);
+  border-right: 1px solid var(--unchk-border);
+
+  // --- Logo ---
+  &__logo {
+    display: flex;
+    align-items: center;
+    padding: 20px 22px 16px;
+    flex-shrink: 0;
+
+    img {
+      width: auto;
+      max-width: 100%;
+    }
+  }
+
+  // --- Navigation ---
+  &__nav {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 8px 14px 16px;
+
+    // Barre de défilement discrète.
+    scrollbar-width: thin;
+    scrollbar-color: var(--unchk-border) transparent;
+  }
+
+  &__section {
+    margin-bottom: 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__section-titre {
+    margin: 12px 10px 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--unchk-text-subtle);
+  }
+
+  &__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  // --- Lien de navigation ---
+  &__lien {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--unchk-radius-pill);
+    color: var(--unchk-text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &-icone {
+      font-size: 1.35rem;
+      flex-shrink: 0;
+      color: var(--unchk-slate);
+      transition: color 0.15s ease;
+    }
+
+    &-libelle {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &:hover {
+      background: var(--unchk-line);
+      color: var(--unchk-navy);
+    }
+
+    // Élément actif : pilule bleu primaire.
+    &--actif,
+    &--actif:hover {
+      background: var(--unchk-blue);
+      color: var(--unchk-white);
+      box-shadow: 0 4px 12px rgba(28, 117, 188, 0.28);
+
+      .sidebar__lien-icone {
+        color: var(--unchk-white);
+      }
+    }
+  }
+
+  // --- Profil en pied ---
+  &__profil {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    margin: 0 12px 12px;
+    border-radius: var(--unchk-radius-lg);
+    background: var(--unchk-background);
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: var(--unchk-radius-pill);
+    background: var(--unchk-blue);
+    color: var(--unchk-white);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  &__profil-texte {
+    min-width: 0;
+  }
+
+  &__profil-nom {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--unchk-navy);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__profil-role {
+    margin: 1px 0 0;
+    font-size: 0.75rem;
+    color: var(--unchk-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

@@ -1,0 +1,131 @@
+<!-- Barre supérieure : menu mobile, fil d'Ariane, recherche, actions, avatar. -->
+<header class="topbar">
+  <!-- Bouton menu (mobile) + fil d'Ariane. -->
+  <div class="topbar__gauche">
+    <button
+      type="button"
+      class="topbar__burger"
+      (click)="basculerMenu.emit()"
+      aria-label="Ouvrir le menu"
+    >
+      <iconify-icon icon="solar:hamburger-menu-linear"></iconify-icon>
+    </button>
+
+    <nav class="topbar__fil" aria-label="Fil d'Ariane">
+      @for (seg of fil(); track seg.libelle; let dernier = $last) {
+        @if (seg.chemin) {
+          <a class="topbar__fil-lien" [routerLink]="seg.chemin">{{ seg.libelle }}</a>
+        } @else {
+          <span class="topbar__fil-courant">{{ seg.libelle }}</span>
+        }
+        @if (!dernier) {
+          <iconify-icon
+            class="topbar__fil-sep"
+            icon="solar:alt-arrow-right-linear"
+          ></iconify-icon>
+        }
+      }
+    </nav>
+  </div>
+
+  <!-- Champ de recherche. -->
+  <div class="topbar__recherche">
+    <iconify-icon
+      class="topbar__recherche-icone"
+      icon="solar:magnifer-linear"
+    ></iconify-icon>
+    <input
+      type="search"
+      class="topbar__recherche-champ"
+      placeholder="Rechercher…"
+      aria-label="Rechercher"
+    />
+  </div>
+
+  <!-- Actions à droite. -->
+  <div class="topbar__actions">
+    <button
+      type="button"
+      class="topbar__icone-btn"
+      matTooltip="Thème"
+      aria-label="Changer de thème"
+    >
+      <iconify-icon icon="solar:sun-2-linear"></iconify-icon>
+    </button>
+
+    <button
+      type="button"
+      class="topbar__icone-btn"
+      matTooltip="Rafraîchir"
+      aria-label="Rafraîchir"
+      (click)="rafraichir()"
+    >
+      <iconify-icon icon="solar:refresh-linear"></iconify-icon>
+    </button>
+
+    <button
+      type="button"
+      class="topbar__icone-btn"
+      matTooltip="Langue"
+      aria-label="Changer de langue"
+      (click)="basculerLangue()"
+    >
+      <span class="topbar__langue">{{ langue() === 'fr' ? 'FR' : 'EN' }}</span>
+    </button>
+
+    <!-- Cloche de notifications avec badge du nombre de non-lues. -->
+    <button
+      type="button"
+      class="topbar__icone-btn topbar__cloche"
+      matTooltip="Notifications"
+      aria-label="Notifications"
+      (click)="basculerRail.emit()"
+    >
+      <iconify-icon icon="solar:bell-bing-linear"></iconify-icon>
+      @if (notifications.nonLues() > 0) {
+        <span class="topbar__badge">{{
+          notifications.nonLues() > 99 ? '99+' : notifications.nonLues()
+        }}</span>
+      }
+    </button>
+
+    <span class="topbar__separateur"></span>
+
+    <!-- Avatar + menu utilisateur. -->
+    <button
+      type="button"
+      class="topbar__avatar-btn"
+      [matMenuTriggerFor]="menuUser"
+      aria-label="Menu utilisateur"
+    >
+      <span class="topbar__avatar">{{ initiales }}</span>
+      <span class="topbar__avatar-texte">
+        <span class="topbar__avatar-nom">{{ user()?.fullName || user()?.email }}</span>
+        <span class="topbar__avatar-role">{{ rolePrincipal }}</span>
+      </span>
+      <iconify-icon
+        class="topbar__avatar-chevron"
+        icon="solar:alt-arrow-down-linear"
+      ></iconify-icon>
+    </button>
+
+    <mat-menu #menuUser="matMenu" xPosition="before">
+      <div class="topbar__menu-entete">
+        <p class="topbar__menu-nom">{{ user()?.fullName || user()?.email }}</p>
+        <p class="topbar__menu-mail">{{ user()?.email }}</p>
+      </div>
+      <button mat-menu-item routerLink="/parametres">
+        <iconify-icon icon="solar:user-circle-linear"></iconify-icon>
+        <span>&nbsp;Mon profil</span>
+      </button>
+      <button mat-menu-item routerLink="/parametres">
+        <iconify-icon icon="solar:settings-linear"></iconify-icon>
+        <span>&nbsp;Paramètres</span>
+      </button>
+      <button mat-menu-item (click)="deconnexion.emit()">
+        <iconify-icon icon="solar:logout-2-linear"></iconify-icon>
+        <span>&nbsp;Se déconnecter</span>
+      </button>
+    </mat-menu>
+  </div>
+</header>

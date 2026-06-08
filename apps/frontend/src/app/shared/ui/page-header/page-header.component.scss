@@ -1,0 +1,54 @@
+// En-tête de page brandé — variables --unchk-*.
+:host {
+  display: block;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+
+  &__gauche {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  &__icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: var(--unchk-radius-md);
+    color: var(--unchk-blue);
+    background: rgba(28, 117, 188, 0.1);
+    font-size: 1.5rem;
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--unchk-navy);
+    letter-spacing: -0.01em;
+  }
+
+  &__sous-titre {
+    margin: 2px 0 0;
+    font-size: 0.9rem;
+    color: var(--unchk-text-muted);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}

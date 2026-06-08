@@ -1,0 +1,11 @@
+<!-- Carte de graphe : section brandée + canvas Chart.js (ng2-charts). -->
+<unchk-section-card [titre]="titre()" [icone]="icone()">
+  <div class="chart-card__zone" [style.height.px]="hauteur()">
+    <canvas
+      baseChart
+      [type]="type()"
+      [data]="data()"
+      [options]="optionsFinales()"
+    ></canvas>
+  </div>
+</unchk-section-card>
