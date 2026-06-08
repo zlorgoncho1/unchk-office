@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Parent : POM agrégateur du monorepo (fournit Spring Boot 3.3.4 + Spring Cloud 2023.0.3) -->
+  <parent>
+    <groupId>sn.unchk.office</groupId>
+    <artifactId>unchk-office-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>academic-service</artifactId>
+  <name>UNCHK Office — Academic Service</name>
+  <description>Service académique : formations (financement, formés par genre), emplois du temps
+    (créneaux) et affectation des formateurs. Produit le topic academic.formations et maintient
+    une projection locale des formateurs (read-model academic_formateur_ro) alimentée par
+    people.staff, sans aucun appel REST inter-service.</description>
+
+  <dependencies>
+    <!-- Librairie transverse maison : sécurité JWT/JWKS, autorisation OPA anti-IDOR,
+         gestion d'erreurs web, messagerie Kafka, export PDF/Excel, audit.
+         Elle apporte aussi web, security, validation, aop et spring-kafka. -->
+    <dependency>
+      <groupId>sn.unchk.office</groupId>
+      <artifactId>common</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+    </dependency>
+
+    <!-- Web MVC (servlet, PAS réactif) : contrôleurs REST sous /api/academic -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Persistance relationnelle (JPA / Hibernate) sur la base academic -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <!-- Validation des DTO (Jakarta Bean Validation) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <!-- Supervision (santé / info) pour les sondes Docker et le monitoring -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <!-- Messagerie : producteurs / consommateurs Kafka (sérialisation JSON) -->
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka</artifactId>
+    </dependency>
+
+    <!-- Pilote PostgreSQL -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Migrations de schéma : Flyway (cœur + support PostgreSQL) -->
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+    </dependency>
+
+    <!-- Tests : JUnit 5, Mockito, assertions Spring -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Tests : utilitaires de test Spring Kafka -->
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Construit un jar exécutable (fat-jar) lançable par java -jar. -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
