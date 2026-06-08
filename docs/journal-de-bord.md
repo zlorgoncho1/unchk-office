@@ -21,6 +21,9 @@ Objectif : tracer les décisions et éviter de re-buter sur les mêmes obstacles
 | 14 | 2026-06-08 | Services crashent : `BeanDefinitionOverrideException` sur `kafkaTemplate` | `libs/common` fournit un `KafkaTemplate` JSON qui entre en conflit avec l'auto-config Kafka de Boot | `SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING=true` (le template custom prime) |
 | 15 | 2026-06-08 | people/communication crashent : `JwtDecoder : expected single bean but found 2` | Boot crée `jwtDecoderByJwkKeySetUri` (via `jwk-set-uri`) **en plus** du `decodeurJwt` de `common` → chaîne de sécurité Boot ambiguë | `@Primary` sur `decodeurJwt` dans `libs/common` |
 | 16 | 2026-06-08 | `docker compose up` : `Bind for 0.0.0.0:8085 failed` (kafka-ui) | Port hôte 8085 déjà occupé | Port kafka-ui déplacé en 8090 |
+| 17 | 2026-06-08 | Login via gateway → 401 ; login direct → 400 `motDePasse obligatoire` | (a) le gateway exige un JWT sur `/api/identity/auth/login` ; (b) le DTO attend `{email, motDePasse}` (champs FR) | (a) `permitAll` sur `/api/identity/auth/**` dans `SecurityConfig` **et** dans la liste publique du filtre OPA ; (b) payload corrigé |
+| 18 | 2026-06-08 | academic/admin/document/insertion → 401 `WWW-Authenticate: Basic` | Ces services n'avaient **pas de chaîne JWT** active et retombaient sur la sécurité Basic par défaut de Boot (config sécurité hétérogène entre agents) | Activation uniforme du resource-server JWT de Boot via env `spring.security.oauth2.resourceserver.jwt.jwk-set-uri` + `issuer-uri` (sans rebuild) |
+| 19 | 2026-06-08 | Aucun compte pour se connecter (login impossible) | Identity ne seedait aucun utilisateur | Migration **V3 seed admin** (BCrypt `$2a$`, idempotente) : `admin@unchk.sn` / `Admin123!`, rôle admin |
 
 > Ce journal est mis à jour à chaque nouvel obstacle non trivial. Voir aussi `docs/architecture.md`,
 > `docs/security.md` et `docs/database.md` pour les décisions de conception.
