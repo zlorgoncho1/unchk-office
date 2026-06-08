@@ -86,6 +86,7 @@ export const routes: Routes = [
       {
         path: 'formations',
         title: 'Formations · UNCHK Office',
+        canActivate: [roleGuard('admin', 'administratif', 'enseignant', 'etudiant')],
         data: { titre: 'Formations', icone: 'square-academic-cap-bold-duotone' },
         loadComponent: () =>
           import('./features/formations/formations.component').then(
@@ -105,7 +106,7 @@ export const routes: Routes = [
       {
         path: 'etudiants',
         title: 'Étudiants · UNCHK Office',
-        canActivate: [roleGuard('admin', 'administratif', 'enseignant', 'appui-insertion')],
+        canActivate: [roleGuard('admin', 'administratif', 'enseignant')],
         data: { titre: 'Étudiants', icone: 'users-group-rounded-bold-duotone' },
         loadComponent: () =>
           import('./features/etudiants/etudiants.component').then(
@@ -115,7 +116,7 @@ export const routes: Routes = [
       {
         path: 'mon-dossier',
         title: 'Mon dossier · UNCHK Office',
-        canActivate: [roleGuard('admin', 'etudiant')],
+        canActivate: [roleGuard('etudiant')],
         data: { titre: 'Mon dossier', icone: 'user-id-bold-duotone' },
         loadComponent: () =>
           import('./features/mon-dossier/mon-dossier.component').then(
@@ -127,6 +128,7 @@ export const routes: Routes = [
       {
         path: 'reunions',
         title: 'Réunions · UNCHK Office',
+        canActivate: [roleGuard('admin', 'administratif', 'enseignant')],
         data: { titre: 'Réunions', icone: 'users-group-two-rounded-bold-duotone' },
         loadComponent: () =>
           import('./features/reunions/reunions.component').then(
@@ -136,6 +138,7 @@ export const routes: Routes = [
       {
         path: 'comptes-rendus',
         title: 'Comptes rendus · UNCHK Office',
+        canActivate: [roleGuard('admin', 'administratif', 'enseignant')],
         data: { titre: 'Comptes rendus', icone: 'document-text-bold-duotone' },
         loadComponent: () =>
           import('./features/comptes-rendus/comptes-rendus.component').then(
@@ -145,6 +148,7 @@ export const routes: Routes = [
       {
         path: 'documents',
         title: 'Documents · UNCHK Office',
+        canActivate: [roleGuard('admin', 'administratif', 'enseignant')],
         data: { titre: 'Documents', icone: 'folder-with-files-bold-duotone' },
         loadComponent: () =>
           import('./features/documents/documents.component').then(
@@ -156,7 +160,7 @@ export const routes: Routes = [
       {
         path: 'insertion',
         title: 'Suivi insertion · UNCHK Office',
-        canActivate: [roleGuard('admin', 'administratif', 'appui-insertion', 'etudiant')],
+        canActivate: [roleGuard('admin', 'administratif', 'enseignant', 'appui-insertion')],
         data: { titre: 'Suivi insertion', icone: 'case-round-minimalistic-bold-duotone' },
         loadComponent: () =>
           import('./features/insertion/insertion.component').then(
@@ -166,7 +170,7 @@ export const routes: Routes = [
       {
         path: 'partenaires',
         title: 'Partenaires · UNCHK Office',
-        canActivate: [roleGuard('admin', 'appui-insertion')],
+        canActivate: [roleGuard('admin', 'administratif', 'enseignant', 'appui-insertion')],
         data: { titre: 'Partenaires', icone: 'buildings-2-bold-duotone' },
         loadComponent: () =>
           import('./features/partenaires/partenaires.component').then(
@@ -176,7 +180,7 @@ export const routes: Routes = [
       {
         path: 'statistiques',
         title: 'Statistiques · UNCHK Office',
-        canActivate: [roleGuard('admin', 'administratif', 'appui-insertion')],
+        canActivate: [roleGuard('admin', 'administratif', 'enseignant', 'appui-insertion')],
         data: { titre: "Statistiques d'insertion", icone: 'chart-2-bold-duotone' },
         loadComponent: () =>
           import('./features/statistiques/statistiques.component').then(
