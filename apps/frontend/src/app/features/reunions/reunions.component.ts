@@ -100,6 +100,7 @@ export class ReunionsComponent {
         { valeur: 'tutorat', libelle: 'Tutorat' },
         { valeur: 'preparation_cours', libelle: 'Préparation de cours' },
         { valeur: 'evaluation', libelle: 'Évaluation' },
+        { valeur: 'rencontre', libelle: 'Rencontre' },
       ],
     },
     { cle: 'startsAt', libelle: 'Début', type: 'date', requis: true },
