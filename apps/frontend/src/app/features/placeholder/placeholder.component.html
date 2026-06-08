@@ -1,0 +1,10 @@
+<!-- Page générique « bientôt disponible » pour les modules à venir. -->
+<unchk-page-header [titre]="meta().titre" [icone]="meta().icone"></unchk-page-header>
+
+<unchk-empty-state
+  icone="hourglass-line-bold-duotone"
+  titre="Module en préparation"
+  [message]="
+    'Le module « ' + meta().titre + ' » sera disponible dans une prochaine étape.'
+  "
+></unchk-empty-state>

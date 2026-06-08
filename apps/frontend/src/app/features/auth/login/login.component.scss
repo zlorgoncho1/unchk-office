@@ -1,0 +1,109 @@
+// Page de connexion — mise en page centrée, charte UNCHK (sobre).
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.login {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 24px;
+  background-color: var(--unchk-background);
+  // Halo discret aux couleurs de la marque (sobre, pas de néon).
+  background-image:
+    radial-gradient(circle at top left, rgba(28, 117, 188, 0.06), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(54, 169, 59, 0.05), transparent 40%);
+  box-sizing: border-box;
+
+  &__carte {
+    width: 100%;
+    max-width: 420px;
+    padding: 40px 32px;
+    box-sizing: border-box;
+  }
+
+  &__entete {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  &__logo {
+    width: 96px;
+    height: auto;
+    margin-bottom: 16px;
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--unchk-navy);
+    letter-spacing: -0.01em;
+  }
+
+  &__sous-titre {
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+    color: var(--unchk-text-muted);
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__champ {
+    width: 100%;
+  }
+
+  &__icone {
+    color: var(--unchk-slate);
+    margin-right: 6px;
+    font-size: 1.15rem;
+  }
+
+  &__erreur {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    padding: 10px 12px;
+    border-radius: var(--unchk-radius-md);
+    background: rgba(229, 72, 77, 0.08);
+    color: var(--unchk-danger);
+    font-size: 0.85rem;
+
+    iconify-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+  }
+
+  &__bouton {
+    width: 100%;
+    height: 44px;
+    margin-top: 4px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  &__spinner {
+    // Le spinner hérite de la couleur du texte du bouton.
+    --mdc-circular-progress-active-indicator-color: currentColor;
+  }
+
+  &__pied {
+    font-size: 0.78rem;
+    color: var(--unchk-text-subtle);
+  }
+}

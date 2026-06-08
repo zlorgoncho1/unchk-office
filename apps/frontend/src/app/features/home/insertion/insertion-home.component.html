@@ -1,0 +1,163 @@
+<!-- Tableau de bord appui à l'insertion : stages + partenaires + statistiques. -->
+<unchk-page-header
+  [titre]="'Bonjour, ' + prenom()"
+  sousTitre="Suivi de l'insertion professionnelle"
+  icone="case-round-minimalistic-bold-duotone"
+>
+  <a mat-flat-button color="primary" routerLink="/statistiques">
+    <iconify-icon icon="solar:chart-2-linear"></iconify-icon>
+    <span>&nbsp;Statistiques</span>
+  </a>
+</unchk-page-header>
+
+<!-- Compteurs insertion. -->
+<section class="home__kpis">
+  <unchk-stat-card
+    libelle="Stages suivis"
+    [valeur]="nbStages()"
+    icone="case-round-minimalistic-bold-duotone"
+    ton="blue"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Stages en cours"
+    [valeur]="nbStagesEnCours()"
+    icone="hourglass-line-bold-duotone"
+    ton="orange"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Partenaires"
+    [valeur]="nbPartenaires()"
+    icone="buildings-2-bold-duotone"
+    ton="green"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Situations suivies"
+    [valeur]="totalInsertions()"
+    icone="chart-2-bold-duotone"
+    ton="navy"
+  ></unchk-stat-card>
+</section>
+
+<div class="home__grille">
+  <!-- Tableau des stages : triable + filtrable. -->
+  <unchk-section-card titre="Stages" icone="case-round-minimalistic-bold-duotone">
+    @if (stages.etat().chargement) {
+      <unchk-loading-state message="Chargement des stages…"></unchk-loading-state>
+    } @else if (stages.etat().erreur) {
+      <unchk-empty-state
+        icone="shield-warning-bold-duotone"
+        titre="Stages indisponibles"
+        [message]="stages.etat().erreur"
+      >
+        <button mat-stroked-button color="primary" (click)="stages.recharger()">
+          Réessayer
+        </button>
+      </unchk-empty-state>
+    } @else if (nbStages() > 0) {
+      <div class="table-filtre">
+        <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+        <input
+          type="text"
+          placeholder="Filtrer par intitulé, encadrant, statut…"
+          (input)="filtrer($any($event.target).value)"
+        />
+      </div>
+      <table mat-table [dataSource]="sourceStages" matSort class="home-table">
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Intitulé</th>
+          <td mat-cell *matCellDef="let s">{{ s.title }}</td>
+        </ng-container>
+        <ng-container matColumnDef="supervisorName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Encadrant</th>
+          <td mat-cell *matCellDef="let s">{{ s.supervisorName ?? '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="period">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Période</th>
+          <td mat-cell *matCellDef="let s">
+            {{ exposeDate(s.startDate) }} → {{ exposeDate(s.endDate) }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut</th>
+          <td mat-cell *matCellDef="let s">
+            <unchk-status-pill [libelle]="s.status" [ton]="tonStage(s.status)"></unchk-status-pill>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="grade">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="aligne-droite">Note</th>
+          <td mat-cell *matCellDef="let s" class="aligne-droite montant">
+            {{ s.grade != null ? s.grade : '—' }}
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="colonnesStages"></tr>
+        <tr mat-row *matRowDef="let row; columns: colonnesStages"></tr>
+      </table>
+    } @else {
+      <unchk-empty-state
+        icone="case-minimalistic-bold-duotone"
+        titre="Aucun stage"
+        message="Aucun stage n'est suivi pour le moment."
+      ></unchk-empty-state>
+    }
+  </unchk-section-card>
+
+  <!-- Colonne latérale : partenaires + graphe. -->
+  <unchk-section-card titre="Partenaires" icone="buildings-2-bold-duotone">
+    @if (partenaires.etat().chargement) {
+      <unchk-loading-state [compact]="true" message="Chargement…"></unchk-loading-state>
+    } @else if (partenaires.etat().erreur) {
+      <unchk-empty-state
+        [compact]="true"
+        icone="shield-warning-bold-duotone"
+        titre="Partenaires indisponibles"
+        [message]="partenaires.etat().erreur"
+      ></unchk-empty-state>
+    } @else if (partenairesRecents().length > 0) {
+      <ul class="liste-doc">
+        @for (p of partenairesRecents(); track p.id) {
+          <li class="liste-doc__item">
+            <iconify-icon icon="solar:buildings-2-bold-duotone"></iconify-icon>
+            <div class="liste-doc__corps">
+              <span class="liste-doc__titre">{{ p.name }}</span>
+              <span class="liste-doc__meta">
+                {{ exposeHumaniser(p.kind) }} · {{ p.city ?? '—' }}
+              </span>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <unchk-empty-state
+        [compact]="true"
+        icone="buildings-bold-duotone"
+        titre="Aucun partenaire"
+        message="Aucun partenaire enregistré."
+      ></unchk-empty-state>
+    }
+  </unchk-section-card>
+</div>
+
+<!-- Graphe de répartition des situations d'insertion (pleine largeur). -->
+<section class="home__section">
+  @if (stats.etat().chargement) {
+    <unchk-section-card titre="Répartition des situations" icone="chart-square-bold-duotone">
+      <unchk-loading-state message="Chargement…"></unchk-loading-state>
+    </unchk-section-card>
+  } @else if (totalInsertions() > 0) {
+    <unchk-chart-card
+      titre="Situations d'insertion par type"
+      icone="chart-square-bold-duotone"
+      type="doughnut"
+      [data]="grapheInsertion()"
+      [hauteur]="300"
+    ></unchk-chart-card>
+  } @else {
+    <unchk-section-card titre="Répartition des situations" icone="chart-square-bold-duotone">
+      <unchk-empty-state
+        icone="chart-2-bold-duotone"
+        titre="Pas de données"
+        message="Aucune situation d'insertion à représenter."
+      ></unchk-empty-state>
+    </unchk-section-card>
+  }
+</section>

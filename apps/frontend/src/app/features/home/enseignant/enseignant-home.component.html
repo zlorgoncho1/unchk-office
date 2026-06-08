@@ -1,0 +1,123 @@
+<!-- Tableau de bord enseignant : formations + réunions. -->
+<unchk-page-header
+  [titre]="'Bonjour, ' + prenom()"
+  sousTitre="Vos formations et vos réunions"
+  icone="square-academic-cap-bold-duotone"
+>
+  <a mat-stroked-button color="primary" routerLink="/reunions">
+    <iconify-icon icon="solar:users-group-two-rounded-linear"></iconify-icon>
+    <span>&nbsp;Réunions</span>
+  </a>
+</unchk-page-header>
+
+<!-- Compteurs pédagogiques. -->
+<section class="home__kpis">
+  <unchk-stat-card
+    libelle="Formations"
+    [valeur]="nbFormations()"
+    icone="square-academic-cap-bold-duotone"
+    ton="blue"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Apprenants formés"
+    [valeur]="totalFormes()"
+    icone="users-group-rounded-bold-duotone"
+    ton="green"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Réunions à venir"
+    [valeur]="nbReunionsAVenir()"
+    icone="calendar-bold-duotone"
+    ton="orange"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Réunions totales"
+    [valeur]="nbReunions()"
+    icone="users-group-two-rounded-bold-duotone"
+    ton="navy"
+  ></unchk-stat-card>
+</section>
+
+<div class="home__grille">
+  <!-- Tableau des réunions : triable + filtrable. -->
+  <unchk-section-card titre="Réunions" icone="users-group-two-rounded-bold-duotone">
+    @if (reunions.etat().chargement) {
+      <unchk-loading-state message="Chargement des réunions…"></unchk-loading-state>
+    } @else if (reunions.etat().erreur) {
+      <unchk-empty-state
+        icone="shield-warning-bold-duotone"
+        titre="Réunions indisponibles"
+        [message]="reunions.etat().erreur"
+      >
+        <button mat-stroked-button color="primary" (click)="reunions.recharger()">
+          Réessayer
+        </button>
+      </unchk-empty-state>
+    } @else if (nbReunions() > 0) {
+      <div class="table-filtre">
+        <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+        <input
+          type="text"
+          placeholder="Filtrer par titre, type, lieu, statut…"
+          (input)="filtrer($any($event.target).value)"
+        />
+      </div>
+      <table mat-table [dataSource]="sourceReunions" matSort class="home-table">
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Titre</th>
+          <td mat-cell *matCellDef="let r">{{ r.title }}</td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+          <td mat-cell *matCellDef="let r">{{ exposeHumaniser(r.type) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="startsAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Début</th>
+          <td mat-cell *matCellDef="let r">{{ exposeDateHeure(r.startsAt) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Lieu</th>
+          <td mat-cell *matCellDef="let r">{{ r.location ?? '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut</th>
+          <td mat-cell *matCellDef="let r">
+            <unchk-status-pill [libelle]="r.status" [ton]="tonReunion(r.status)"></unchk-status-pill>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="colonnesReunions"></tr>
+        <tr mat-row *matRowDef="let row; columns: colonnesReunions"></tr>
+      </table>
+    } @else {
+      <unchk-empty-state
+        icone="calendar-bold-duotone"
+        titre="Aucune réunion"
+        message="Aucune réunion n'est planifiée pour le moment."
+      ></unchk-empty-state>
+    }
+  </unchk-section-card>
+
+  <!-- Graphe des effectifs formés par formation. -->
+  @if (formations.etat().chargement) {
+    <unchk-section-card titre="Apprenants formés" icone="chart-square-bold-duotone">
+      <unchk-loading-state [compact]="true" message="Chargement…"></unchk-loading-state>
+    </unchk-section-card>
+  } @else if (nbFormations() > 0) {
+    <unchk-chart-card
+      titre="Apprenants formés par formation"
+      icone="chart-square-bold-duotone"
+      type="bar"
+      [data]="grapheFormations()"
+      [hauteur]="320"
+    ></unchk-chart-card>
+  } @else {
+    <unchk-section-card titre="Apprenants formés" icone="chart-square-bold-duotone">
+      <unchk-empty-state
+        [compact]="true"
+        icone="chart-2-bold-duotone"
+        titre="Pas de données"
+        message="Aucune formation à représenter."
+      ></unchk-empty-state>
+    </unchk-section-card>
+  }
+</div>

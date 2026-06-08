@@ -1,0 +1,181 @@
+<!-- Tableau de bord étudiant : fiche personnelle + formations + graphe. -->
+<unchk-page-header
+  [titre]="'Bonjour, ' + prenom()"
+  sousTitre="Votre espace étudiant UNCHK"
+  icone="user-id-bold-duotone"
+>
+  <a mat-stroked-button color="primary" routerLink="/mon-dossier">
+    <iconify-icon icon="solar:folder-with-files-linear"></iconify-icon>
+    <span>&nbsp;Mon dossier</span>
+  </a>
+</unchk-page-header>
+
+<!-- KPI synthétiques tirés de la fiche et des formations. -->
+<section class="home__kpis">
+  <unchk-stat-card
+    libelle="Statut"
+    [valeur]="fiche.etat().donnees?.status ?? '—'"
+    icone="user-check-rounded-bold-duotone"
+    ton="blue"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Promotion"
+    [valeur]="fiche.etat().donnees?.promotion ?? '—'"
+    icone="square-academic-cap-bold-duotone"
+    ton="green"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Année d'inscription"
+    [valeur]="fiche.etat().donnees?.enrollmentYear ?? '—'"
+    icone="calendar-bold-duotone"
+    ton="orange"
+  ></unchk-stat-card>
+  <unchk-stat-card
+    libelle="Diplômes obtenus"
+    [valeur]="fiche.etat().donnees?.diplomas?.length ?? 0"
+    icone="diploma-bold-duotone"
+    ton="navy"
+  ></unchk-stat-card>
+</section>
+
+<div class="home__grille">
+  <!-- Colonne large : fiche personnelle. -->
+  <unchk-section-card titre="Ma fiche" icone="user-id-bold-duotone">
+    @if (fiche.etat().chargement) {
+      <unchk-loading-state message="Chargement de votre fiche…"></unchk-loading-state>
+    } @else if (fiche.etat().erreur) {
+      <unchk-empty-state
+        icone="shield-warning-bold-duotone"
+        titre="Fiche indisponible"
+        [message]="fiche.etat().erreur"
+      >
+        <button mat-stroked-button color="primary" (click)="fiche.recharger()">
+          Réessayer
+        </button>
+      </unchk-empty-state>
+    } @else {
+      @if (fiche.etat().donnees; as f) {
+        <div class="fiche">
+          <div class="fiche__champ">
+            <span class="fiche__libelle">Nom complet</span>
+            <span class="fiche__valeur">{{ f.firstName }} {{ f.lastName }}</span>
+          </div>
+          <div class="fiche__champ">
+            <span class="fiche__libelle">Matricule</span>
+            <span class="fiche__valeur">{{ f.matricule ?? '—' }}</span>
+          </div>
+          <div class="fiche__champ">
+            <span class="fiche__libelle">INE</span>
+            <span class="fiche__valeur">{{ f.ine ?? '—' }}</span>
+          </div>
+          <div class="fiche__champ">
+            <span class="fiche__libelle">Courriel</span>
+            <span class="fiche__valeur">{{ f.email ?? '—' }}</span>
+          </div>
+          <div class="fiche__champ">
+            <span class="fiche__libelle">Téléphone</span>
+            <span class="fiche__valeur">{{ f.phone ?? '—' }}</span>
+          </div>
+          <div class="fiche__champ">
+            <span class="fiche__libelle">Né(e) le</span>
+            <span class="fiche__valeur">{{ exposeUtil(f.birthDate) }}</span>
+          </div>
+          <div class="fiche__champ">
+            <span class="fiche__libelle">Formation</span>
+            <span class="fiche__valeur">{{ maFormation()?.label ?? '—' }}</span>
+          </div>
+          <div class="fiche__champ">
+            <span class="fiche__libelle">Statut</span>
+            <span class="fiche__valeur">
+              <unchk-status-pill [libelle]="f.status" [ton]="tonStatut()"></unchk-status-pill>
+            </span>
+          </div>
+        </div>
+      } @else {
+        <unchk-empty-state
+          icone="user-cross-rounded-bold-duotone"
+          titre="Aucune fiche"
+          message="Aucune fiche étudiante n'est rattachée à votre compte."
+        ></unchk-empty-state>
+      }
+    }
+  </unchk-section-card>
+
+  <!-- Colonne latérale : graphe des effectifs formés. -->
+  @if (formations.etat().chargement) {
+    <unchk-section-card titre="Effectifs formés" icone="chart-2-bold-duotone">
+      <unchk-loading-state [compact]="true" message="Chargement…"></unchk-loading-state>
+    </unchk-section-card>
+  } @else if ((formations.etat().donnees?.length ?? 0) > 0) {
+    <unchk-chart-card
+      titre="Effectifs formés par formation"
+      icone="users-group-rounded-bold-duotone"
+      type="bar"
+      [data]="grapheEffectifs()"
+      [hauteur]="300"
+    ></unchk-chart-card>
+  } @else {
+    <unchk-section-card titre="Effectifs formés" icone="chart-2-bold-duotone">
+      <unchk-empty-state
+        [compact]="true"
+        icone="chart-2-bold-duotone"
+        titre="Pas de données"
+        message="Aucune formation à représenter."
+      ></unchk-empty-state>
+    </unchk-section-card>
+  }
+</div>
+
+<!-- Tableau des formations (mat-table). -->
+<section class="home__section">
+  <unchk-section-card titre="Les formations de l'université" icone="square-academic-cap-bold-duotone">
+    @if (formations.etat().chargement) {
+      <unchk-loading-state message="Chargement des formations…"></unchk-loading-state>
+    } @else if (formations.etat().erreur) {
+      <unchk-empty-state
+        icone="shield-warning-bold-duotone"
+        titre="Formations indisponibles"
+        [message]="formations.etat().erreur"
+      >
+        <button mat-stroked-button color="primary" (click)="formations.recharger()">
+          Réessayer
+        </button>
+      </unchk-empty-state>
+    } @else if ((formations.etat().donnees?.length ?? 0) > 0) {
+      <table
+        mat-table
+        [dataSource]="formations.etat().donnees ?? []"
+        class="home-table"
+      >
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef>Code</th>
+          <td mat-cell *matCellDef="let f">{{ f.code }}</td>
+        </ng-container>
+        <ng-container matColumnDef="label">
+          <th mat-header-cell *matHeaderCellDef>Intitulé</th>
+          <td mat-cell *matCellDef="let f">{{ f.label }}</td>
+        </ng-container>
+        <ng-container matColumnDef="level">
+          <th mat-header-cell *matHeaderCellDef>Niveau</th>
+          <td mat-cell *matCellDef="let f">
+            <unchk-status-pill [libelle]="f.level" ton="info"></unchk-status-pill>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="period">
+          <th mat-header-cell *matHeaderCellDef>Période</th>
+          <td mat-cell *matCellDef="let f">
+            {{ exposeUtil(f.startDate) }} → {{ exposeUtil(f.endDate) }}
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="colonnesFormations"></tr>
+        <tr mat-row *matRowDef="let row; columns: colonnesFormations"></tr>
+      </table>
+    } @else {
+      <unchk-empty-state
+        icone="square-academic-cap-bold-duotone"
+        titre="Aucune formation"
+        message="Aucune formation n'est disponible pour le moment."
+      ></unchk-empty-state>
+    }
+  </unchk-section-card>
+</section>
