@@ -62,10 +62,13 @@ export class TopbarComponent {
   // Fil d'Ariane courant.
   readonly fil = signal<FilSegment[]>([]);
 
-  // Langue active (bascule purement visuelle pour l'instant).
-  readonly langue = signal<'fr' | 'en'>('fr');
+  // Thème d'affichage (clair / sombre), persisté dans le navigateur.
+  readonly theme = signal<'clair' | 'sombre'>(this.lireThemeInitial());
 
   constructor() {
+    // Applique le thème persisté dès le chargement de l'espace connecté.
+    this.appliquerTheme(this.theme());
+
     // Recalcule le fil d'Ariane à chaque navigation.
     this.router.events
       .pipe(
@@ -100,9 +103,32 @@ export class TopbarComponent {
       .then(() => this.router.navigateByUrl(url));
   }
 
-  /** Bascule la langue d'affichage (placeholder visuel). */
-  basculerLangue(): void {
-    this.langue.update((l) => (l === 'fr' ? 'en' : 'fr'));
+  /** Bascule le thème clair/sombre et le persiste. */
+  basculerTheme(): void {
+    const suivant = this.theme() === 'clair' ? 'sombre' : 'clair';
+    this.theme.set(suivant);
+    this.appliquerTheme(suivant);
+    try {
+      localStorage.setItem('unchk-theme', suivant);
+    } catch {
+      /* stockage indisponible : on garde le thème en mémoire */
+    }
+  }
+
+  /** Lit le thème persisté (clair par défaut). */
+  private lireThemeInitial(): 'clair' | 'sombre' {
+    try {
+      return localStorage.getItem('unchk-theme') === 'sombre' ? 'sombre' : 'clair';
+    } catch {
+      return 'clair';
+    }
+  }
+
+  /** Applique le thème au document via l'attribut data-theme (consommé par _tokens.scss). */
+  private appliquerTheme(theme: 'clair' | 'sombre'): void {
+    if (typeof document !== 'undefined') {
+      document.documentElement.dataset['theme'] = theme === 'sombre' ? 'dark' : '';
+    }
   }
 
   // Construit le fil d'Ariane à partir de l'URL et de la table de navigation.

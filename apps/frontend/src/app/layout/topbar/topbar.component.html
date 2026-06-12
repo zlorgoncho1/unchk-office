@@ -48,10 +48,13 @@
     <button
       type="button"
       class="topbar__icone-btn"
-      matTooltip="Thème"
+      [matTooltip]="theme() === 'sombre' ? 'Passer en thème clair' : 'Passer en thème sombre'"
       aria-label="Changer de thème"
+      (click)="basculerTheme()"
     >
-      <iconify-icon icon="solar:sun-2-linear"></iconify-icon>
+      <iconify-icon
+        [attr.icon]="theme() === 'sombre' ? 'solar:sun-2-bold' : 'solar:moon-stars-linear'"
+      ></iconify-icon>
     </button>
 
     <button
@@ -64,15 +67,6 @@
       <iconify-icon icon="solar:refresh-linear"></iconify-icon>
     </button>
 
-    <button
-      type="button"
-      class="topbar__icone-btn"
-      matTooltip="Langue"
-      aria-label="Changer de langue"
-      (click)="basculerLangue()"
-    >
-      <span class="topbar__langue">{{ langue() === 'fr' ? 'FR' : 'EN' }}</span>
-    </button>
 
     <!-- Cloche de notifications avec badge du nombre de non-lues. -->
     <button
