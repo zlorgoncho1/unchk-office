@@ -80,7 +80,8 @@ export class EtudiantsComponent implements OnInit {
     // Formation principale : libellé résolu depuis le catalogue academic.
     { cle: 'formationRef', libelle: 'Formation', valeur: (e) => this.libelleFormation(e.formationRef) },
     { cle: 'promotion', libelle: 'Promo' },
-    { cle: 'enrollmentYear', libelle: 'Année', type: 'nombre', largeur: '90px' },
+    // « texte » : une année s'affiche sans séparateur de milliers (« 2024 »).
+    { cle: 'enrollmentYear', libelle: 'Année', type: 'texte', largeur: '90px' },
     // Nombre de diplômes enregistrés (édités via le dialog dédié).
     {
       cle: 'diplomas',

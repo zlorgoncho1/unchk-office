@@ -26,7 +26,7 @@ import {
   optionsDrawer,
 } from '../../shared/ui';
 import { chargerDepuis } from '../../shared/util/loadable';
-import { humaniser } from '../../shared/util/format.util';
+import { formaterTaille, humaniser } from '../../shared/util/format.util';
 import {
   UploadDocumentDialogComponent,
   UploadDocumentResultat,
@@ -107,7 +107,14 @@ export class DocumentsComponent {
       largeur: '140px',
     },
     { cle: 'mimeType', libelle: 'Type' },
-    { cle: 'sizeBytes', libelle: 'Taille', type: 'nombre', largeur: '110px' },
+    // Taille lisible (Ko/Mo) plutôt que des octets bruts ; alignée à droite.
+    {
+      cle: 'sizeBytes',
+      libelle: 'Taille',
+      align: 'droite',
+      valeur: (d) => formaterTaille(d.sizeBytes),
+      largeur: '110px',
+    },
     { cle: 'createdAt', libelle: 'Date', type: 'date', largeur: '110px' },
     {
       cle: 'archived',

@@ -58,6 +58,26 @@ export function formaterMontantCompact(
   return `${fmt(montant, 0)} ${dev}`;
 }
 
+// Formate une taille de fichier en octets vers une unité lisible (o / Ko / Mo / Go).
+// Évite d'afficher des octets bruts (« 1 234 567 ») dans les tableaux de documents.
+export function formaterTaille(octets: number | null | undefined): string {
+  if (octets == null || Number.isNaN(octets) || octets < 0) {
+    return '—';
+  }
+  if (octets < 1024) {
+    return `${octets} o`;
+  }
+  const unites = ['Ko', 'Mo', 'Go', 'To'];
+  let taille = octets / 1024;
+  let i = 0;
+  while (taille >= 1024 && i < unites.length - 1) {
+    taille /= 1024;
+    i++;
+  }
+  const arrondi = taille >= 100 ? Math.round(taille) : Math.round(taille * 10) / 10;
+  return `${new Intl.NumberFormat('fr-FR').format(arrondi)} ${unites[i]}`;
+}
+
 // Formate une date ISO (jj/mm/aaaa) ; renvoie « — » si absente/invalide.
 export function formaterDate(iso: string | null | undefined): string {
   if (!iso) {

@@ -92,9 +92,11 @@ export class BudgetsComponent {
   protected readonly colonnes: ColonneTable<BudgetResume>[] = [
     { cle: 'label', libelle: 'Libellé' },
     {
+      // « texte » et non « nombre » : une année ne prend pas de séparateur de
+      // milliers (afficher « 2024 » et non « 2 024 »).
       cle: 'fiscalYear',
       libelle: 'Exercice',
-      type: 'nombre',
+      type: 'texte',
       align: 'centre',
       largeur: '100px',
     },
