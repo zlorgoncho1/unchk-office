@@ -58,11 +58,20 @@ docker compose ps
 
 > **Une seule commande suffit** : `docker compose up` démarre **toute l'application** (frontend + backend).
 
-Le **frontend** est servi sur **http://localhost:4200** (nginx) et le **gateway** expose l'API sur `http://localhost:8080`. Ouvrez http://localhost:4200 et connectez-vous. Compte de démonstration (seedé par Flyway) :
+Le **frontend** est servi sur **http://localhost:4200** (nginx) et le **gateway** expose l'API sur `http://localhost:8080`. Ouvrez http://localhost:4200 et connectez-vous. Comptes de démonstration (seedés par Flyway, un par rôle — chacun a son propre tableau de bord) :
 
 | Identifiant | Mot de passe | Rôle |
 |---|---|---|
 | `admin@unchk.sn` | `Admin123!` | admin |
+| `administratif@unchk.sn` | `Demo1234!` | administratif |
+| `enseignant@unchk.sn` | `Demo1234!` | enseignant |
+| `appui@unchk.sn` | `Demo1234!` | appui-insertion |
+| `etudiant@unchk.sn` | `Demo1234!` | etudiant |
+
+> Un jeu de **données de démonstration** complet et cohérent (personnel, étudiants, formations,
+> emplois du temps, réunions, comptes rendus, documents, partenaires, stages, budgets) est
+> rejoué automatiquement par les migrations Flyway `V*__seed_demo.sql` : `docker compose up`
+> sur une base vierge fournit une application immédiatement explorable.
 
 Vérification rapide en ligne de commande :
 
