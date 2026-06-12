@@ -18,7 +18,9 @@
       { "method": "GET", "path": "/api/insertion/**" },
       { "method": "POST", "path": "/api/insertion/**" },
       { "method": "GET", "path": "/api/people/students" },
-      { "method": "GET", "path": "/api/people/students/**" }
+      { "method": "GET", "path": "/api/people/students/**" },
+      { "method": "GET", "path": "/api/academic/formations" },
+      { "method": "GET", "path": "/api/academic/formations/**" }
     ],
     "etudiant": [
       { "method": "GET", "path": "/api/etudiants/me" },
