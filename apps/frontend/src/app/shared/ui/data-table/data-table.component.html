@@ -32,7 +32,7 @@
         @for (ligne of lignesFiltrees(); track $index) {
           <tr>
             @for (col of colonnes(); track col.cle) {
-              <td [class]="classe(col)">
+              <td [class]="classe(col)" [attr.title]="afficher(col, ligne)">
                 @if (col.type === 'pastille') {
                   <unchk-status-pill
                     [libelle]="afficher(col, ligne)"

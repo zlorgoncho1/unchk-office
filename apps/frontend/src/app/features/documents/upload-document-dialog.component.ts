@@ -85,12 +85,17 @@ export interface UploadDocumentResultat {
 
       <!-- Champ fichier maison (le form-field Material ne gère pas l'input file). -->
       <div class="ud-fichier">
-        <span class="ud-fichier-libelle">Fichier</span>
-        <input
-          type="file"
-          (change)="onFichier($event)"
-          aria-label="Choisir un fichier à déposer"
-        />
+        <span class="ud-fichier-libelle">Fichier *</span>
+        <label class="ud-fichier-bouton">
+          <iconify-icon icon="solar:upload-minimalistic-linear"></iconify-icon>
+          <span>Choisir un fichier</span>
+          <input
+            type="file"
+            (change)="onFichier($event)"
+            aria-label="Choisir un fichier à déposer"
+            hidden
+          />
+        </label>
         @if (fichier()) {
           <span class="ud-fichier-nom">{{ fichier()!.name }}</span>
         } @else {
@@ -163,34 +168,26 @@ export interface UploadDocumentResultat {
         gap: 6px;
         padding: 4px 0 8px;
       }
-      /* Champ fichier brandé : zone en pointillés + bouton bleu (au lieu du bouton natif gris). */
-      .ud-fichier input[type='file'] {
-        font: inherit;
-        color: var(--unchk-text-muted);
-        border: 1px dashed var(--unchk-border);
+      /* Bouton de sélection de fichier entièrement brandé (input natif masqué via [hidden]). */
+      .ud-fichier-bouton {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        align-self: flex-start;
+        padding: 9px 16px;
+        border: 1px solid var(--unchk-blue);
         border-radius: var(--unchk-radius-md);
-        padding: 10px 12px;
-        background: var(--unchk-background);
-        cursor: pointer;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      .ud-fichier input[type='file']:hover {
-        border-color: var(--unchk-blue);
-      }
-      .ud-fichier input[type='file']::file-selector-button {
-        font: inherit;
+        background: rgba(28, 117, 188, 0.06);
+        color: var(--unchk-blue);
         font-weight: 600;
-        margin-right: 12px;
-        padding: 7px 14px;
-        border: none;
-        border-radius: var(--unchk-radius-sm);
-        background: var(--unchk-blue);
-        color: #fff;
         cursor: pointer;
+        transition: background 0.15s ease;
       }
-      .ud-fichier input[type='file']::file-selector-button:hover {
-        filter: brightness(0.92);
+      .ud-fichier-bouton:hover {
+        background: rgba(28, 117, 188, 0.12);
+      }
+      .ud-fichier-bouton iconify-icon {
+        font-size: 1.15rem;
       }
       .ud-fichier-libelle {
         font-size: 0.85rem;
