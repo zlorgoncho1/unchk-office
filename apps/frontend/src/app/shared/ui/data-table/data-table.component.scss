@@ -43,6 +43,18 @@
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
+
+  // Barre de défilement fine et visible : affordance claire que le tableau défile.
+  scrollbar-width: thin;
+  scrollbar-color: var(--unchk-border) transparent;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--unchk-border);
+    border-radius: 4px;
+  }
 }
 
 // Tableau brandé UNCHK.
