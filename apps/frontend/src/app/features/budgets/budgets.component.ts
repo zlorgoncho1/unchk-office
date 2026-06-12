@@ -24,7 +24,7 @@ import {
   optionsDrawer,
 } from '../../shared/ui';
 import { chargerDepuis } from '../../shared/util/loadable';
-import { formaterMontant, humaniser, pourcentage } from '../../shared/util/format.util';
+import { formaterMontantCompact, humaniser, pourcentage } from '../../shared/util/format.util';
 import { LignesBudgetDialog } from './lignes-budget-dialog.component';
 
 /**
@@ -76,7 +76,7 @@ export class BudgetsComponent {
   );
 
   // Expose le formatage de montant au template (stat-cards).
-  protected readonly exposeMontant = formaterMontant;
+  protected readonly exposeMontant = formaterMontantCompact;
 
   // Options du statut (= enum BudgetStatus côté backend).
   private readonly optionsStatut = [

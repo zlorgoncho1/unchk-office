@@ -10,7 +10,9 @@
   white-space: nowrap;
 
   &[data-ton='neutre'] {
-    background: var(--unchk-line);
+    // Fond légèrement teinté (et non la couleur de filet, trop pâle) pour que la
+    // pastille neutre se lise clairement COMME une pastille (ex. statut « Prévu »).
+    background: rgba(22, 49, 74, 0.08);
     color: var(--unchk-text-muted);
   }
   &[data-ton='info'] {

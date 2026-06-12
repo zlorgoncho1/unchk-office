@@ -31,6 +31,30 @@ export function formaterMontant(
   }
 }
 
+// Formate un montant en version COMPACTE pour les cartes KPI (ex. « 6,33 Md FCFA »,
+// « 12,5 M FCFA ») : évite les très longs nombres qui débordent des tuiles.
+export function formaterMontantCompact(
+  montant: number | null | undefined,
+  devise = 'FCFA'
+): string {
+  if (montant == null || Number.isNaN(montant)) {
+    return '—';
+  }
+  const abs = Math.abs(montant);
+  const fmt = (n: number, d: number): string =>
+    new Intl.NumberFormat('fr-FR', { maximumFractionDigits: d }).format(n);
+  if (abs >= 1_000_000_000) {
+    return `${fmt(montant / 1_000_000_000, 2)} Md ${devise}`;
+  }
+  if (abs >= 1_000_000) {
+    return `${fmt(montant / 1_000_000, 1)} M ${devise}`;
+  }
+  if (abs >= 1_000) {
+    return `${fmt(montant / 1_000, 0)} k ${devise}`;
+  }
+  return `${fmt(montant, 0)} ${devise}`;
+}
+
 // Formate une date ISO (jj/mm/aaaa) ; renvoie « — » si absente/invalide.
 export function formaterDate(iso: string | null | undefined): string {
   if (!iso) {
