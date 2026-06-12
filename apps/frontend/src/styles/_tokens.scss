@@ -39,3 +39,33 @@
   --unchk-shadow-raised:  0 4px 16px rgba(22,49,74,0.10);
   --unchk-shadow-overlay: 0 12px 32px rgba(22,49,74,0.16);
 }
+
+// ============================================================
+// Thème SOMBRE : seuls les neutres, le texte et les ombres basculent ; les couleurs
+// de marque (bleu/vert/orange) restent. Activé par [data-theme='dark'] sur <html>.
+// ============================================================
+[data-theme='dark'] {
+  // Texte (le "navy"/"slate" sont des couleurs de texte → deviennent claires).
+  --unchk-navy:        #E8EEF4;
+  --unchk-slate:       #9FC0D6;
+  --unchk-text:        #E8EEF4;
+  --unchk-text-muted:  #9DB0BE;
+  --unchk-text-subtle: #6E8190;
+
+  // Surfaces & neutres.
+  --unchk-white:       #1B2A38;
+  --unchk-background:  #0E1822;
+  --unchk-surface:     #16232F;
+  --unchk-border:      #2A3B49;
+  --unchk-line:        #21303C;
+
+  // Variantes foncées utilisées comme TEXTE de pastilles : éclaircies pour le contraste.
+  --unchk-blue-dark:   #6FB3E8;
+  --unchk-green-dark:  #6FD074;
+  --unchk-orange-dark: #FBB454;
+
+  // Ombres adaptées au fond sombre.
+  --unchk-shadow-card:    0 1px 2px rgba(0,0,0,0.40), 0 2px 8px rgba(0,0,0,0.30);
+  --unchk-shadow-raised:  0 4px 16px rgba(0,0,0,0.45);
+  --unchk-shadow-overlay: 0 12px 32px rgba(0,0,0,0.55);
+}
