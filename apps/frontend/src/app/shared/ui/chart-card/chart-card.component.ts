@@ -60,7 +60,9 @@ export class ChartCardComponent {
   readonly hauteur = input<number>(260);
 
   // Options finales : défauts sobres surchargés par celles du parent.
-  readonly optionsFinales = computed<ChartConfiguration['options']>(() => ({
+  readonly optionsFinales = computed<ChartConfiguration['options']>(() => {
+    const cartesien = this.type() === 'bar' || this.type() === 'line';
+    return {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -83,6 +85,39 @@ export class ChartCardComponent {
         cornerRadius: 6,
       },
     },
+    // Axes en FRANÇAIS et compacts UNIQUEMENT pour les graphes cartésiens (bar/line) ;
+    // jamais pour les doughnuts/pies (sinon des axes parasites apparaissent).
+    ...(cartesien && { scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color: 'rgba(22,49,74,0.06)' },
+        ticks: {
+          color: COULEURS_UNCHK.navy,
+          font: { family: 'Inter, sans-serif', size: 11 },
+          callback: (valeur) => {
+            const n = Number(valeur);
+            if (Math.abs(n) >= 1_000_000_000) {
+              return `${(n / 1_000_000_000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} Md`;
+            }
+            if (Math.abs(n) >= 1_000_000) {
+              return `${(n / 1_000_000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} M`;
+            }
+            if (Math.abs(n) >= 1_000) {
+              return `${(n / 1_000).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} k`;
+            }
+            return n.toLocaleString('fr-FR');
+          },
+        },
+      },
+      x: {
+        grid: { display: false },
+        ticks: {
+          color: COULEURS_UNCHK.navy,
+          font: { family: 'Inter, sans-serif', size: 11 },
+        },
+      },
+    } }),
     ...this.options(),
-  }));
+    };
+  });
 }

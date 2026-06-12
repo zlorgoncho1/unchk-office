@@ -61,6 +61,31 @@ export class StatistiquesComponent {
       this.data.etat().donnees ?? { total: 0, parType: {}, parFormation: [] }
   );
 
+  // Catalogue des formations, pour le graphe des effectifs formés par genre.
+  protected readonly formations = chargerDepuis(() => this.academic.listerFormations());
+
+  // Graphe : effectifs formés (hommes / femmes) par formation.
+  protected readonly grapheGenre = computed<ChartData<'bar'>>(() => {
+    const liste = (this.formations.etat().donnees ?? []).slice(0, 8);
+    return {
+      labels: liste.map((f) => f.code),
+      datasets: [
+        {
+          label: 'Hommes formés',
+          data: liste.map((f) => f.trainedMale),
+          backgroundColor: PALETTE_UNCHK[0],
+          borderRadius: 4,
+        },
+        {
+          label: 'Femmes formées',
+          data: liste.map((f) => f.trainedFemale),
+          backgroundColor: PALETTE_UNCHK[1],
+          borderRadius: 4,
+        },
+      ],
+    };
+  });
+
   // --- KPIs dérivés -------------------------------------------------------
 
   // Nombre total d'étudiants insérés.
