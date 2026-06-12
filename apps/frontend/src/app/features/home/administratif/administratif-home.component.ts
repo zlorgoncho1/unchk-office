@@ -33,6 +33,7 @@ import {
 import { chargerDepuis } from '../../../shared/util/loadable';
 import {
   formaterDate,
+  formaterMontant,
   formaterMontantCompact,
   pourcentage,
 } from '../../../shared/util/format.util';
@@ -68,7 +69,8 @@ export class AdministratifHomeComponent implements AfterViewInit {
   private readonly admin = inject(AdminService);
 
   readonly exposeDate = formaterDate;
-  readonly exposeMontant = formaterMontantCompact;
+  readonly exposeMontant = formaterMontant;
+  readonly exposeMontantCompact = formaterMontantCompact;
 
   readonly prenom = computed(() => {
     const u = this.auth.currentUser();

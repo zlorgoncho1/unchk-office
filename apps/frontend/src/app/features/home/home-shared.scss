@@ -21,7 +21,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
   gap: 16px;
-  align-items: start;
+  align-items: stretch;
 
   // Empilement sur une colonne dès que la zone centrale devient étroite (laptops).
   @media (max-width: 1300px) {

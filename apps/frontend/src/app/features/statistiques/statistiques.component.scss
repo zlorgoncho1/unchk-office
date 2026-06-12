@@ -19,11 +19,17 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  align-items: start;
+  // stretch : les deux cartes de graphe ont la même hauteur (bas alignés).
+  align-items: stretch;
 
   @media (max-width: 1100px) {
     grid-template-columns: 1fr;
   }
+}
+
+// Bloc « effectifs formés par genre » : graphe pleine largeur + exports dessous.
+.stats__genre {
+  margin-top: 16px;
 }
 
 // Bloc d'export des statistiques de formations : texte + boutons alignés.
@@ -46,6 +52,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+
+  // Variante sous le graphe « par genre » : alignés à droite, espacés du graphe.
+  &--bas {
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
 }
 
 // Bouton « Réessayer » brandé (état d'erreur).

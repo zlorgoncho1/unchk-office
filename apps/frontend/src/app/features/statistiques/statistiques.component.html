@@ -108,24 +108,23 @@
   </div>
 }
 
-<!-- Exports des statistiques de formations par genre (PDF / Excel), toujours disponibles. -->
-<unchk-section-card
-  titre="Statistiques de formations (par genre)"
-  icone="square-academic-cap-bold-duotone"
->
-  <div class="stats__exports">
-    <p class="stats__exports-texte">
-      Téléchargez la répartition des formés par genre et par formation.
-    </p>
-    <div class="stats__exports-actions">
-      <button mat-stroked-button (click)="exporterFormationsPdf()">
-        <iconify-icon icon="solar:file-text-bold"></iconify-icon>
-        <span>&nbsp;Export PDF</span>
-      </button>
-      <button mat-stroked-button (click)="exporterFormationsExcel()">
-        <iconify-icon icon="solar:file-download-bold"></iconify-icon>
-        <span>&nbsp;Export Excel</span>
-      </button>
-    </div>
+<!-- Effectifs formés par genre : graphe (hommes/femmes par formation) + exports PDF/Excel. -->
+<div class="stats__genre">
+  <unchk-chart-card
+    titre="Formations : effectifs formés par genre"
+    icone="square-academic-cap-bold-duotone"
+    type="bar"
+    [data]="grapheGenre()"
+    [hauteur]="280"
+  ></unchk-chart-card>
+  <div class="stats__exports-actions stats__exports-actions--bas">
+    <button mat-stroked-button (click)="exporterFormationsPdf()">
+      <iconify-icon icon="solar:file-text-bold"></iconify-icon>
+      <span>&nbsp;Export PDF</span>
+    </button>
+    <button mat-stroked-button (click)="exporterFormationsExcel()">
+      <iconify-icon icon="solar:file-download-bold"></iconify-icon>
+      <span>&nbsp;Export Excel</span>
+    </button>
   </div>
-</unchk-section-card>
+</div>

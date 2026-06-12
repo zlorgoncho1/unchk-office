@@ -8,6 +8,10 @@
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
+  // Remplit la cellule de grille : toutes les cartes d'une rangée ont la même
+  // hauteur et leur contenu reste centré verticalement (plus de valeur « collée en bas »).
+  height: 100%;
+  box-sizing: border-box;
   background: var(--unchk-surface);
   border: 1px solid var(--unchk-border);
   border-radius: var(--unchk-radius-lg);
@@ -43,12 +47,13 @@
 
   &__valeur {
     margin: 4px 0 0;
-    font-size: 1.6rem;
+    font-size: 1.55rem;
     font-weight: 700;
-    line-height: 1.15;
+    line-height: 1.2;
     color: var(--unchk-navy);
     letter-spacing: -0.01em;
-    white-space: nowrap;
+    // Pas de nowrap : les valeurs textuelles longues (« Emploi salarié ») passent à
+    // la ligne dans la carte au lieu de déborder ; les montants compacts tiennent déjà.
   }
 
   &__variation {
