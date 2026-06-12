@@ -163,6 +163,35 @@ export interface UploadDocumentResultat {
         gap: 6px;
         padding: 4px 0 8px;
       }
+      /* Champ fichier brandé : zone en pointillés + bouton bleu (au lieu du bouton natif gris). */
+      .ud-fichier input[type='file'] {
+        font: inherit;
+        color: var(--unchk-text-muted);
+        border: 1px dashed var(--unchk-border);
+        border-radius: var(--unchk-radius-md);
+        padding: 10px 12px;
+        background: var(--unchk-background);
+        cursor: pointer;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .ud-fichier input[type='file']:hover {
+        border-color: var(--unchk-blue);
+      }
+      .ud-fichier input[type='file']::file-selector-button {
+        font: inherit;
+        font-weight: 600;
+        margin-right: 12px;
+        padding: 7px 14px;
+        border: none;
+        border-radius: var(--unchk-radius-sm);
+        background: var(--unchk-blue);
+        color: #fff;
+        cursor: pointer;
+      }
+      .ud-fichier input[type='file']::file-selector-button:hover {
+        filter: brightness(0.92);
+      }
       .ud-fichier-libelle {
         font-size: 0.85rem;
         font-weight: 600;

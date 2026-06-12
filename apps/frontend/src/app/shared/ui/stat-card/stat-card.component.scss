@@ -43,11 +43,14 @@
 
   &__valeur {
     margin: 4px 0 0;
-    font-size: 1.7rem;
+    font-size: 1.6rem;
     font-weight: 700;
-    line-height: 1.1;
+    line-height: 1.15;
     color: var(--unchk-navy);
     letter-spacing: -0.01em;
+    // Les très longues valeurs (gros montants en F CFA) passent à la ligne dans la
+    // carte au lieu de déborder sur le bord droit.
+    overflow-wrap: anywhere;
   }
 
   &__variation {
