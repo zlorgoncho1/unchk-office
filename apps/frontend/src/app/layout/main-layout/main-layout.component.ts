@@ -35,7 +35,10 @@ export class MainLayoutComponent implements OnInit {
   readonly railOuvert = signal(false);
   // États desktop : repli pour gérer l'espace (sidebar en mini-icônes, rail masqué).
   readonly sidebarReplie = signal(false);
-  readonly railReplie = signal(false);
+  // Rail droit (notifications/activités/contacts) MASQUÉ par défaut : il encombre les
+  // pages de travail et les parcours. Le contenu gagne toute la largeur (tableaux et
+  // graphiques tiennent sans débordement). La cloche de la topbar le rouvre au besoin.
+  readonly railReplie = signal(true);
 
   ngOnInit(): void {
     // Ouvre le canal de notifications temps réel à l'entrée de l'espace connecté.
