@@ -4,7 +4,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 
-import { InsertionService, Stage, StatutStage } from '../../core/data';
+import {
+  Etudiant,
+  InsertionService,
+  Partenaire,
+  Personnel,
+  PeopleService,
+  Stage,
+  StatutStage,
+} from '../../core/data';
 import {
   ChampForm,
   ColonneTable,
@@ -40,8 +48,21 @@ import { chargerDepuis } from '../../shared/util/loadable';
 })
 export class InsertionComponent {
   private readonly svc = inject(InsertionService);
+  private readonly people = inject(PeopleService);
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
+
+  // Référentiels chargés au démarrage pour alimenter les SÉLECTEURS du formulaire
+  // (l'utilisateur choisit un étudiant / partenaire / tuteur, il ne tape pas d'UUID).
+  private etudiants: Etudiant[] = [];
+  private partenaires: Partenaire[] = [];
+  private personnel: Personnel[] = [];
+
+  constructor() {
+    this.people.listerEtudiants(0, 200).subscribe((r) => (this.etudiants = r.content));
+    this.svc.listerPartenaires().subscribe((p) => (this.partenaires = p));
+    this.people.listerPersonnel(0, 200).subscribe((r) => (this.personnel = r.content));
+  }
 
   // Chargement des stages (état réactif : chargement / erreur / données).
   protected readonly data = chargerDepuis(() => this.svc.listerStages());
@@ -69,43 +90,54 @@ export class InsertionComponent {
     { cle: 'grade', libelle: 'Note', type: 'nombre', largeur: '90px' },
   ];
 
-  // Champs du formulaire = DTO backend InternshipRequest.
-  // Les clés correspondent exactement aux noms du DTO (studentRef, partnerId, etc.).
-  private readonly champs: ChampForm[] = [
-    { cle: 'title', libelle: 'Intitulé du stage', requis: true, largeur: 'pleine' },
-    {
-      cle: 'studentRef',
-      libelle: 'Étudiant (identifiant)',
-      requis: true,
-      aide: 'Identifiant de l’étudiant (people.students.id).',
-    },
-    {
-      cle: 'status',
-      libelle: 'Statut',
-      type: 'select',
-      options: [
-        { valeur: 'prevu', libelle: 'Prévu' },
-        { valeur: 'en_cours', libelle: 'En cours' },
-        { valeur: 'termine', libelle: 'Terminé' },
-        { valeur: 'rompu', libelle: 'Rompu' },
-        { valeur: 'valide', libelle: 'Validé' },
-      ],
-    },
-    { cle: 'startDate', libelle: 'Date de début', type: 'date' },
-    { cle: 'endDate', libelle: 'Date de fin', type: 'date' },
-    { cle: 'supervisorName', libelle: 'Maître de stage' },
-    {
-      cle: 'partnerId',
-      libelle: 'Partenaire (identifiant)',
-      aide: 'Identifiant du partenaire d’accueil.',
-    },
-    {
-      cle: 'tutorRef',
-      libelle: 'Tuteur académique (identifiant)',
-      aide: 'Identifiant du tuteur (people.staff.id).',
-    },
-    { cle: 'grade', libelle: 'Note (0 à 20)', type: 'nombre' },
-  ];
+  // Champs du formulaire = DTO backend InternshipRequest (clés alignées : studentRef, partnerId…).
+  // studentRef / partnerId / tutorRef sont des SÉLECTEURS alimentés par les référentiels chargés.
+  private champs(): ChampForm[] {
+    return [
+      { cle: 'title', libelle: 'Intitulé du stage', requis: true, largeur: 'pleine' },
+      {
+        cle: 'studentRef',
+        libelle: 'Étudiant',
+        requis: true,
+        type: 'select',
+        options: this.etudiants.map((e) => ({
+          valeur: e.id,
+          libelle: `${e.firstName} ${e.lastName}${e.matricule ? ' — ' + e.matricule : ''}`,
+        })),
+      },
+      {
+        cle: 'status',
+        libelle: 'Statut',
+        type: 'select',
+        options: [
+          { valeur: 'prevu', libelle: 'Prévu' },
+          { valeur: 'en_cours', libelle: 'En cours' },
+          { valeur: 'termine', libelle: 'Terminé' },
+          { valeur: 'rompu', libelle: 'Rompu' },
+          { valeur: 'valide', libelle: 'Validé' },
+        ],
+      },
+      { cle: 'startDate', libelle: 'Date de début', type: 'date' },
+      { cle: 'endDate', libelle: 'Date de fin', type: 'date' },
+      { cle: 'supervisorName', libelle: 'Maître de stage' },
+      {
+        cle: 'partnerId',
+        libelle: 'Partenaire d’accueil',
+        type: 'select',
+        options: this.partenaires.map((p) => ({ valeur: p.id, libelle: p.name })),
+      },
+      {
+        cle: 'tutorRef',
+        libelle: 'Tuteur académique',
+        type: 'select',
+        options: this.personnel.map((s) => ({
+          valeur: s.id,
+          libelle: `${s.firstName} ${s.lastName}`,
+        })),
+      },
+      { cle: 'grade', libelle: 'Note (0 à 20)', type: 'nombre' },
+    ];
+  }
 
   /** Ouvre le drawer de création. */
   protected nouveau(): void {
@@ -159,7 +191,7 @@ export class InsertionComponent {
         FormDrawerComponent,
         optionsDrawer({
           titre,
-          champs: this.champs,
+          champs: this.champs(),
           valeurInitiale: s as unknown as Record<string, unknown>,
         })
       )
