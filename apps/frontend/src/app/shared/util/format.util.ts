@@ -40,8 +40,9 @@ export function formaterMontantCompact(
   if (montant == null || Number.isNaN(montant)) {
     return '—';
   }
-  // Le code ISO XOF s'affiche « F CFA » (cohérent avec le reste de l'interface).
-  const dev = devise === 'XOF' ? 'F CFA' : devise;
+  // Le code ISO XOF s'affiche « F CFA » (cohérent avec le reste de l'interface) ;
+  // espace insécable pour que « F CFA » ne se coupe jamais en fin de ligne.
+  const dev = devise === 'XOF' || devise === 'F CFA' ? 'F\u00A0CFA' : devise;
   const abs = Math.abs(montant);
   const fmt = (n: number, d: number): string =>
     new Intl.NumberFormat('fr-FR', { maximumFractionDigits: d }).format(n);

@@ -163,7 +163,12 @@
   font-weight: 600;
 }
 
-.aligne-droite {
+// .home-table en préfixe pour passer DEVANT la spécificité de Material (.mat-mdc-table
+// .mat-mdc-cell) : sinon les montants des tables d'accueil restent alignés à gauche.
+.home-table th.aligne-droite,
+.home-table td.aligne-droite,
+th.aligne-droite,
+td.aligne-droite {
   text-align: right;
 }
 
