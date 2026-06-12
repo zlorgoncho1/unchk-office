@@ -15,13 +15,16 @@
 }
 
 // Grille principale : zone large + colonne latérale.
+// minmax(0, …) : les colonnes peuvent rétrécir sous la largeur intrinsèque de leur
+// contenu (un graphique se redimensionne au lieu de déborder sous le rail droit).
 .home__grille {
   display: grid;
-  grid-template-columns: 1.6fr 1fr;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
   gap: 16px;
   align-items: start;
 
-  @media (max-width: 1100px) {
+  // Empilement sur une colonne dès que la zone centrale devient étroite (laptops).
+  @media (max-width: 1300px) {
     grid-template-columns: 1fr;
   }
 }
