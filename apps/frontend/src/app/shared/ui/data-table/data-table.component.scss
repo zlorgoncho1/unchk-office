@@ -1,5 +1,6 @@
 :host {
   display: block;
+  min-width: 0;
 }
 
 // Barre de filtre au-dessus du tableau (cohérente avec .table-filtre des dashboards).
@@ -36,9 +37,11 @@
   }
 }
 
-// Conteneur défilant horizontalement sur petits écrans.
+// Conteneur défilant horizontalement (contient le débordement des tableaux larges
+// SANS casser la largeur de la page : max-width 100% obligatoire).
 .dt-scroll {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
 }
 
@@ -104,14 +107,30 @@
     color: var(--unchk-navy);
   }
 
-  // Colonne d'actions : boutons icône discrets, alignés à droite.
+  // Colonne d'actions : boutons icône discrets, ÉPINGLÉE à droite (sticky) pour
+  // rester toujours visible même quand un tableau large défile horizontalement.
   .dt-actions-col {
     width: 1%;
     white-space: nowrap;
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    background: var(--unchk-line);
+    box-shadow: -10px 0 10px -10px rgba(22, 49, 74, 0.18);
   }
 
   .dt-actions {
     white-space: nowrap;
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    background: var(--unchk-surface);
+    box-shadow: -10px 0 10px -10px rgba(22, 49, 74, 0.18);
+  }
+
+  // Le fond épinglé suit le survol de la ligne (cohérence visuelle).
+  tbody tr:hover .dt-actions {
+    background: var(--unchk-background);
   }
 
   .dt-action-btn {

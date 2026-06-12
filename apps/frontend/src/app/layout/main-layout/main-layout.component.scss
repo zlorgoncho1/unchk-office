@@ -16,7 +16,10 @@ $largeur-rail: 312px;
   --col-rail: #{$largeur-rail};
 
   display: grid;
-  grid-template-columns: var(--col-sidebar) 1fr var(--col-rail);
+  // minmax(0, 1fr) (et non 1fr = minmax(auto, 1fr)) : la colonne centrale peut
+  // rétrécir sous la largeur intrinsèque d'un tableau large, qui défile alors DANS
+  // sa carte au lieu de dilater la grille et de compresser toute la page.
+  grid-template-columns: var(--col-sidebar) minmax(0, 1fr) var(--col-rail);
   height: 100vh;
   background: var(--unchk-background);
   transition: grid-template-columns 0.22s ease;
@@ -82,7 +85,7 @@ $largeur-rail: 312px;
 
   // --- Responsive : rail droit en overlay sous 1280px ---
   @media (max-width: 1280px) {
-    grid-template-columns: var(--col-sidebar) 1fr;
+    grid-template-columns: var(--col-sidebar) minmax(0, 1fr);
 
     .layout__rail {
       position: fixed;
