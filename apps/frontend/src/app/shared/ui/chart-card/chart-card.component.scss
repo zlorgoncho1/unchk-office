@@ -1,3 +1,10 @@
+// height: 100% : la carte de graphe remplit la cellule de grille étirée pour
+// s'aligner sur la carte voisine (la section-card interne hérite alors la hauteur).
+:host {
+  display: block;
+  height: 100%;
+}
+
 // Conteneur de graphe : hauteur fixée par le parent, canvas responsive.
 .chart-card__zone {
   position: relative;

@@ -1,6 +1,10 @@
 // Carte de section brandée — variables --unchk-*.
+// height: 100% : dans une grille à `align-items: stretch` (colonnes d'accueil),
+// la carte remplit la cellule étirée pour que les bas de cartes voisines s'alignent.
+// En flux normal (parent sans hauteur définie), 100% se résout en `auto` : aucun effet.
 :host {
   display: block;
+  height: 100%;
 }
 
 .section-card {
@@ -9,6 +13,9 @@
   border-radius: var(--unchk-radius-lg);
   box-shadow: var(--unchk-shadow-card);
   overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &__entete {
     display: flex;
@@ -46,6 +53,9 @@
 
   &__corps {
     padding: 20px;
+    // Occupe la hauteur restante sous l'en-tête : le corps (et son fond) descend
+    // jusqu'en bas de la carte étirée au lieu de laisser un vide non peint.
+    flex: 1 1 auto;
 
     &--plat {
       padding: 0;
