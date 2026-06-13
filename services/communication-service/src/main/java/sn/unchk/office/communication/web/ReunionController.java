@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import sn.unchk.office.common.authz.VerifieAccesObjet;
 import sn.unchk.office.communication.dto.ReunionCreationRequest;
 import sn.unchk.office.communication.dto.ReunionDto;
+import sn.unchk.office.communication.security.FournisseurAttributsCommunication;
 import sn.unchk.office.communication.service.ServiceReunion;
 
 import java.util.List;
@@ -49,21 +51,27 @@ public class ReunionController {
         return serviceReunion.lister();
     }
 
-    /** Consulte une réunion par identifiant. */
+    /** Consulte une réunion par identifiant — ABAC objet (créateur ou admin). */
     @GetMapping("/{id}")
+    @VerifieAccesObjet(type = FournisseurAttributsCommunication.TYPE_REUNION,
+            action = "read", idParam = "id")
     public ResponseEntity<ReunionDto> consulter(@PathVariable UUID id) {
         return ResponseEntity.ok(serviceReunion.consulter(id));
     }
 
-    /** Modifie une réunion (corps = même DTO que la création). */
+    /** Modifie une réunion (corps = même DTO que la création). Réservé au propriétaire (ABAC update). */
     @PutMapping("/{id}")
+    @VerifieAccesObjet(type = FournisseurAttributsCommunication.TYPE_REUNION,
+            action = "update", idParam = "id")
     public ReunionDto modifier(@PathVariable UUID id,
                                @Valid @RequestBody ReunionCreationRequest requete) {
         return serviceReunion.modifier(id, requete);
     }
 
-    /** Supprime une réunion (suppression logique). */
+    /** Supprime une réunion (suppression logique). Réservé au propriétaire (ABAC delete). */
     @DeleteMapping("/{id}")
+    @VerifieAccesObjet(type = FournisseurAttributsCommunication.TYPE_REUNION,
+            action = "delete", idParam = "id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void supprimer(@PathVariable UUID id) {
         serviceReunion.supprimer(id);

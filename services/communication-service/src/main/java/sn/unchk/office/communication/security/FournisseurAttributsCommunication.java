@@ -4,7 +4,9 @@ import org.springframework.stereotype.Component;
 import sn.unchk.office.common.authz.EntreeOpa;
 import sn.unchk.office.common.authz.FournisseurAttributsRessource;
 import sn.unchk.office.communication.domain.CompteRendu;
+import sn.unchk.office.communication.domain.Reunion;
 import sn.unchk.office.communication.repository.CompteRenduRepository;
+import sn.unchk.office.communication.repository.ReunionRepository;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,11 +27,16 @@ public class FournisseurAttributsCommunication implements FournisseurAttributsRe
 
     /** Type logique des comptes rendus pour l'annotation {@code @VerifieAccesObjet}. */
     public static final String TYPE_COMPTE_RENDU = "compte-rendu";
+    /** Type logique des réunions pour l'annotation {@code @VerifieAccesObjet}. */
+    public static final String TYPE_REUNION = "reunion";
 
     private final CompteRenduRepository compteRenduRepository;
+    private final ReunionRepository reunionRepository;
 
-    public FournisseurAttributsCommunication(CompteRenduRepository compteRenduRepository) {
+    public FournisseurAttributsCommunication(CompteRenduRepository compteRenduRepository,
+                                             ReunionRepository reunionRepository) {
         this.compteRenduRepository = compteRenduRepository;
+        this.reunionRepository = reunionRepository;
     }
 
     @Override
@@ -37,8 +44,33 @@ public class FournisseurAttributsCommunication implements FournisseurAttributsRe
         if (TYPE_COMPTE_RENDU.equals(type)) {
             return attributsCompteRendu(id);
         }
+        if (TYPE_REUNION.equals(type)) {
+            return attributsReunion(id);
+        }
         // Type non géré ici : ressource minimale, OPA décidera selon ses propres données.
         return new EntreeOpa.Ressource(type, id, null, List.of());
+    }
+
+    /**
+     * Charge le propriétaire d'une réunion pour l'ABAC. Une réunion n'a pas de
+     * visibilité par rôle (elle a des participants) : seul le créateur (ou l'admin)
+     * peut la consulter/modifier/supprimer par id (anti-IDOR).
+     */
+    private EntreeOpa.Ressource attributsReunion(String id) {
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(id);
+        } catch (IllegalArgumentException ex) {
+            return new EntreeOpa.Ressource(TYPE_REUNION, id, null, List.of());
+        }
+        return reunionRepository.findByIdAndDeletedAtIsNull(uuid)
+                .map(this::versRessourceReunion)
+                .orElseGet(() -> new EntreeOpa.Ressource(TYPE_REUNION, id, null, List.of()));
+    }
+
+    private EntreeOpa.Ressource versRessourceReunion(Reunion r) {
+        String ownerId = r.getCreatedBy() != null ? r.getCreatedBy().toString() : null;
+        return new EntreeOpa.Ressource(TYPE_REUNION, r.getId().toString(), ownerId, List.of());
     }
 
     /** Charge le propriétaire et la visibilité d'un compte rendu pour l'ABAC. */

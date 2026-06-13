@@ -5,18 +5,23 @@
     ],
     "administratif": [
       { "method": "GET", "path": "/api/**" },
-      { "method": "POST", "path": "/api/documents/**" },
-      { "method": "POST", "path": "/api/communication/**" },
-      { "method": "POST", "path": "/api/admin/**" }
+      { "method": "*", "path": "/api/documents" },
+      { "method": "*", "path": "/api/documents/**" },
+      { "method": "*", "path": "/api/communication/**" },
+      { "method": "*", "path": "/api/admin/**" },
+      { "method": "*", "path": "/api/people/**" }
     ],
     "enseignant": [
       { "method": "GET", "path": "/api/**" },
-      { "method": "POST", "path": "/api/academic/**" },
-      { "method": "POST", "path": "/api/communication/comptes-rendus/**" }
+      { "method": "*", "path": "/api/academic/**" },
+      { "method": "*", "path": "/api/communication/comptes-rendus" },
+      { "method": "*", "path": "/api/communication/comptes-rendus/**" },
+      { "method": "*", "path": "/api/communication/reunions" },
+      { "method": "*", "path": "/api/communication/reunions/**" }
     ],
     "appui-insertion": [
-      { "method": "GET", "path": "/api/insertion/**" },
-      { "method": "POST", "path": "/api/insertion/**" },
+      { "method": "*", "path": "/api/insertion" },
+      { "method": "*", "path": "/api/insertion/**" },
       { "method": "GET", "path": "/api/people/students" },
       { "method": "GET", "path": "/api/people/students/**" },
       { "method": "GET", "path": "/api/people/staff" },
