@@ -12,41 +12,58 @@
 <!-- Corps défilant : formulaire réactif, une colonne. -->
 <form class="fd-corps" [formGroup]="form" (ngSubmit)="valider()">
   @for (champ of data.champs; track champ.cle) {
-    <mat-form-field appearance="outline">
-      <mat-label>{{ champ.libelle }}</mat-label>
+    @if (champ.type === 'date') {
+      <!-- Cas date traité dans son PROPRE mat-form-field (hors @switch) : le toggle
+           matIconSuffix se projette alors normalement (un @case multi-slots casserait
+           la projection — NG8011). Sélecteur français jj/mm/aaaa, déterministe. -->
+      <mat-form-field appearance="outline">
+        <mat-label>{{ champ.libelle }}</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [formControlName]="champ.cle"
+          placeholder="jj/mm/aaaa"
+        />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        @if (champ.aide) {
+          <mat-hint>{{ champ.aide }}</mat-hint>
+        }
+      </mat-form-field>
+    } @else {
+      <mat-form-field appearance="outline">
+        <mat-label>{{ champ.libelle }}</mat-label>
 
-      @switch (champ.type) {
-        @case ('textarea') {
-          <textarea matInput [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" rows="3"></textarea>
+        @switch (champ.type) {
+          @case ('textarea') {
+            <textarea matInput [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" rows="3"></textarea>
+          }
+          @case ('select') {
+            <mat-select [formControlName]="champ.cle">
+              @for (o of champ.options || []; track o.valeur) {
+                <mat-option [value]="o.valeur">{{ o.libelle }}</mat-option>
+              }
+            </mat-select>
+          }
+          @case ('nombre') {
+            <input matInput type="number" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
+          }
+          @case ('email') {
+            <input matInput type="email" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
+          }
+          @case ('tel') {
+            <input matInput type="tel" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
+          }
+          @default {
+            <input matInput type="text" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
+          }
         }
-        @case ('select') {
-          <mat-select [formControlName]="champ.cle">
-            @for (o of champ.options || []; track o.valeur) {
-              <mat-option [value]="o.valeur">{{ o.libelle }}</mat-option>
-            }
-          </mat-select>
-        }
-        @case ('date') {
-          <input matInput type="date" [formControlName]="champ.cle" />
-        }
-        @case ('nombre') {
-          <input matInput type="number" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
-        }
-        @case ('email') {
-          <input matInput type="email" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
-        }
-        @case ('tel') {
-          <input matInput type="tel" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
-        }
-        @default {
-          <input matInput type="text" [formControlName]="champ.cle" [placeholder]="champ.placeholder || ''" />
-        }
-      }
 
-      @if (champ.aide) {
-        <mat-hint>{{ champ.aide }}</mat-hint>
-      }
-    </mat-form-field>
+        @if (champ.aide) {
+          <mat-hint>{{ champ.aide }}</mat-hint>
+        }
+      </mat-form-field>
+    }
   }
 </form>
 

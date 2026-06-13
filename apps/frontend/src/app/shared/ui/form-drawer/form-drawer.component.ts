@@ -14,6 +14,11 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import {
+  MAT_DATE_LOCALE,
+  MatNativeDateModule,
+} from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 /** Type d'un champ de formulaire. */
 export type TypeChamp =
@@ -75,7 +80,11 @@ export interface FormDrawerData {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
+  // Dates en français (jj/mm/aaaa) pour le sélecteur de date de TOUS les formulaires.
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './form-drawer.component.html',
   styleUrl: './form-drawer.component.scss',
@@ -90,7 +99,11 @@ export class FormDrawerComponent {
 
   constructor() {
     for (const champ of this.data.champs) {
-      const valeur = this.data.valeurInitiale?.[champ.cle] ?? '';
+      const brut = this.data.valeurInitiale?.[champ.cle] ?? '';
+      // Les champs date utilisent un MatDatepicker (objet Date) : on convertit la
+      // valeur initiale ISO « yyyy-MM-dd » en Date (ou null si absente).
+      const valeur =
+        champ.type === 'date' ? (brut ? this.versDate(String(brut)) : null) : brut;
       this.form.addControl(
         champ.cle,
         new FormControl(valeur, champ.requis ? Validators.required : []),
@@ -107,12 +120,27 @@ export class FormDrawerComponent {
     const brut = this.form.getRawValue();
     const valeurs: Record<string, unknown> = {};
     for (const [cle, val] of Object.entries(brut)) {
+      // Date (du datepicker) -> chaîne ISO « yyyy-MM-dd » attendue par le backend.
+      const v = val instanceof Date ? this.versIso(val) : val;
       // On n'envoie pas les chaînes vides (laisse le backend appliquer ses défauts).
-      if (val !== '' && val !== null && val !== undefined) {
-        valeurs[cle] = val;
+      if (v !== '' && v !== null && v !== undefined) {
+        valeurs[cle] = v;
       }
     }
     this.ref.close(valeurs);
+  }
+
+  /** « yyyy-MM-dd » (ou ISO complet) -> Date locale (minuit, sans décalage de fuseau). */
+  private versDate(iso: string): Date | null {
+    const jour = iso.slice(0, 10);
+    const d = new Date(`${jour}T00:00:00`);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  /** Date -> « yyyy-MM-dd » (composantes locales, pas d'UTC pour éviter le décalage). */
+  private versIso(d: Date): string {
+    const p = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
   }
 
   protected annuler(): void {
