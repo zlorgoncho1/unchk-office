@@ -194,3 +194,29 @@
     margin: 0 10px 12px;
   }
 }
+
+// ============================================================
+// Thème SOMBRE : l'état actif en bleu plein vif (mode clair) est trop criard
+// sur fond sombre. On passe à une pilule bleu translucide + texte bleu clair,
+// sans l'ombre portée, pour rester cohérent avec la profondeur du thème.
+// :host-context : l'attribut data-theme est porté par <html> (hors composant).
+// ============================================================
+:host-context([data-theme='dark']) {
+  .sidebar__lien--actif,
+  .sidebar__lien--actif:hover {
+    background: rgba(28, 117, 188, 0.22);
+    color: var(--unchk-blue-light);
+    box-shadow: none;
+
+    .sidebar__lien-icone {
+      color: var(--unchk-blue-light);
+    }
+  }
+
+  // Logo PNG (texte foncé) : léger éclaircissement pour rester lisible sur le
+  // fond sombre de la barre, en attendant un lockup clair dédié.
+  .sidebar__logo img {
+    filter: brightness(0) invert(1);
+    opacity: 0.92;
+  }
+}

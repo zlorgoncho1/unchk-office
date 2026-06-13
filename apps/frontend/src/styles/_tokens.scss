@@ -52,12 +52,13 @@
   --unchk-text-muted:  #9DB0BE;
   --unchk-text-subtle: #6E8190;
 
-  // Surfaces & neutres.
-  --unchk-white:       #1B2A38;
+  // Surfaces & neutres. Surface volontairement plus claire que le fond de page
+  // (#1C2D3E sur #0E1822) pour bien détacher les cartes du fond en mode sombre.
+  --unchk-white:       #1F3142;
   --unchk-background:  #0E1822;
-  --unchk-surface:     #16232F;
-  --unchk-border:      #2A3B49;
-  --unchk-line:        #21303C;
+  --unchk-surface:     #1C2D3E;
+  --unchk-border:      #2E4255;
+  --unchk-line:        #26384A;
 
   // Variantes foncées utilisées comme TEXTE de pastilles : éclaircies pour le contraste.
   --unchk-blue-dark:   #6FB3E8;
