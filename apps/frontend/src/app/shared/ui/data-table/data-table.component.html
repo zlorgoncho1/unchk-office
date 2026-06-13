@@ -20,7 +20,7 @@
     <table class="dt">
       <thead>
         <tr>
-          @for (col of colonnes(); track col.cle) {
+          @for (col of colonnesVisibles(); track col.cle) {
             <th [class]="classe(col)" [style.width]="col.largeur || null">{{ col.libelle }}</th>
           }
           @if (aDesActions()) {
@@ -31,7 +31,7 @@
       <tbody>
         @for (ligne of lignesFiltrees(); track $index) {
           <tr>
-            @for (col of colonnes(); track col.cle) {
+            @for (col of colonnesVisibles(); track col.cle) {
               <td [class]="classe(col)" [attr.title]="afficher(col, ligne)">
                 @if (col.type === 'pastille') {
                   <unchk-status-pill
@@ -40,6 +40,17 @@
                   />
                 } @else if (col.type === 'montant' || col.type === 'nombre') {
                   <span class="dt-num">{{ afficher(col, ligne) }}</span>
+                } @else if (col.type === 'lien') {
+                  <!-- Lien externe (ex. visioconférence d'une réunion en ligne) :
+                       bouton « Rejoindre » cliquable ; texte simple sinon (salle physique). -->
+                  @if (lienHref(col, ligne); as href) {
+                    <a [href]="href" target="_blank" rel="noopener noreferrer" class="dt-lien">
+                      <iconify-icon icon="solar:videocamera-record-bold"></iconify-icon>
+                      <span>Rejoindre</span>
+                    </a>
+                  } @else {
+                    {{ afficher(col, ligne) }}
+                  }
                 } @else {
                   {{ afficher(col, ligne) }}
                 }
@@ -56,6 +67,17 @@
                     (click)="ouvrirDetail(ligne)"
                   >
                     <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
+                  </button>
+                }
+                @if (telechargeable()) {
+                  <button
+                    type="button"
+                    class="dt-action-btn"
+                    title="Télécharger"
+                    aria-label="Télécharger"
+                    (click)="emettreTelecharger(ligne, $event)"
+                  >
+                    <iconify-icon icon="solar:download-minimalistic-bold-duotone"></iconify-icon>
                   </button>
                 }
                 @if (modifiable()) {

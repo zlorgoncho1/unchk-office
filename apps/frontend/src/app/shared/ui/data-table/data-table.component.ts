@@ -32,7 +32,8 @@ export type TypeColonne =
   | 'montant'
   | 'date'
   | 'date-heure'
-  | 'pastille';
+  | 'pastille'
+  | 'lien';
 
 /**
  * Description d'une colonne de {@link DataTableComponent}.
@@ -54,6 +55,9 @@ export interface ColonneTable<T = Record<string, unknown>> {
   ton?: (ligne: T) => StatusPillTon;
   /** Largeur CSS optionnelle (ex : « 120px »). */
   largeur?: string;
+  /** Masque la colonne du tableau mais la conserve dans le drawer de détail
+   *  (ex. contenu long d'un compte rendu : illisible en cellule, utile en détail). */
+  masquerEnTable?: boolean;
 }
 
 /**
@@ -95,10 +99,14 @@ export class DataTableComponent<T = Record<string, unknown>> {
   readonly modifiable = input(false, { transform: booleanAttribute });
   /** Ajoute un bouton « Supprimer » par ligne (émet {@link supprimer}). */
   readonly supprimable = input(false, { transform: booleanAttribute });
+  /** Ajoute un bouton « Télécharger » par ligne (émet {@link telecharger}). */
+  readonly telechargeable = input(false, { transform: booleanAttribute });
   /** Émis au clic de « Modifier » avec la ligne concernée. */
   readonly modifier = output<T>();
   /** Émis au clic de « Supprimer » avec la ligne concernée. */
   readonly supprimer = output<T>();
+  /** Émis au clic de « Télécharger » avec la ligne concernée. */
+  readonly telecharger = output<T>();
 
   private readonly dialog = inject(MatDialog);
 
@@ -164,10 +172,26 @@ export class DataTableComponent<T = Record<string, unknown>> {
     return align === 'droite' ? 'dt--droite' : align === 'centre' ? 'dt--centre' : '';
   }
 
+  /** Colonnes réellement affichées dans le tableau (hors colonnes « détail seul »). */
+  protected readonly colonnesVisibles = computed(() =>
+    this.colonnes().filter((c) => !c.masquerEnTable)
+  );
+
   /** Indique si une colonne d'actions doit être affichée (signal dérivé, référence stable). */
   protected readonly aDesActions = computed(
-    () => this.detaillable() || this.modifiable() || this.supprimable()
+    () =>
+      this.detaillable() ||
+      this.modifiable() ||
+      this.supprimable() ||
+      this.telechargeable()
   );
+
+  /** URL d'une cellule de type « lien » si la valeur est une URL http(s), sinon null. */
+  protected lienHref(col: ColonneTable<T>, ligne: T): string | null {
+    const v = this.brut(col, ligne);
+    const s = v == null ? '' : String(v).trim();
+    return /^https?:\/\//i.test(s) ? s : null;
+  }
 
   /** Ouvre le dialog de détail générique avec les valeurs formatées de la ligne. */
   protected ouvrirDetail(ligne: T): void {
@@ -202,5 +226,11 @@ export class DataTableComponent<T = Record<string, unknown>> {
   protected emettreSupprimer(ligne: T, evt: Event): void {
     evt.stopPropagation();
     this.supprimer.emit(ligne);
+  }
+
+  /** Émet l'événement « télécharger » pour la ligne. */
+  protected emettreTelecharger(ligne: T, evt: Event): void {
+    evt.stopPropagation();
+    this.telecharger.emit(ligne);
   }
 }

@@ -180,3 +180,26 @@
     }
   }
 }
+
+// Lien « Rejoindre » (réunion en ligne) : bouton vert discret dans la cellule.
+.dt-lien {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--unchk-radius-sm);
+  background: rgba(54, 169, 59, 0.12);
+  color: var(--unchk-green-dark);
+  font-weight: 600;
+  font-size: 0.84rem;
+  text-decoration: none;
+  transition: background 0.15s ease;
+
+  iconify-icon {
+    font-size: 1rem;
+  }
+
+  &:hover {
+    background: rgba(54, 169, 59, 0.2);
+  }
+}

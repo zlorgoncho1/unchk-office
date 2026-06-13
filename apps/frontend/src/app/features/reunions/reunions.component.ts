@@ -69,8 +69,9 @@ export class ReunionsComponent {
       largeur: '140px', // pastille courte : largeur fixe
     },
     { cle: 'startsAt', libelle: 'Début', type: 'date-heure', largeur: '150px' }, // date+heure : largeur fixe
-    // Colonne de texte : laissée libre de s'étirer.
-    { cle: 'location', libelle: 'Lieu' },
+    // Lieu : si la valeur est une URL (réunion en ligne) -> bouton « Rejoindre »
+    // cliquable ; sinon texte de la salle physique.
+    { cle: 'location', libelle: 'Lieu', type: 'lien' },
     {
       cle: 'status',
       libelle: 'Statut',

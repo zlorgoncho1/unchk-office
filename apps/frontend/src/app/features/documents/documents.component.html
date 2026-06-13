@@ -44,8 +44,10 @@
       [chargement]="data.etat().chargement"
       modifiable
       supprimable
+      telechargeable
       (modifier)="onModifier($event)"
       (supprimer)="onSupprimer($event)"
+      (telecharger)="onTelecharger($event)"
       filtrable
       placeholderFiltre="Filtrer par titre, catégorie, type…"
       titreVide="Aucun document"

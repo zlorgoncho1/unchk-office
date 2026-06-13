@@ -245,6 +245,22 @@ export class DocumentsComponent {
       });
   }
 
+  /**
+   * Télécharge le document : récupère une URL présignée (le backend vérifie l'accès)
+   * puis ouvre le binaire dans un nouvel onglet.
+   */
+  protected onTelecharger(d: Document): void {
+    this.svc.telecharger(d.id).subscribe({
+      next: (r) => window.open(r.url, '_blank', 'noopener'),
+      error: () =>
+        this.snack.open(
+          'Téléchargement impossible (droits insuffisants ou fichier indisponible).',
+          'OK',
+          { duration: 4000 }
+        ),
+    });
+  }
+
   /** Ouvre le drawer de formulaire (édition des métadonnées, pré-rempli). */
   private ouvrirForm(
     titre: string,

@@ -143,17 +143,20 @@ export interface Reunion {
 }
 
 // --- Communication : compte rendu (/api/communication/comptes-rendus) ---
+// Aligné sur CompteRenduDto (backend) : authorId/authorName, type, body, meetingDate.
 export interface CompteRendu {
   id: string;
+  reunionId: string | null;
   title: string;
-  meetingRef: string | null;
-  status: string;
-  ownerId: string | null;
-  ownerName: string | null;
-  visibility: string[] | null;
+  type: string;
+  body: string | null;
+  documentRef: string | null;
+  meetingDate: string | null;
+  authorId: string | null;
+  authorName: string | null;
+  published: boolean;
   publishedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
+  visibility: string[] | null;
 }
 
 // --- Communication : notification (/api/communication/notifications) ---

@@ -84,4 +84,22 @@ export class DocumentsService {
   supprimer(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/api/documents/${id}`);
   }
+
+  /**
+   * Récupère une URL présignée (temporaire) pour télécharger le binaire du document.
+   * Le backend vérifie l'accès objet (ABAC) avant de signer l'URL.
+   */
+  telecharger(id: string): Observable<UrlTelechargement> {
+    return this.http.get<UrlTelechargement>(
+      `${this.base}/api/documents/${id}/telechargement`
+    );
+  }
+}
+
+/** URL présignée de téléchargement (réponse de /api/documents/{id}/telechargement). */
+export interface UrlTelechargement {
+  url: string;
+  expireA: string;
+  fileName: string;
+  mimeType: string;
 }

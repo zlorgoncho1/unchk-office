@@ -19,6 +19,7 @@ import {
   optionsDrawer,
 } from '../../shared/ui';
 import { chargerDepuis } from '../../shared/util/loadable';
+import { humaniser } from '../../shared/util/format.util';
 
 /**
  * Page « Comptes rendus » : liste tabulaire des comptes rendus de la communication
@@ -55,7 +56,17 @@ export class ComptesRendusComponent {
   // Colonnes du tableau brandé.
   protected readonly colonnes: ColonneTable<CompteRendu>[] = [
     { cle: 'title', libelle: 'Titre' },
-    { cle: 'ownerName', libelle: 'Auteur' },
+    {
+      cle: 'type',
+      libelle: 'Type',
+      type: 'pastille',
+      valeur: (c) => humaniser(c.type),
+      ton: () => 'info',
+      largeur: '150px',
+    },
+    // authorName (et non ownerName) : aligné sur le DTO backend (sinon colonne vide).
+    { cle: 'authorName', libelle: 'Auteur' },
+    { cle: 'meetingDate', libelle: 'Réunion le', type: 'date', largeur: '120px' },
     {
       cle: 'status',
       libelle: 'Statut',
@@ -66,13 +77,14 @@ export class ComptesRendusComponent {
       valeur: (c) => (c.publishedAt ? 'Publié' : 'Brouillon'),
       ton: (c) => (c.publishedAt ? 'succes' : 'attention'),
     },
-    // Colonne date courte : largeur fixe, les colonnes de texte long s'étirent.
-    { cle: 'publishedAt', libelle: 'Publié le', type: 'date', largeur: '120px' },
     {
       cle: 'visibility',
       libelle: 'Visibilité',
       valeur: (c) => (c.visibility ?? []).join(', '),
     },
+    // Contenu complet du compte rendu : masqué du tableau (trop long en cellule),
+    // affiché dans le drawer de détail — c'est LE compte rendu réel.
+    { cle: 'body', libelle: 'Contenu', masquerEnTable: true },
   ];
 
   // Champs du formulaire = sous-ensemble simple de CompteRenduCreationRequest.
@@ -175,8 +187,13 @@ export class ComptesRendusComponent {
 
   /** Ouvre le drawer d'édition d'un compte rendu (pré-rempli avec ce que la liste expose). */
   protected onModifier(c: CompteRendu): void {
+    // Pré-remplissage COMPLET : type, date de réunion (ISO -> yyyy-MM-dd) et contenu,
+    // pas seulement le titre (sinon l'édition repart d'un formulaire à moitié vide).
     const initial = {
       title: c.title,
+      type: c.type ?? '',
+      meetingDate: c.meetingDate ? c.meetingDate.slice(0, 10) : '',
+      body: c.body ?? '',
       visibility: (c.visibility ?? [])[0] ?? '',
     };
     this.dialog
@@ -189,7 +206,7 @@ export class ComptesRendusComponent {
         if (corps) {
           const charge = {
             ...corps,
-            authorId: c.ownerId ?? this.auth.currentUser()?.id,
+            authorId: c.authorId ?? this.auth.currentUser()?.id,
             visibility: corps['visibility'] ? [corps['visibility']] : [],
           };
           this.ecrire(this.svc.modifierCompteRendu(c.id, charge), 'Compte rendu modifié.');
