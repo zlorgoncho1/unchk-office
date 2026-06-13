@@ -154,7 +154,13 @@ export class InsertionComponent {
 
   /** Ouvre le drawer d'édition (pré-rempli). */
   protected onModifier(s: Stage): void {
-    this.ouvrirForm('Modifier le stage', s).subscribe((corps) => {
+    // Dates ISO -> yyyy-MM-dd pour pré-remplir les <input type="date">.
+    const initial: Stage = {
+      ...s,
+      startDate: s.startDate ? s.startDate.slice(0, 10) : '',
+      endDate: s.endDate ? s.endDate.slice(0, 10) : '',
+    };
+    this.ouvrirForm('Modifier le stage', initial).subscribe((corps) => {
       if (corps) {
         this.ecrire(this.svc.modifierStage(s.id, corps), 'Stage modifié.');
       }

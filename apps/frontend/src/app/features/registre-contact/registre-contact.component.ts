@@ -265,13 +265,20 @@ export class RegistreContactComponent {
         aide: 'Pour les statistiques d’insertion par formation.',
       },
     ];
+    // Date de constat ISO -> yyyy-MM-dd pour pré-remplir l'<input type="date">.
+    const valeurInitiale = s
+      ? ({ ...s, observedAt: s.observedAt ? s.observedAt.slice(0, 10) : '' } as unknown as Record<
+          string,
+          unknown
+        >)
+      : undefined;
     return this.dialog
       .open(
         FormDrawerComponent,
         optionsDrawer({
           titre,
           champs,
-          valeurInitiale: s as unknown as Record<string, unknown>,
+          valeurInitiale,
         })
       )
       .afterClosed();

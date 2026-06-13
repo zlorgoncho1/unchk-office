@@ -161,7 +161,13 @@ export class FormationsComponent {
 
   /** Ouvre le drawer d'édition (pré-rempli). */
   protected onModifier(f: Formation): void {
-    this.ouvrirForm('Modifier la formation', f).subscribe((corps) => {
+    // Dates ISO -> yyyy-MM-dd pour pré-remplir les <input type="date">.
+    const initial: Formation = {
+      ...f,
+      startDate: f.startDate ? f.startDate.slice(0, 10) : '',
+      endDate: f.endDate ? f.endDate.slice(0, 10) : '',
+    };
+    this.ouvrirForm('Modifier la formation', initial).subscribe((corps) => {
       if (corps) {
         // On préserve l'état actif existant de la formation lors de la modification.
         this.ecrire(

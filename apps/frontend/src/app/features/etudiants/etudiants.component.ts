@@ -200,10 +200,15 @@ export class EtudiantsComponent implements OnInit {
    * permet de gérer à la fois les champs scalaires et la liste imbriquée des diplômes.
    */
   protected onModifier(e: Etudiant): void {
+    // Date de naissance ISO -> yyyy-MM-dd pour pré-remplir l'<input type="date">.
+    const initial = {
+      ...e,
+      birthDate: e.birthDate ? e.birthDate.slice(0, 10) : '',
+    } as unknown as Record<string, unknown>;
     this.ouvrirForm(
       'Modifier l’étudiant',
       this.champsCommuns(),
-      e as unknown as Record<string, unknown>
+      initial
     ).subscribe((corps) => {
       if (!corps) {
         return;

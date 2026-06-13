@@ -135,7 +135,12 @@ export class PersonnelComponent {
 
   /** Ouvre le drawer d'édition (pré-rempli). */
   protected onModifier(p: Personnel): void {
-    this.ouvrirForm('Modifier le membre', p).subscribe((corps) => {
+    // Date d'embauche ISO -> yyyy-MM-dd pour pré-remplir l'<input type="date">.
+    const initial: Personnel = {
+      ...p,
+      hiredAt: p.hiredAt ? p.hiredAt.slice(0, 10) : '',
+    };
+    this.ouvrirForm('Modifier le membre', initial).subscribe((corps) => {
       if (corps) {
         // On préserve l'état actif existant lors de la modification (champ requis).
         this.ecrire(
