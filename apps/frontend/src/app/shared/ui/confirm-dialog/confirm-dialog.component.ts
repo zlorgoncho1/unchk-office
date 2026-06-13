@@ -40,7 +40,8 @@ export interface ConfirmDialogData {
       <button mat-stroked-button [mat-dialog-close]="false">Annuler</button>
       <button
         mat-flat-button
-        [color]="data.danger ? 'warn' : 'primary'"
+        color="primary"
+        [class.cd-confirm--danger]="data.danger"
         [mat-dialog-close]="true"
       >
         {{ data.libelleConfirmer || 'Confirmer' }}
@@ -67,6 +68,11 @@ export interface ConfirmDialogData {
         color: var(--unchk-text);
         line-height: 1.5;
         max-width: 420px;
+      }
+      // Action destructive : bouton rouge (les tokens MDC traversent l'encapsulation).
+      .cd-confirm--danger {
+        --mdc-filled-button-container-color: var(--unchk-danger);
+        --mdc-filled-button-label-text-color: #fff;
       }
     `,
   ],

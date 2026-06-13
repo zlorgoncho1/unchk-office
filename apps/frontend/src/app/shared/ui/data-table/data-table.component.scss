@@ -4,11 +4,13 @@
 }
 
 // Barre de filtre au-dessus du tableau (cohérente avec .table-filtre des dashboards).
+// Gouttière 16px : le filtre respire (ne touche plus les bords de la carte
+// « sansBordure ») et s'aligne sur l'inset des cellules du tableau.
 .dt-filtre {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 0 12px;
+  padding: 16px 16px 12px;
 
   iconify-icon {
     color: var(--unchk-text-subtle);
@@ -120,13 +122,29 @@
   }
 
   // Colonne d'actions : boutons icône discrets, alignés à droite.
+  // STICKY à droite : reste visible quand le tableau défile horizontalement
+  // (les actions ne sont jamais coupées). Fond opaque + ombre douce de séparation.
   .dt-actions-col {
     width: 1%;
     white-space: nowrap;
+    position: sticky;
+    right: 0;
+    background: var(--unchk-line);
+    box-shadow: -8px 0 8px -8px rgba(22, 49, 74, 0.1);
   }
 
   .dt-actions {
     white-space: nowrap;
+    position: sticky;
+    right: 0;
+    background: var(--unchk-surface);
+    box-shadow: -8px 0 8px -8px rgba(22, 49, 74, 0.1);
+  }
+
+  // Le survol de ligne doit aussi colorer la cellule d'actions sticky (sinon
+  // elle garde son fond opaque et casse l'effet de survol).
+  tbody tr:hover td.dt-actions {
+    background: var(--unchk-background);
   }
 
   .dt-action-btn {
@@ -152,7 +170,7 @@
     }
 
     & + .dt-action-btn {
-      margin-left: 2px;
+      margin-left: 4px;
     }
 
     // Variante « supprimer » : survol rouge.
