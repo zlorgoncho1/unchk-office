@@ -70,7 +70,7 @@ export interface DetailLigneData {
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-        padding: 20px 22px 14px;
+        padding: 20px 24px 16px;
         border-bottom: 1px solid var(--unchk-border);
         flex: 0 0 auto;
       }
@@ -99,8 +99,8 @@ export interface DetailLigneData {
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 18px;
-        padding: 20px 22px !important;
+        gap: 16px;
+        padding: 20px 24px !important;
         margin: 0;
         max-height: none;
       }
@@ -128,7 +128,7 @@ export interface DetailLigneData {
       /* Actions figées en bas. */
       .dld-actions {
         flex: 0 0 auto;
-        padding: 14px 22px 18px;
+        padding: 16px 24px 20px;
         border-top: 1px solid var(--unchk-border);
       }
     `,

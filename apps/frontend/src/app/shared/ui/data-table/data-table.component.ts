@@ -15,6 +15,7 @@ import {
   formaterDateHeure,
   formaterMontant,
   formaterNombre,
+  humaniser,
 } from '../../util/format.util';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
 import { LoadingStateComponent } from '../loading-state/loading-state.component';
@@ -142,6 +143,10 @@ export class DataTableComponent<T = Record<string, unknown>> {
         return formaterDate(v as string);
       case 'date-heure':
         return formaterDateHeure(v as string);
+      case 'pastille':
+        // Libellé humanisé comme dans la pastille du tableau (cohérent avec
+        // le drawer de détail qui réutilise cette valeur : « Validé », pas « valide »).
+        return v == null || v === '' ? '—' : humaniser(String(v));
       default:
         return v == null || v === '' ? '—' : String(v);
     }
@@ -166,13 +171,18 @@ export class DataTableComponent<T = Record<string, unknown>> {
 
   /** Ouvre le dialog de détail générique avec les valeurs formatées de la ligne. */
   protected ouvrirDetail(ligne: T): void {
-    const champs = this.colonnes().map((c) => ({
+    const colonnes = this.colonnes();
+    const champs = colonnes.map((c) => ({
       libelle: c.libelle,
       valeur: this.afficher(c, ligne),
     }));
+    // Titre contextuel : « Détail — <valeur de la 1re colonne> » (ex. nom/code),
+    // plus parlant que « Détail » seul et cohérent avec les titres d'édition.
+    const premiere = colonnes[0] ? this.afficher(colonnes[0], ligne) : '';
+    const titre = premiere && premiere !== '—' ? `Détail — ${premiere}` : 'Détail';
     // Ouverture en panneau latéral (drawer) collé au bord droit de l'écran.
     this.dialog.open(DetailLigneDialog, {
-      data: { titre: 'Détail', champs },
+      data: { titre, champs },
       autoFocus: false,
       position: { top: '0', right: '0' },
       height: '100vh',

@@ -122,7 +122,8 @@ export class DocumentsComponent {
       type: 'pastille',
       // Libellé lisible selon l'archivage.
       valeur: (d) => (d.archived ? 'Archivé' : 'Actif'),
-      ton: (d) => (d.archived ? 'succes' : 'neutre'),
+      // Sémantique : « Actif » en vert (positif/visible), « Archivé » en gris neutre.
+      ton: (d) => (d.archived ? 'neutre' : 'succes'),
       // Colonne courte : largeur figée (pastille Actif/Archivé).
       largeur: '110px',
     },

@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, of } from 'rxjs';
 
 import {
+  AcademicService,
   ContactRegistre,
   Etudiant,
   InsertionService,
@@ -62,12 +63,26 @@ import { chargerDepuis } from '../../shared/util/loadable';
 export class RegistreContactComponent {
   private readonly people = inject(PeopleService);
   private readonly svc = inject(InsertionService);
+  private readonly academic = inject(AcademicService);
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
 
   // Chargement de la liste des étudiants (pour le sélecteur).
   protected readonly etudiants = chargerDepuis(() =>
     this.people.listerEtudiants(0, 100)
+  );
+
+  // Catalogue des formations : alimente le sélecteur « Formation » du drawer
+  // (on ne saisit JAMAIS un UUID à la main — on choisit un libellé lisible).
+  private readonly formations = chargerDepuis(() =>
+    this.academic.listerFormations()
+  );
+
+  private readonly optionsFormation = computed(() =>
+    (this.formations.etat().donnees ?? []).map((f) => ({
+      valeur: f.id,
+      libelle: `${f.code} — ${f.label}`,
+    }))
   );
 
   protected readonly listeEtudiants = computed<Etudiant[]>(
@@ -244,8 +259,10 @@ export class RegistreContactComponent {
       { cle: 'observedAt', libelle: 'Date de constat', type: 'date' },
       {
         cle: 'formationRef',
-        libelle: 'Formation (identifiant)',
-        aide: 'Renseigner pour les statistiques par formation (academic.formations.id).',
+        libelle: 'Formation',
+        type: 'select',
+        options: this.optionsFormation(),
+        aide: 'Pour les statistiques d’insertion par formation.',
       },
     ];
     return this.dialog
