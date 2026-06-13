@@ -157,12 +157,15 @@ export class InsertionHomeComponent implements AfterViewInit {
       case 'en_cours':
         return 'attention';
       case 'termine':
+        // Distinct de « Validé » (vert) : « Terminé » = fin neutre-positive (bleu),
+        // cohérent avec la page Suivi insertion.
+        return 'info';
       case 'valide':
         return 'succes';
       case 'rompu':
         return 'danger';
       default:
-        return 'info';
+        return 'neutre';
     }
   }
 }
