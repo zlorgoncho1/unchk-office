@@ -112,3 +112,15 @@ iconify-icon { display: inline-block; vertical-align: middle; line-height: 1; }
     transform: translateX(0);
   }
 }
+
+// --- Panneau déroulant des mat-select : hauteur bornée + options tronquées ---
+// Évite qu'une longue liste (étudiants, formations…) déborde du viewport ; les
+// libellés longs (« CODE — Intitulé ») sont coupés proprement avec « … ».
+.mat-mdc-select-panel {
+  max-height: 320px !important;
+}
+.mat-mdc-option .mdc-list-item__primary-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

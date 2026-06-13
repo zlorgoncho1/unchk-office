@@ -42,7 +42,9 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 20px 24px 8px;
+  // Respiration suffisante avant le footer figé (8px donnait une impression de
+  // collision quand le formulaire est court).
+  padding: 20px 24px 16px;
 
   mat-form-field {
     width: 100%;
