@@ -14,8 +14,11 @@
 // --- Fiche personnelle : liste de paires clé/valeur ---
 .fiche {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px 24px;
+  // Colonnes plafonnées (pas de 1fr) + alignées à gauche : les champs courts
+  // ne s'étirent plus sur toute la largeur de la carte (plus de grand vide à droite).
+  grid-template-columns: repeat(auto-fit, minmax(200px, 320px));
+  justify-content: start;
+  gap: 16px 32px;
   margin: 0;
 
   &__champ {
