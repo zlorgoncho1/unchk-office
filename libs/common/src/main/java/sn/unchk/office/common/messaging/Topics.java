@@ -42,4 +42,7 @@ public final class Topics {
 
     /** admin-service : budget (projet de budget, budget réalisé). */
     public static final String ADMIN_BUDGET = "admin.budget";
+
+    /** admin-service : communiqués administratifs (notes de service, circulaires) → notifications. */
+    public static final String ADMIN_COMMUNIQUES = "admin.communiques";
 }

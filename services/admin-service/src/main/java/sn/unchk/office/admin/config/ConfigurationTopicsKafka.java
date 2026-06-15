@@ -36,4 +36,16 @@ public class ConfigurationTopicsKafka {
                 .configs(Map.of("cleanup.policy", "compact"))
                 .build();
     }
+
+    /**
+     * Topic des communiqués publiés (notes de service, circulaires) : flux d'événements
+     * (publication) consommé par communication-service pour déclencher les notifications.
+     */
+    @Bean
+    public NewTopic topicAdminCommuniques() {
+        return TopicBuilder.name(Topics.ADMIN_COMMUNIQUES)
+                .partitions(PARTITIONS)
+                .replicas(REPLICATION)
+                .build();
+    }
 }
