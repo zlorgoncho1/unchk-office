@@ -1,0 +1,67 @@
+<!-- Page Courrier : registre du courrier arrivé / départ. -->
+<unchk-page-header
+  titre="Courrier"
+  sousTitre="Registre du courrier arrivé et départ : suivi, statut et archivage"
+  icone="letter-bold-duotone"
+>
+  <button mat-flat-button color="primary" (click)="nouveau()">
+    <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+    <span>&nbsp;Nouveau courrier</span>
+  </button>
+</unchk-page-header>
+
+@if (data.etat().erreur) {
+  <unchk-empty-state
+    icone="shield-warning-line-duotone"
+    titre="Courrier indisponible"
+    [message]="data.etat().erreur"
+  />
+} @else {
+  <!-- Compteurs synthétiques (masqués tant qu'il n'y a aucune donnée). -->
+  @if (nbCourriers() > 0) {
+    <section class="courriers__kpis">
+      <unchk-stat-card
+        libelle="Courriers"
+        [valeur]="nbCourriers()"
+        icone="letter-bold-duotone"
+        ton="blue"
+      />
+      <unchk-stat-card
+        libelle="Arrivés"
+        [valeur]="nbArrives()"
+        icone="inbox-in-bold-duotone"
+        ton="green"
+      />
+      <unchk-stat-card
+        libelle="Départs"
+        [valeur]="nbDeparts()"
+        icone="inbox-out-bold-duotone"
+        ton="orange"
+      />
+      <unchk-stat-card
+        libelle="En cours"
+        [valeur]="nbEnCours()"
+        icone="hourglass-line-duotone"
+        ton="navy"
+      />
+    </section>
+  }
+
+  <unchk-section-card sansBordure>
+    <unchk-data-table
+      detaillable
+      [colonnes]="colonnes"
+      [lignes]="lignes()"
+      [chargement]="data.etat().chargement"
+      modifiable
+      supprimable
+      (modifier)="onModifier($event)"
+      (supprimer)="onSupprimer($event)"
+      filtrable
+      placeholderFiltre="Filtrer par objet, correspondant, référence…"
+      titreVide="Aucun courrier"
+      messageVide="Aucun courrier n'est enregistré pour le moment."
+      iconeVide="letter-bold-duotone"
+    />
+  </unchk-section-card>
+}

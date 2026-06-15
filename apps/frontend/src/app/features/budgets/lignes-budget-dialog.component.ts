@@ -29,6 +29,7 @@ import {
   optionsDrawer,
 } from '../../shared/ui';
 import { formaterMontant, humaniser } from '../../shared/util/format.util';
+import { telechargerBlob } from '../../shared/util/telechargement.util';
 
 /** Données passées au drawer de gestion des lignes : le budget concerné. */
 export interface LignesBudgetData {
@@ -240,6 +241,35 @@ export class LignesBudgetDialog {
           .pipe(switchMap(() => this.admin.consulterBudget(this.data.budget.id)));
         this.ecrire(maj$, 'Entête mise à jour.');
       }
+    });
+  }
+
+  /** Exporte l'état budgétaire (entête + lignes + totaux) au format PDF. */
+  protected exporterPdf(): void {
+    this.exporter(
+      this.admin.exporterBudgetPdf(this.data.budget.id),
+      `budget-${this.data.budget.fiscalYear}-${this.data.budget.label}.pdf`
+    );
+  }
+
+  /** Exporte l'état budgétaire au format Excel (xlsx). */
+  protected exporterExcel(): void {
+    this.exporter(
+      this.admin.exporterBudgetExcel(this.data.budget.id),
+      `budget-${this.data.budget.fiscalYear}-${this.data.budget.label}.xlsx`
+    );
+  }
+
+  /** Récupère le binaire d'export puis déclenche le téléchargement ; notifie en cas d'échec. */
+  private exporter(source$: Observable<Blob>, nomFichier: string): void {
+    source$.subscribe({
+      next: (blob) => telechargerBlob(blob, nomFichier),
+      error: () =>
+        this.snack.open(
+          "Export impossible (droits insuffisants ou service indisponible).",
+          'OK',
+          { duration: 4000 }
+        ),
     });
   }
 

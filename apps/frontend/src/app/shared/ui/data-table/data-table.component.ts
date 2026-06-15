@@ -101,12 +101,22 @@ export class DataTableComponent<T = Record<string, unknown>> {
   readonly supprimable = input(false, { transform: booleanAttribute });
   /** Ajoute un bouton « Télécharger » par ligne (émet {@link telecharger}). */
   readonly telechargeable = input(false, { transform: booleanAttribute });
+  /** Ajoute un bouton d'action personnalisée par ligne (émet {@link action}). */
+  readonly actionnable = input(false, { transform: booleanAttribute });
+  /** Icône Solar du bouton d'action personnalisée. */
+  readonly actionIcone = input<string>('solar:bolt-circle-bold-duotone');
+  /** Infobulle / aria-label du bouton d'action personnalisée. */
+  readonly actionInfobulle = input<string>('Action');
+  /** Prédicat de visibilité du bouton d'action, par ligne (défaut : toujours visible). */
+  readonly actionVisible = input<(ligne: T) => boolean>(() => true);
   /** Émis au clic de « Modifier » avec la ligne concernée. */
   readonly modifier = output<T>();
   /** Émis au clic de « Supprimer » avec la ligne concernée. */
   readonly supprimer = output<T>();
   /** Émis au clic de « Télécharger » avec la ligne concernée. */
   readonly telecharger = output<T>();
+  /** Émis au clic de l'action personnalisée avec la ligne concernée. */
+  readonly action = output<T>();
 
   private readonly dialog = inject(MatDialog);
 
@@ -183,8 +193,14 @@ export class DataTableComponent<T = Record<string, unknown>> {
       this.detaillable() ||
       this.modifiable() ||
       this.supprimable() ||
-      this.telechargeable()
+      this.telechargeable() ||
+      this.actionnable()
   );
+
+  /** Indique si l'action personnalisée est visible pour une ligne donnée. */
+  protected estActionVisible(ligne: T): boolean {
+    return this.actionnable() && this.actionVisible()(ligne);
+  }
 
   /** URL d'une cellule de type « lien » si la valeur est une URL http(s), sinon null. */
   protected lienHref(col: ColonneTable<T>, ligne: T): string | null {
@@ -232,5 +248,11 @@ export class DataTableComponent<T = Record<string, unknown>> {
   protected emettreTelecharger(ligne: T, evt: Event): void {
     evt.stopPropagation();
     this.telecharger.emit(ligne);
+  }
+
+  /** Émet l'événement d'action personnalisée pour la ligne. */
+  protected emettreAction(ligne: T, evt: Event): void {
+    evt.stopPropagation();
+    this.action.emit(ligne);
   }
 }

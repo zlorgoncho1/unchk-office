@@ -3,7 +3,16 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { BudgetDetail, BudgetResume, StatutBudget } from './api.models';
+import {
+  BudgetDetail,
+  BudgetResume,
+  Communique,
+  Courrier,
+  NatureCommunique,
+  SensCourrier,
+  StatutBudget,
+  StatutCourrier,
+} from './api.models';
 
 /**
  * Accès aux données « admin » (budgets) via le gateway.
@@ -96,5 +105,113 @@ export class AdminService {
     return this.http.delete<BudgetDetail>(
       `${this.base}/api/admin/budgets/${id}/lignes/${ligneId}`
     );
+  }
+
+  // --- Exports budgétaires (PDF / Excel). Le binaire est récupéré en Blob
+  //     (requête authentifiée par l'intercepteur) puis téléchargé côté navigateur. ---
+
+  /** Exporte l'état budgétaire au format PDF. */
+  exporterBudgetPdf(id: string): Observable<Blob> {
+    return this.http.get(`${this.base}/api/admin/budgets/${id}/export/pdf`, {
+      responseType: 'blob',
+    });
+  }
+
+  /** Exporte l'état budgétaire au format Excel (xlsx). */
+  exporterBudgetExcel(id: string): Observable<Blob> {
+    return this.http.get(`${this.base}/api/admin/budgets/${id}/export/excel`, {
+      responseType: 'blob',
+    });
+  }
+
+  // --- Courrier (registre du courrier arrivé / départ) : /api/admin/mails ---
+
+  /** Liste les courriers, filtrés optionnellement par sens et/ou statut. */
+  listerCourriers(
+    direction?: SensCourrier,
+    statut?: StatutCourrier
+  ): Observable<Courrier[]> {
+    let params = new HttpParams();
+    if (direction) {
+      params = params.set('direction', direction);
+    }
+    if (statut) {
+      params = params.set('statut', statut);
+    }
+    return this.http.get<Courrier[]>(`${this.base}/api/admin/mails`, { params });
+  }
+
+  /** Enregistre un courrier (corps = CreationMailDto). */
+  creerCourrier(corps: Record<string, unknown>): Observable<Courrier> {
+    return this.http.post<Courrier>(`${this.base}/api/admin/mails`, corps);
+  }
+
+  /** Met à jour un courrier (corps = MajMailDto). */
+  modifierCourrier(
+    id: string,
+    corps: Record<string, unknown>
+  ): Observable<Courrier> {
+    return this.http.put<Courrier>(`${this.base}/api/admin/mails/${id}`, corps);
+  }
+
+  /** Fait évoluer le statut d'un courrier. */
+  changerStatutCourrier(
+    id: string,
+    status: StatutCourrier
+  ): Observable<Courrier> {
+    return this.http.patch<Courrier>(
+      `${this.base}/api/admin/mails/${id}/statut`,
+      { status }
+    );
+  }
+
+  /** Supprime (logiquement) un courrier. */
+  supprimerCourrier(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/api/admin/mails/${id}`);
+  }
+
+  // --- Communiqués (notes de service / circulaires) : /api/admin/communiques ---
+
+  /** Liste les communiqués, filtrés optionnellement par nature. */
+  listerCommuniques(kind?: NatureCommunique): Observable<Communique[]> {
+    let params = new HttpParams();
+    if (kind) {
+      params = params.set('kind', kind);
+    }
+    return this.http.get<Communique[]>(`${this.base}/api/admin/communiques`, {
+      params,
+    });
+  }
+
+  /** Crée un communiqué (brouillon). Corps = CreationCommuniqueDto. */
+  creerCommunique(corps: Record<string, unknown>): Observable<Communique> {
+    return this.http.post<Communique>(
+      `${this.base}/api/admin/communiques`,
+      corps
+    );
+  }
+
+  /** Met à jour un communiqué. Corps = MajCommuniqueDto. */
+  modifierCommunique(
+    id: string,
+    corps: Record<string, unknown>
+  ): Observable<Communique> {
+    return this.http.put<Communique>(
+      `${this.base}/api/admin/communiques/${id}`,
+      corps
+    );
+  }
+
+  /** Publie un communiqué → notifications automatiques aux rôles ciblés. */
+  publierCommunique(id: string): Observable<Communique> {
+    return this.http.patch<Communique>(
+      `${this.base}/api/admin/communiques/${id}/publication`,
+      {}
+    );
+  }
+
+  /** Supprime (logiquement) un communiqué. */
+  supprimerCommunique(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/api/admin/communiques/${id}`);
   }
 }

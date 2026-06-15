@@ -134,6 +134,18 @@ export const NAVIGATION: NavSection[] = [
         icone: 'users-group-rounded-bold-duotone',
         roles: ['admin', 'administratif'],
       },
+      {
+        libelle: 'Courrier',
+        chemin: 'courriers',
+        icone: 'letter-bold-duotone',
+        roles: ['admin', 'administratif'],
+      },
+      {
+        libelle: 'Communiqués',
+        chemin: 'communiques',
+        icone: 'megaphone-bold-duotone',
+        roles: ['admin', 'administratif'],
+      },
     ],
   },
   {

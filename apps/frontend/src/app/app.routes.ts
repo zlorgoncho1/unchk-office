@@ -219,6 +219,26 @@ export const routes: Routes = [
             (m) => m.PersonnelComponent
           ),
       },
+      {
+        path: 'courriers',
+        title: 'Courrier · UNCHK Office',
+        canActivate: [roleGuard('admin', 'administratif')],
+        data: { titre: 'Courrier', icone: 'letter-bold-duotone' },
+        loadComponent: () =>
+          import('./features/courriers/courriers.component').then(
+            (m) => m.CourriersComponent
+          ),
+      },
+      {
+        path: 'communiques',
+        title: 'Communiqués · UNCHK Office',
+        canActivate: [roleGuard('admin', 'administratif')],
+        data: { titre: 'Communiqués', icone: 'megaphone-bold-duotone' },
+        loadComponent: () =>
+          import('./features/communiques/communiques.component').then(
+            (m) => m.CommuniquesComponent
+          ),
+      },
 
       // --- Système ---
       {

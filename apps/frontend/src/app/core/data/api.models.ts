@@ -217,6 +217,51 @@ export interface BudgetDetail {
   lignes: LigneBudgetaire[];
 }
 
+// --- Admin : courrier (/api/admin/mails) ---
+export type SensCourrier = 'arrive' | 'depart';
+export type StatutCourrier =
+  | 'recu'
+  | 'en_traitement'
+  | 'traite'
+  | 'archive'
+  | 'clos';
+
+export interface Courrier {
+  id: string;
+  reference: string | null;
+  direction: SensCourrier;
+  subject: string;
+  correspondent: string;
+  mailDate: string | null;
+  registeredAt: string | null;
+  status: StatutCourrier;
+  assignedTo: string | null;
+  documentRef: string | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// --- Admin : communiqué — note de service / circulaire (/api/admin/communiques) ---
+export type NatureCommunique = 'note_service' | 'circulaire';
+
+export interface Communique {
+  id: string;
+  kind: NatureCommunique;
+  reference: string | null;
+  title: string;
+  body: string | null;
+  documentRef: string | null;
+  issueDate: string | null;
+  published: boolean;
+  publishedAt: string | null;
+  // Audience déduite des rôles ciblés (tous, personnel, enseignants, etudiants, administration).
+  audience: string;
+  targets: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 // --- Insertion : stage (/api/insertion/stages) ---
 export type StatutStage =
   | 'prevu'

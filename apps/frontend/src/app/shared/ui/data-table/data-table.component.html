@@ -69,6 +69,17 @@
                     <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
                   </button>
                 }
+                @if (estActionVisible(ligne)) {
+                  <button
+                    type="button"
+                    class="dt-action-btn dt-action-btn--accent"
+                    [title]="actionInfobulle()"
+                    [attr.aria-label]="actionInfobulle()"
+                    (click)="emettreAction(ligne, $event)"
+                  >
+                    <iconify-icon [icon]="actionIcone()"></iconify-icon>
+                  </button>
+                }
                 @if (telechargeable()) {
                   <button
                     type="button"

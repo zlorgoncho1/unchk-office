@@ -29,10 +29,21 @@
 <div class="lb-corps">
   <div class="lb-barre">
     <span class="lb-sous-titre">Lignes du budget (prévu / réalisé)</span>
-    <button mat-flat-button color="primary" type="button" (click)="ajouter()">
-      <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
-      <span>&nbsp;Ajouter une ligne</span>
-    </button>
+    <div class="lb-barre-actions">
+      <!-- Exports de l'état budgétaire (PDF / Excel). -->
+      <button mat-stroked-button type="button" (click)="exporterPdf()">
+        <iconify-icon icon="solar:file-text-linear"></iconify-icon>
+        <span>&nbsp;PDF</span>
+      </button>
+      <button mat-stroked-button type="button" (click)="exporterExcel()">
+        <iconify-icon icon="solar:file-download-linear"></iconify-icon>
+        <span>&nbsp;Excel</span>
+      </button>
+      <button mat-flat-button color="primary" type="button" (click)="ajouter()">
+        <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+        <span>&nbsp;Ajouter une ligne</span>
+      </button>
+    </div>
   </div>
 
   <unchk-data-table
